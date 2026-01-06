@@ -1,0 +1,40 @@
+import jwt from "jsonwebtoken";
+
+export default function (req, res, next) {
+  const header = req.headers["authorization"];
+  if (!header) return res.status(401).json({ msg: "No token" });
+
+  const token = header.split(" ")[1];
+  if (!token) return res.status(401).json({ msg: "Token missing" });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // MUST contain role
+    next();
+  } catch (err) {
+    return res.status(401).json({ msg: "Invalid token" });
+  }
+}
+
+export const adminOnly = (req, res, next) => {
+  if (!req.user) return res.status(401).json({ msg: "Not logged in" });
+  if (req.user.role !== "admin")
+    return res.status(403).json({ msg: "Admin Only Access" });
+
+  next();
+};
+export const hotelAdminOnly = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ msg: "Not logged in" });
+  }
+
+  if (req.user.role !== "hotel-admin") {
+    return res.status(403).json({ msg: "Hotel admin access only" });
+  }
+
+  if (!req.user.hotelId) {
+    return res.status(403).json({ msg: "Hotel not assigned" });
+  }
+
+  next();
+};

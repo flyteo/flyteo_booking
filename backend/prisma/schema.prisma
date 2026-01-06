@@ -1,0 +1,444 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model amenity {
+  id           Int            @id @default(autoincrement())
+  name         String         @unique(map: "Amenity_name_key")
+  hotelamenity hotelamenity[]
+  villaamenity villaamenity[]
+}
+
+model booking {
+  id              Int             @id @default(autoincrement())
+  userId          Int
+  type            String
+  hotelId         Int?
+  campingId       Int?
+  roomType        String?
+  acType          String?
+  checkIn         DateTime
+  checkOut        DateTime?
+  guests          Int
+  paymentStatus   String          @default("pending")
+  createdAt       DateTime        @default(now())
+  fullname        String?         @db.VarChar(255)
+  mobileno        String          @default(dbgenerated("(_cp850\\'Unknown\\')")) @db.VarChar(20)
+  villaId         Int?
+  totalAmount     Float           @default(0) @db.Float
+  paidAmount      Float           @default(0) @db.Float
+  remainingAmount Float           @default(0) @db.Float
+  paymentType     String?         @default("full") @db.VarChar(20)
+  advancePercent  Int?
+  roomCount       Int?            @default(1)
+  camping         camping?        @relation(fields: [campingId], references: [id], map: "Booking_campingId_fkey")
+  hotel           hotel?          @relation(fields: [hotelId], references: [id], map: "Booking_hotelId_fkey")
+  user            user            @relation(fields: [userId], references: [id], map: "Booking_userId_fkey")
+  villa           villa?          @relation(fields: [villaId], references: [id], onUpdate: NoAction, map: "fk_booking_villa")
+  bookingperson   bookingperson[]
+
+  @@index([campingId], map: "Booking_campingId_fkey")
+  @@index([hotelId], map: "Booking_hotelId_fkey")
+  @@index([userId], map: "Booking_userId_fkey")
+  @@index([villaId], map: "idx_booking_villaId")
+}
+
+model bookingperson {
+  id        Int     @id @default(autoincrement())
+  bookingId Int
+  type      String
+  name      String
+  age       Int
+  note      String?
+  booking   booking @relation(fields: [bookingId], references: [id], onDelete: Cascade, map: "BookingPerson_bookingId_fkey")
+
+  @@index([bookingId], map: "BookingPerson_bookingId_fkey")
+}
+
+model camping {
+  id                    Int                @id @default(autoincrement())
+  name                  String
+  description           String
+  location              String
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+  advancePaymentAllowed Boolean?           @default(false)
+  advancePercent        Int?
+  booking               booking[]
+  campingactivity       campingactivity[]
+  campingexclusion      campingexclusion[]
+  campingimage          campingimage[]
+  campinginclusion      campinginclusion[]
+  campingitinerary      campingitinerary[]
+  campingpricing        campingpricing[]
+  reviews               reviews[]
+}
+
+model campingactivity {
+  id        Int     @id @default(autoincrement())
+  campingId Int
+  text      String
+  camping   camping @relation(fields: [campingId], references: [id], onDelete: Cascade, map: "CampingActivity_campingId_fkey")
+
+  @@index([campingId], map: "CampingActivity_campingId_fkey")
+}
+
+model campingexclusion {
+  id        Int     @id @default(autoincrement())
+  campingId Int
+  text      String
+  camping   camping @relation(fields: [campingId], references: [id], onDelete: Cascade, map: "CampingExclusion_campingId_fkey")
+
+  @@index([campingId], map: "CampingExclusion_campingId_fkey")
+}
+
+model campingimage {
+  id        Int     @id @default(autoincrement())
+  campingId Int
+  url       String
+  camping   camping @relation(fields: [campingId], references: [id], onDelete: Cascade, map: "CampingImage_campingId_fkey")
+
+  @@index([campingId], map: "CampingImage_campingId_fkey")
+}
+
+model campinginclusion {
+  id        Int     @id @default(autoincrement())
+  campingId Int
+  text      String
+  camping   camping @relation(fields: [campingId], references: [id], onDelete: Cascade, map: "CampingInclusion_campingId_fkey")
+
+  @@index([campingId], map: "CampingInclusion_campingId_fkey")
+}
+
+model campingitinerary {
+  id                    Int                     @id @default(autoincrement())
+  campingId             Int
+  day                   String
+  camping               camping                 @relation(fields: [campingId], references: [id], onDelete: Cascade, map: "CampingItinerary_campingId_fkey")
+  campingitinerarypoint campingitinerarypoint[]
+
+  @@index([campingId], map: "CampingItinerary_campingId_fkey")
+}
+
+model campingitinerarypoint {
+  id               Int              @id @default(autoincrement())
+  itineraryId      Int
+  text             String
+  campingitinerary campingitinerary @relation(fields: [itineraryId], references: [id], onDelete: Cascade, map: "CampingItineraryPoint_itineraryId_fkey")
+
+  @@index([itineraryId], map: "CampingItineraryPoint_itineraryId_fkey")
+}
+
+model campingpricing {
+  id         Int     @id @default(autoincrement())
+  campingId  Int
+  day        String
+  adultPrice Float
+  childPrice Float
+  camping    camping @relation(fields: [campingId], references: [id], onDelete: Cascade, map: "CampingPricing_campingId_fkey")
+
+  @@unique([campingId, day], map: "CampingPricing_campingId_day_key")
+}
+
+model coupon {
+  id               Int           @id @default(autoincrement())
+  code             String        @unique(map: "Coupon_code_key")
+  discountType     String
+  amount           Float
+  minBookingAmount Float
+  validFrom        DateTime
+  validTo          DateTime
+  isActive         Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  image            String?       @db.VarChar(255)
+  hotelcoupon      hotelcoupon[]
+  villacoupon      villacoupon[]
+}
+
+model hotel {
+  id                    Int              @id @default(autoincrement())
+  name                  String
+  slug                  String           @unique(map: "Hotel_slug_key")
+  location              String
+  description           String
+  address               String?
+  email                 String?
+  phone                 String?
+  mapLocation           String?
+  nearby                String?
+  hotelType             String?
+  starCategory          Int?
+  discount              Int              @default(0)
+  ratingAverage         Float            @default(0)
+  ratingCount           Int              @default(0)
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+  taxes                 Float?           @default(0) @db.Float
+  advancePaymentAllowed Boolean?         @default(false)
+  advancePercent        Int?
+  booking               booking[]
+  hotelamenity          hotelamenity[]
+  hotelcoupon           hotelcoupon[]
+  hotelhighlight        hotelhighlight[]
+  hotelimage            hotelimage[]
+  hoteloffer            hoteloffer[]
+  hotelpolicy           hotelpolicy?
+  hotelrule             hotelrule?
+  hotelsafety           hotelsafety?
+  reviews               reviews[]
+  room                  room[]
+  user                  user[]
+}
+
+model hotelamenity {
+  hotelId   Int
+  amenityId Int
+  amenity   amenity @relation(fields: [amenityId], references: [id], onDelete: Cascade, map: "HotelAmenity_amenityId_fkey")
+  hotel     hotel   @relation(fields: [hotelId], references: [id], onDelete: Cascade, map: "HotelAmenity_hotelId_fkey")
+
+  @@id([hotelId, amenityId])
+  @@index([amenityId], map: "HotelAmenity_amenityId_fkey")
+}
+
+model hotelcoupon {
+  hotelId  Int
+  couponId Int
+  coupon   coupon @relation(fields: [couponId], references: [id], onDelete: Cascade, map: "HotelCoupon_couponId_fkey")
+  hotel    hotel  @relation(fields: [hotelId], references: [id], onDelete: Cascade, map: "HotelCoupon_hotelId_fkey")
+
+  @@id([hotelId, couponId])
+  @@index([couponId], map: "HotelCoupon_couponId_fkey")
+}
+
+model hotelhighlight {
+  id      Int    @id @default(autoincrement())
+  hotelId Int
+  text    String
+  hotel   hotel  @relation(fields: [hotelId], references: [id], onDelete: Cascade, map: "HotelHighlight_hotelId_fkey")
+
+  @@index([hotelId], map: "HotelHighlight_hotelId_fkey")
+}
+
+model hotelimage {
+  id      Int    @id @default(autoincrement())
+  hotelId Int
+  url     String
+  hotel   hotel  @relation(fields: [hotelId], references: [id], onDelete: Cascade, map: "HotelImage_hotelId_fkey")
+
+  @@index([hotelId], map: "HotelImage_hotelId_fkey")
+}
+
+model hoteloffer {
+  hotelId Int
+  offerId Int
+  hotel   hotel @relation(fields: [hotelId], references: [id], onDelete: Cascade, map: "HotelOffer_hotelId_fkey")
+  offer   offer @relation(fields: [offerId], references: [id], onDelete: Cascade, map: "HotelOffer_offerId_fkey")
+
+  @@id([hotelId, offerId])
+  @@index([offerId], map: "HotelOffer_offerId_fkey")
+}
+
+model hotelpolicy {
+  hotelId            Int     @id
+  checkIn            String?
+  checkOut           String?
+  cancellationPolicy String?
+  childPolicy        String?
+  petPolicy          String?
+  coupleFriendly     Boolean @default(false)
+  hotel              hotel   @relation(fields: [hotelId], references: [id], onDelete: Cascade, map: "HotelPolicy_hotelId_fkey")
+}
+
+model hotelrule {
+  hotelId          Int     @id
+  smokingAllowed   Boolean @default(false)
+  alcoholAllowed   Boolean @default(false)
+  visitorsAllowed  Boolean @default(false)
+  loudMusicAllowed Boolean @default(false)
+  hotel            hotel   @relation(fields: [hotelId], references: [id], onDelete: Cascade, map: "HotelRule_hotelId_fkey")
+}
+
+model hotelsafety {
+  hotelId            Int     @id
+  sanitizedRooms     Boolean @default(false)
+  staffVaccinated    Boolean @default(false)
+  fireSafety         Boolean @default(false)
+  cctv               Boolean @default(false)
+  contactlessCheckin Boolean @default(false)
+  hotel              hotel   @relation(fields: [hotelId], references: [id], onDelete: Cascade, map: "HotelSafety_hotelId_fkey")
+}
+
+model offer {
+  id              Int          @id @default(autoincrement())
+  title           String
+  discountPercent Int
+  validFrom       DateTime
+  validTo         DateTime
+  isActive        Boolean      @default(true)
+  createdAt       DateTime     @default(now())
+  image           String?      @db.VarChar(255)
+  hoteloffer      hoteloffer[]
+  villaoffer      villaoffer[]
+}
+
+model room {
+  id         Int         @id @default(autoincrement())
+  hotelId    Int
+  type       String
+  acType     String
+  price      Float
+  maxPersons Int
+  totalRooms Int
+  hotel      hotel       @relation(fields: [hotelId], references: [id], onDelete: Cascade, map: "Room_hotelId_fkey")
+  roomimage  roomimage[]
+
+  @@index([hotelId], map: "Room_hotelId_fkey")
+}
+
+model roomimage {
+  id     Int    @id @default(autoincrement())
+  roomId Int
+  url    String
+  room   room   @relation(fields: [roomId], references: [id], onDelete: Cascade, map: "RoomImage_roomId_fkey")
+
+  @@index([roomId], map: "RoomImage_roomId_fkey")
+}
+
+model user {
+  id           Int       @id @default(autoincrement())
+  name         String
+  email        String    @unique(map: "User_email_key")
+  role         String
+  createdAt    DateTime  @default(now())
+  hotelId      Int?
+  passwordHash String
+  mobileNo     String?   @db.VarChar(20)
+  booking      booking[]
+  reviews      reviews[]
+  hotel        hotel?    @relation(fields: [hotelId], references: [id], map: "User_hotelId_fkey")
+
+  @@index([hotelId], map: "User_hotelId_fkey")
+}
+
+model villa {
+  id                    Int            @id @default(autoincrement())
+  name                  String         @db.VarChar(255)
+  description           String         @db.Text
+  location              String         @db.VarChar(255)
+  address               String?        @db.VarChar(255)
+  mapLocation           String?        @db.VarChar(255)
+  maxGuests             Int
+  includedGuests        Int
+  basePrice             Decimal        @db.Decimal(10, 2)
+  discount              Int?           @default(0)
+  extraGuestPrice       Decimal        @db.Decimal(10, 2)
+  checkInTime           String?        @db.VarChar(50)
+  checkOutTime          String?        @db.VarChar(50)
+  cancellationPolicy    String?        @db.Text
+  securityDeposit       Decimal?       @db.Decimal(10, 2)
+  createdAt             DateTime?      @default(now()) @db.DateTime(0)
+  updatedAt             DateTime?      @default(now()) @db.DateTime(0)
+  advancePaymentAllowed Boolean?       @default(false)
+  advancePercent        Int?
+  booking               booking[]
+  reviews               reviews[]
+  villaamenity          villaamenity[]
+  villacoupon           villacoupon[]
+  villaimage            villaimage[]
+  villalayout           villalayout?
+  villaoffer            villaoffer[]
+}
+
+model villaimage {
+  id      Int    @id @default(autoincrement())
+  villaId Int
+  url     String @db.Text
+  villa   villa  @relation(fields: [villaId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "villaimage_ibfk_1")
+
+  @@index([villaId], map: "villaId")
+}
+
+model villalayout {
+  id           Int      @id @default(autoincrement())
+  villaId      Int      @unique(map: "villaId")
+  bedrooms     Int
+  bathrooms    Int
+  beds         Int
+  livingRoom   Boolean? @default(true)
+  kitchen      Boolean? @default(true)
+  privatePool  Boolean? @default(false)
+  garden       Boolean? @default(false)
+  parkingSlots Int?
+  extraNotes   String?  @db.Text
+  villa        villa    @relation(fields: [villaId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "villalayout_ibfk_1")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model reviews {
+  id        Int       @id @default(autoincrement())
+  rating    Int
+  comment   String?   @db.Text
+  hotelId   Int?
+  campingId Int?
+  villaId   Int?
+  userId    Int
+  createdAt DateTime? @default(now()) @db.DateTime(0)
+  camping   camping?  @relation(fields: [campingId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_review_camping")
+  hotel     hotel?    @relation(fields: [hotelId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_review_hotel")
+  user      user      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_review_user")
+  villa     villa?    @relation(fields: [villaId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_review_villa")
+
+  @@index([campingId], map: "fk_review_camping")
+  @@index([hotelId], map: "fk_review_hotel")
+  @@index([userId], map: "fk_review_user")
+  @@index([villaId], map: "fk_review_villa")
+}
+
+model villaamenity {
+  villaId   Int
+  amenityId Int
+  amenity   amenity @relation(fields: [amenityId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_villaamenity_amenity")
+  villa     villa   @relation(fields: [villaId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_villaamenity_villa")
+
+  @@id([villaId, amenityId])
+  @@index([amenityId], map: "fk_villaamenity_amenity")
+}
+
+model villacoupon {
+  villaId  Int
+  couponId Int
+  coupon   coupon @relation(fields: [couponId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_villacoupon_coupon")
+  villa    villa  @relation(fields: [villaId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_villacoupon_villa")
+
+  @@id([villaId, couponId])
+  @@index([couponId], map: "fk_villacoupon_coupon")
+}
+
+model villaoffer {
+  villaId Int
+  offerId Int
+  offer   offer @relation(fields: [offerId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_villaoffer_offer")
+  villa   villa @relation(fields: [villaId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_villaoffer_villa")
+
+  @@id([villaId, offerId])
+  @@index([offerId], map: "fk_villaoffer_offer")
+}
+
+model contactmessage {
+  id         Int       @id @default(autoincrement())
+  name       String    @db.VarChar(255)
+  email      String    @db.VarChar(255)
+  mobileNo   String?   @db.VarChar(20)
+  subject    String?   @db.VarChar(255)
+  message    String    @db.Text
+  isResolved Boolean?  @default(false)
+  createdAt  DateTime? @default(now()) @db.DateTime(0)
+
+  @@index([email], map: "idx_contact_email")
+  @@index([isResolved], map: "idx_contact_resolved")
+}

@@ -1,0 +1,196 @@
+import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+
+export default function VillaBookingSidebar({ villa }) {
+  const nav = useNavigate();
+
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
+  const [adults, setAdults] = useState(2);
+  const [children, setChildren] = useState(0);
+
+  const nights = useMemo(() => {
+    if (!checkIn || !checkOut) return 0;
+    const s = new Date(checkIn);
+    const e = new Date(checkOut);
+    return Math.ceil((e - s) / (1000 * 60 * 60 * 24));
+  }, [checkIn, checkOut]);
+
+  const totalGuests = adults + children;
+  const extraGuests = Math.max(
+    totalGuests - villa.includedGuests,
+    0
+  );
+
+  const totalPrice = useMemo(() => {
+    if (!nights) return 0;
+    return (
+      villa.basePrice * nights +
+      extraGuests * villa.extraGuestPrice * nights
+    );
+  }, [nights, extraGuests, villa]);
+
+  const [showPopup, setShowPopup] = useState(false);
+  const proceedBooking = () => {
+    setShowPopup(true);
+    // if (!checkIn || !checkOut) {
+    //   alert("Please select dates");
+    //   return;
+    // }
+
+    // nav(
+    //   `/booking?villaId=${villa.id}` +
+    //   `&checkIn=${checkIn}` +
+    //   `&checkOut=${checkOut}` +
+    //   `&adults=${adults}` +
+    //   `&children=${children}` +
+    //   `&price=${totalPrice}`
+    // );
+  };
+
+  return (
+    <div className="bg-white rounded-2xl shadow-xl p-6 sticky top-24">
+
+      {/* PRICE */}
+      <p className="text-gray-500 text-sm">Starting from</p>
+      <p className="text-3xl font-bold text-palmGreen">
+        ₹{villa.basePrice}
+        <span className="text-base font-normal text-gray-500">
+          /night
+        </span>
+      </p>
+
+      {/* DATES */}
+      <div className="mt-4 space-y-3">
+        <input
+          type="date"
+          className="w-full p-3 border rounded"
+          placeholder="Check-in Date"
+          value={checkIn}
+          onChange={e => setCheckIn(e.target.value)}
+        />
+        <input
+          type="date"
+          placeholder="Check-out Date"
+          className="w-full p-3 border rounded"
+          value={checkOut}
+          onChange={e => setCheckOut(e.target.value)}
+        />
+      </div>
+
+      {/* GUESTS */}
+      <div className="mt-4">
+        <label className="font-medium">Guests</label>
+
+        <div className="flex justify-between mt-2">
+          <span>Adults</span>
+          <input
+            type="number"
+            min="1"
+            className="w-20 border rounded p-1 text-center"
+            value={adults}
+            onChange={e => setAdults(Number(e.target.value))}
+          />
+        </div>
+
+        <div className="flex justify-between mt-2">
+          <span>Children</span>
+          <input
+            type="number"
+            min="0"
+            className="w-20 border rounded p-1 text-center"
+            value={children}
+            onChange={e => setChildren(Number(e.target.value))}
+          />
+        </div>
+
+        <p className="text-xs text-gray-500 mt-2">
+          Includes {villa.includedGuests} guests. Extra guests ₹
+          {villa.extraGuestPrice}/night each.
+        </p>
+      </div>
+
+      {/* PRICE BREAKDOWN */}
+      {nights > 0 && (
+        <div className="mt-4 border-t pt-4 space-y-2 text-sm">
+          <div className="flex justify-between">
+            <span>₹{villa.basePrice} × {nights} nights</span>
+            <span>₹{villa.basePrice * nights}</span>
+          </div>
+
+          {extraGuests > 0 && (
+            <div className="flex justify-between text-red-600">
+              <span>
+                Extra guests ({extraGuests}) × ₹
+                {villa.extraGuestPrice} × {nights}
+              </span>
+              <span>
+                ₹{extraGuests * villa.extraGuestPrice * nights}
+              </span>
+            </div>
+          )}
+
+          <div className="flex justify-between font-bold text-lg text-palmGreen">
+            <span>Total</span>
+            <span>₹{totalPrice}</span>
+          </div>
+        </div>
+      )}
+
+      {/* CTA */}
+      <button
+        onClick={proceedBooking}
+        className="mt-5 w-full bg-rusticBrown text-white py-3 rounded-lg text-lg hover:opacity-90"
+      >
+        Reserve Villa
+      </button>
+      {showPopup && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+    <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 relative">
+
+      {/* CLOSE BUTTON */}
+      <button
+        onClick={() => setShowPopup(false)}
+        className="absolute top-3 right-3 text-gray-500 text-xl"
+      >
+        ✕
+      </button>
+
+      {/* ICON */}
+      <div className="text-center">
+        <div className="text-4xl mb-3">📞</div>
+
+        <h2 className="font-heading text-xl text-gray-800">
+          Booking Unavailable
+        </h2>
+
+        <p className="text-gray-600 mt-3">
+          Currently online booking is not available.
+        </p>
+
+        <p className="text-gray-800 font-semibold mt-2">
+          Contact for booking:
+        </p>
+
+        <a
+          href="tel:7894563521"
+          className="text-palmGreen font-bold text-lg mt-1 block"
+        >
+          📱 7894563521
+        </a>
+
+        {/* ACTION BUTTON */}
+        <button
+          onClick={() => setShowPopup(false)}
+          className="mt-6 w-full bg-palmGreen text-white py-3 rounded-lg font-medium"
+        >
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+    </div>
+  );
+}
