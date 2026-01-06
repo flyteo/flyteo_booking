@@ -41,7 +41,7 @@ export default function AddReviews({
       setLoading(true);
 
       await axios.post(
-        "/api/reviews",
+        "/reviews",
         {
           type,
           targetId,

@@ -10,7 +10,7 @@ export default function OfferList() {
 
   useEffect(() => {
     axios
-      .get("/api/offers")
+      .get("/offers")
       .then((res) => setOffers(res.data))
       .finally(() => setLoading(false));
   }, []);

@@ -16,7 +16,7 @@ export default function Payment() {
     const token = localStorage.getItem("token");
 
     axios
-      .get(`http://localhost:5000/api/bookings/my`, {
+      .get(`/bookings/my`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -33,7 +33,7 @@ export default function Payment() {
 
       // Mark booking as paid
       await axios.put(
-        `http://localhost:5000/api/bookings/${bookingId}/pay`,
+        `/bookings/${bookingId}/pay`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

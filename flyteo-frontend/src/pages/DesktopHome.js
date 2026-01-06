@@ -30,29 +30,29 @@ const popularLocations = [...new Set([
 
     
       useEffect(() => {
-        axios.get("/api/hotels").then((res) =>
+        axios.get("/hotels").then((res) =>
           setHotels(res.data.slice(0, 6))
         );
     
-        axios.get("/api/campings").then((res) =>
+        axios.get("/campings").then((res) =>
           setCampings(res.data.slice(0, 6))
         );
     
-        axios.get("/api/villas").then((res) =>
+        axios.get("/villas").then((res) =>
           setVillas(res.data.slice(0, 6))
         );
       }, []);
     const [offers, setOffers] = useState([]);
     
     useEffect(() => {
-      axios.get("/api/search/activeoffers")
+      axios.get("/search/activeoffers")
            .then(res => setOffers(res.data))
             .catch(() => setOffers([])); // safety fallback
     }, []);
     const [coupons, setCoupons] = useState([]);
     
     useEffect(() => {
-      axios.get("/api/search/activecoupons")
+      axios.get("/search/activecoupons")
            .then((res) => setCoupons(res.data));
     }, []);
     const locationBgMap = {

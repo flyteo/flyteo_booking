@@ -17,7 +17,7 @@ export default function HotelAdminDashboard() {
     const token = localStorage.getItem("token");
 
     const res = await axios.get(
-      "/api/hotel-admin/my-hotel",
+      "/hotel-admin/my-hotel",
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
@@ -36,7 +36,7 @@ export default function HotelAdminDashboard() {
     const token = localStorage.getItem("token");
 
     const res = await axios.get(
-      "/api/hotel-admin/bookings",
+      "/hotel-admin/bookings",
       { headers: { Authorization: `Bearer ${token}` } }
     );
 

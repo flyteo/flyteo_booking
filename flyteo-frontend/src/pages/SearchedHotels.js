@@ -12,7 +12,7 @@ export default function SearchedHotels() {
 
   useEffect(() => {
     axios
-      .get("/api/search", {
+      .get("/search", {
         params: { location, guests }
       })
       .then(res => setData(res.data));

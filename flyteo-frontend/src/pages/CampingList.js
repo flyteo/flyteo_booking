@@ -11,7 +11,7 @@ export default function CampingList() {
 
   useEffect(() => {
     axios
-      .get("/api/campings")
+      .get("/campings")
       .then(res => setCampings(res.data))
       .finally(() => setLoading(false));
   }, []);

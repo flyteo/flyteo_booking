@@ -6,7 +6,7 @@ export default function HotelsList() {
   const [hotels, setHotels] = useState([]);
 
   useEffect(() => {
-    axios.get("/api/hotels")
+    axios.get("/hotels")
       .then((res) => setHotels(res.data));
   }, []);
 

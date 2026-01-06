@@ -61,7 +61,7 @@ export default function EditVilla() {
     const token = localStorage.getItem("token");
 
     await axios.put(
-      `/api/villas/${id}`,
+      `/villas/${id}`,
       {
         ...villa,
         basePrice: Number(villa.basePrice),

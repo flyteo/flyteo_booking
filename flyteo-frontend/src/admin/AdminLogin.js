@@ -12,7 +12,7 @@ export default function AdminLogin() {
     e.preventDefault();
 
     try {
-      const res = await axios.post("/api/auth/login", data);
+      const res = await axios.post("/auth/login", data);
 
       if (res.data.user.role !== "admin") {
         setError("Not an admin account");

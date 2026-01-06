@@ -2,8 +2,8 @@ import bcrypt from "bcryptjs";
 import prisma from "../prisma.js";
 
 async function createAdmin() {
-  const email = "admin@flyteo.com";
-  const password = "Admin@123";
+  const email = process.env.ADMIN_ID ;
+  const password = process.env.ADMIN_PASS;
 
   const existing = await prisma.user.findUnique({
     where: { email }

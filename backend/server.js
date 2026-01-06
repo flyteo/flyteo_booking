@@ -25,8 +25,7 @@ import contactRoutes from "./src/routes/contact.js";
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: ["http://localhost:3000",
-    "http://10.12.76.87:3000"], credentials: true }));
+app.use(cors({ origin: process.env.FRONTEND_URL_FLYTEO, credentials: true }));
 
 
 app.use("/api/auth", authRoutes);
@@ -47,7 +46,7 @@ app.use("/api/search", searchableRoutes);
 app.use("/api/ebill-booking", invoiceRoutes);
 app.use("/api/contact", contactRoutes);
 
-app.listen(5000,"0.0.0.0", () =>
+app.listen(process.env.PORT,"0.0.0.0", () =>
       console.log(`Backend running on port ${process.env.PORT}`)
     );
   

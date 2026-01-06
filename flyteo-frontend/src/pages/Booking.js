@@ -65,14 +65,14 @@ const [type] = useState(
   // Load hotel or camping details
   useEffect(() => {
     if (type === "hotel") {
-      axios.get(`/api/hotels/${hotelId}`)
+      axios.get(`/hotels/${hotelId}`)
         .then((res) => setItem(res.data));
     } else if (type === "camping") {
-      axios.get(`/api/campings/${campingId}`)
+      axios.get(`/campings/${campingId}`)
         .then((res) => setItem(res.data));
     }
     else if(type === "villa") {
-    axios.get(`/api/villas/${villaId}`)
+    axios.get(`/villas/${villaId}`)
       .then(res => setItem(res.data));
   }
   }, []);
@@ -397,7 +397,7 @@ if (!fullname || !mobileno) {
   return;
 }
     const res = await axios.post(
-      "/api/bookings",
+      "/bookings",
       payload,
       {
         headers: { Authorization: `Bearer ${token}` }

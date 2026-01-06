@@ -52,18 +52,18 @@ export default function AddVilla() {
   }, []);
 
   const loadOfferList = async () => {
-    const res = await axios.get("/api/search/activeoffers");
+    const res = await axios.get("/search/activeoffers");
     setOfferList(res.data);
   };
   
   const loadCouponList = async () => {
-    const res = await axios.get("/api/search/activecoupons");
+    const res = await axios.get("/search/activecoupons");
     setCouponList(res.data);
   };
   
   
   useEffect(() => {
-    axios.get("/api/hotels/amenities")
+    axios.get("/hotels/amenities")
       .then(res => setAmenityList(res.data));
   }, []);
   
@@ -74,7 +74,7 @@ export default function AddVilla() {
     const token = localStorage.getItem("token");
 
     await axios.post(
-      "/api/villas",
+      "/villas",
       villa,
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -159,7 +159,7 @@ export default function AddVilla() {
       fd.append("image", file);
 
       const res = await axios.post(
-        "http://localhost:5000/api/upload",
+        "/upload",
         fd,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

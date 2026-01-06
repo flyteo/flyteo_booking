@@ -25,20 +25,20 @@ export default function MobileHome() {
   const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
-    axios.get("/api/hotels")
+    axios.get("/hotels")
       .then(res => setHotels(res.data.slice(0, 8)));
 
-    axios.get("/api/offers")
+    axios.get("/offers")
       .then(res => setOffers(res.data));
-    axios.get("/api/campings").then((res) =>
+    axios.get("/campings").then((res) =>
                 setCampings(res.data.slice(0, 6))
               );
-     axios.get("/api/villas").then((res) =>
+     axios.get("/villas").then((res) =>
                 setVillas(res.data.slice(0, 6))
               );
   }, []);
 useEffect(() => {
-  axios.get("/api/hotels")
+  axios.get("/hotels")
     .then(res => {
       const hotelsData = res.data;
       setHotels(hotelsData.slice(0, 8));

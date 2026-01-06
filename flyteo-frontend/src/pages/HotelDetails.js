@@ -36,7 +36,7 @@ const [countdown, setCountdown] = useState("");
 
   useEffect(() => {
     if (!id) return; // 🛑 important guard
-  axios.get(`/api/hotels/${id}`).then((res) => {
+  axios.get(`/hotels/${id}`).then((res) => {
      
     const h = res.data;
 

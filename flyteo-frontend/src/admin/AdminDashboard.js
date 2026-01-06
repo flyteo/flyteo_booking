@@ -30,7 +30,7 @@ if (!user || user.role !== "admin") {
     const token = localStorage.getItem("token");
     if (!token) return; // admin should be logged in
 
-    axios.get("/api/admin/stats", {
+    axios.get("/admin/stats", {
       headers: { Authorization: `Bearer ${token}` }
     }).then(res => setStats(res.data)).catch(err => {
       console.error(err);

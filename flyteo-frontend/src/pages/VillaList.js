@@ -131,7 +131,7 @@ export default function VillaList() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/villas")
+      .get("/villas")
       .then((res) => setVillas(res.data))
       .finally(() => setLoading(false));
   }, []);

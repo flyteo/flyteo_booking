@@ -6,7 +6,7 @@ export default function ContactMessages() {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    axios.get("/api/contact").then(res => setMessages(res.data));
+    axios.get("/contact").then(res => setMessages(res.data));
   }, []);
 
   return (
@@ -32,7 +32,7 @@ export default function ContactMessages() {
 
               <button
                 onClick={() =>
-                  axios.put(`/api/contact/${m.id}/resolve`)
+                  axios.put(`/contact/${m.id}/resolve`)
                 }
                 className="mt-3 text-sm bg-palmGreen text-white px-3 py-1 rounded"
               >

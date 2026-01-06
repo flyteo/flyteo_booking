@@ -13,7 +13,7 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await axios.post("/api/contact", form);
+    await axios.post("/contact", form);
     alert("Message sent successfully!");
     setForm({ name: "", email: "", mobileNo: "", subject: "", message: "" });
   };

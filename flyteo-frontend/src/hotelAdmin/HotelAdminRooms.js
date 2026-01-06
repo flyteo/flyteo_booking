@@ -20,7 +20,7 @@ export default function HotelAdminRooms() {
     const token = localStorage.getItem("token");
 
     const res = await axios.get(
-      "/api/hotel-admin/my-rooms",
+      "/hotel-admin/my-rooms",
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
@@ -31,7 +31,7 @@ export default function HotelAdminRooms() {
     const token = localStorage.getItem("token");
 
     await axios.put(
-      `/api/hotel-admin/rooms/${id}`,
+      `/hotel-admin/rooms/${id}`,
       updatedRoom,
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -43,7 +43,7 @@ export default function HotelAdminRooms() {
     const token = localStorage.getItem("token");
 
     await axios.put(
-      `/api/hotel-admin/rooms/${id}`,
+      `/hotel-admin/rooms/${id}`,
       { _delete: true }, // You will handle this in backend later
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -55,7 +55,7 @@ export default function HotelAdminRooms() {
     const token = localStorage.getItem("token");
 
     await axios.put(
-      "/api/hotel-admin/update-hotel",
+      "/hotel-admin/update-hotel",
       { rooms: [...rooms, newRoom] },
       { headers: { Authorization: `Bearer ${token}` } }
     );

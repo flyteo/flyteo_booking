@@ -7,13 +7,13 @@ export default function ManageHotels() {
   const [hotels, setHotels] = useState([]);
 
   useEffect(() => {
-    axios.get("/api/hotels")
+    axios.get("/hotels")
       .then((res) => setHotels(res.data));
   }, []);
 
   const delHotel = async (id) => {
     const token = localStorage.getItem("token");
-    await axios.delete(`/api/hotels/${id}`, {
+    await axios.delete(`/hotels/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     setHotels(hotels.filter((h) => h.id !== id));

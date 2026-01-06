@@ -16,7 +16,7 @@ export default function EditCamping() {
     const loadCamp = async () => {
       try {
         const res = await axios.get(
-          `/api/campings/${id}`
+          `/campings/${id}`
         );
         const c = res.data;
 
@@ -89,7 +89,7 @@ export default function EditCamping() {
       const token = localStorage.getItem("token");
 
       await axios.put(
-        `/api/campings/${id}`,
+        `/campings/${id}`,
         {
           ...camp,
           advancePaymentAllowed: camp.advancePaymentAllowed,
@@ -186,7 +186,7 @@ export default function EditCamping() {
         fd.append("image", f);
 
         const res = await axios.post(
-          "http://localhost:5000/api/upload",
+          "/upload",
           fd,
           { headers: { "Content-Type": "multipart/form-data" } }
         );

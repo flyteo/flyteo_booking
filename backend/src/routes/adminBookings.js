@@ -5,7 +5,7 @@ import auth, { adminOnly } from "../middlewares/auth.js";
 const router = express.Router();
 
 /**
- * GET /api/admin/bookings
+ * GET /bookings
  * Filters:
  *  - fromDate
  *  - toDate

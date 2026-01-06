@@ -13,7 +13,7 @@ export default function MyBookings() {
         const token = localStorage.getItem("token");
 
         const res = await axios.get(
-          "/api/bookings/my",
+          "/bookings/my",
           {
             headers: { Authorization: `Bearer ${token}` }
           }
@@ -119,7 +119,7 @@ export default function MyBookings() {
                   <button
   onClick={() =>
     window.open(
-      `http://localhost:5000/api/ebill-booking/${b.id}`,
+      `/ebill-booking/${b.id}`,
       "_blank"
     )
   }

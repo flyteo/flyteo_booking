@@ -14,7 +14,7 @@ export default function AdminOffers() {
   });
 
   const loadOffers = async () => {
-    const res = await axios.get("/api/offers");
+    const res = await axios.get("/offers");
     setOffers(res.data);
   };
 
@@ -24,7 +24,7 @@ export default function AdminOffers() {
 
   const addOffer = async () => {
     await axios.post(
-      "/api/offers",
+      "/offers",
       {
         title: form.title,
         discountPercent: Number(form.discountPercent),
@@ -42,7 +42,7 @@ export default function AdminOffers() {
 
   const deleteOffer = async (id) => {
     await axios.delete(
-      `/api/offers/${id}`,
+      `/offers/${id}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     loadOffers();

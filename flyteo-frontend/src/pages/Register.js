@@ -23,7 +23,7 @@ export default function Register() {
     }
 
     try {
-      await axios.post("/api/auth/register", {
+      await axios.post("/auth/register", {
         name: data.name,
         email: data.email,
         password: data.password,

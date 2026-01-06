@@ -19,18 +19,18 @@ export default function EditHotel() {
   });
 
 useEffect(() => {
-  axios.get("/api/hotels/amenities")
+  axios.get("/hotels/amenities")
     .then(res => setAmenityList(res.data));
 }, []);
 
   const [error, setError] = useState("");
 const [offerList, setOfferList] = useState([]);
 useEffect(() => {
-  axios.get("/api/offers").then((res) => setOfferList(res.data));
+  axios.get("/search/activeoffers").then((res) => setOfferList(res.data));
 }, []);
 const [couponList, setCouponList] = useState([]);
 useEffect(() => {
-  axios.get("/api/coupons").then((res) => setCouponList(res.data));
+  axios.get("/search/activecoupons").then((res) => setCouponList(res.data));
 }, []);
 
   // 🔥 Load hotel data
@@ -39,7 +39,7 @@ useEffect(() => {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        `/api/hotels/${id}`,
+        `/hotels/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -101,7 +101,7 @@ useEffect(() => {
       const token = localStorage.getItem("token");
 
       await axios.put(
-        `/api/hotels/${id}`,
+        `/hotels/${id}`,
        {
     name: hotel.name,
     location: hotel.location,
@@ -498,7 +498,7 @@ room: hotel.room.map(
       formData.append("image", e.target.files[0]);
 
       const res = await axios.post(
-        "http://localhost:5000/api/upload",
+        "/upload",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -637,7 +637,7 @@ room: hotel.room.map(
             fd.append("image", file);
 
             const res = await axios.post(
-              "http://localhost:5000/api/upload",
+              "/upload",
               fd,
               { headers: { "Content-Type": "multipart/form-data" } }
             );

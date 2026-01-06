@@ -19,7 +19,7 @@ const loadReviews = async () => {
   }
 
   const res = await axios.get(
-    `/api/reviews?type=${type}&id=${id}`
+    `/reviews?type=${type}&id=${id}`
   );
 
   setReviews(res.data);

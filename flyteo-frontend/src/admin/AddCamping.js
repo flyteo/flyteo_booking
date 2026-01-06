@@ -42,7 +42,7 @@ export default function AddCamping() {
       const token = localStorage.getItem("token");
 
       await axios.post(
-        "/api/campings",
+        "/campings",
         {
           ...camp,
            advancePaymentAllowed: Boolean(camp.advancePaymentAllowed),
@@ -150,7 +150,7 @@ export default function AddCamping() {
                   const fd = new FormData();
                   fd.append("image", f);
                   const res = await axios.post(
-                    "http://localhost:5000/api/upload",
+                    "/upload",
                     fd,
                     { headers: { "Content-Type": "multipart/form-data" } }
                   );

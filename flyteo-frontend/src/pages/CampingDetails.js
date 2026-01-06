@@ -23,7 +23,7 @@ export default function CampingDetails() {
 
   useEffect(() => {
     axios
-      .get(`/api/campings/${id}`)
+      .get(`/campings/${id}`)
       .then((res) => setCamp(res.data))
       .catch(console.error);
   }, [id]);

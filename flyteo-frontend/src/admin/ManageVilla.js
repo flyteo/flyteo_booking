@@ -7,13 +7,13 @@ export default function ManageVilla() {
   const [villas, setVillas] = useState([]);
 
   useEffect(() => {
-    axios.get("/api/villas")
+    axios.get("/villas")
       .then((res) => setVillas(res.data));
   }, []);
 
   const delVilla = async (id) => {
     const token = localStorage.getItem("token");
-    await axios.delete(`/api/villas/${id}`, {
+    await axios.delete(`/villas/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     setVillas(villas.filter((v) => v.id !== id));

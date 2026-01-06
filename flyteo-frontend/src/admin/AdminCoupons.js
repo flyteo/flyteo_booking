@@ -16,7 +16,7 @@ export default function AdminCoupons() {
   });
 
   const loadCoupons = async () => {
-    const res = await axios.get("/api/coupons");
+    const res = await axios.get("/coupons");
     setCoupons(res.data);
   };
 
@@ -26,7 +26,7 @@ export default function AdminCoupons() {
 
   const addCoupon = async () => {
     await axios.post(
-      "/api/coupons",
+      "/coupons",
       {
         code: form.code.toUpperCase(),
         discountType: form.discountType,
@@ -52,7 +52,7 @@ export default function AdminCoupons() {
 
   const deleteCoupon = async (id) => {
     await axios.delete(
-      `/api/coupons/${id}`,
+      `/coupons/${id}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     loadCoupons();

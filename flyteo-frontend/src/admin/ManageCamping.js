@@ -7,13 +7,13 @@ export default function ManageCamping() {
   const [campings, setCampings] = useState([]);
 
   useEffect(() => {
-    axios.get("/api/campings")
+    axios.get("/campings")
       .then((res) => setCampings(res.data));
   }, []);
 
   const delHotel = async (id) => {
     const token = localStorage.getItem("token");
-    await axios.delete(`/api/campings/${id}`, {
+    await axios.delete(`/campings/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     setCampings(campings.filter((h) => h.id !== id));

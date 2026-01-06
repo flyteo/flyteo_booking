@@ -17,7 +17,7 @@ export default function AdminBookings() {
 
   const loadBookings = async () => {
     const res = await axios.get(
-      "/api/admin/bookings",
+      "/admin/bookings",
       {
         headers: { Authorization: `Bearer ${token}` },
         params: filters

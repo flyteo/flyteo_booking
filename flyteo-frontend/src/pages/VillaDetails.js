@@ -19,7 +19,7 @@ export default function VillaDetails() {
 
   useEffect(() => {
     axios
-      .get(`/api/villas/${id}`)
+      .get(`/villas/${id}`)
       .then(res => setVilla(res.data))
       .catch(console.error);
   }, [id]);
