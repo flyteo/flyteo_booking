@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import axios from "../axios";
+import api from "../axios";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 
@@ -25,20 +25,20 @@ export default function MobileHome() {
   const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
-    axios.get("/hotels")
+    api.get("/hotels")
       .then(res => setHotels(res.data.slice(0, 8)));
 
-    axios.get("/offers")
+    api.get("/offers")
       .then(res => setOffers(res.data));
-    axios.get("/campings").then((res) =>
+    api.get("/campings").then((res) =>
                 setCampings(res.data.slice(0, 6))
               );
-     axios.get("/villas").then((res) =>
+     api.get("/villas").then((res) =>
                 setVillas(res.data.slice(0, 6))
               );
   }, []);
 useEffect(() => {
-  axios.get("/hotels")
+  api.get("/hotels")
     .then(res => {
       const hotelsData = res.data;
       setHotels(hotelsData.slice(0, 8));

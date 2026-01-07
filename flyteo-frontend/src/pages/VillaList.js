@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 import { Link } from "react-router-dom";
 
 
@@ -130,7 +130,7 @@ export default function VillaList() {
   const isDesktop = window.innerWidth > 1024;
 
   useEffect(() => {
-    axios
+    api
       .get("/villas")
       .then((res) => setVillas(res.data))
       .finally(() => setLoading(false));

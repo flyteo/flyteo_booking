@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../axios";
 
 export default function Payment() {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ export default function Payment() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    axios
+    api
       .get(`/bookings/my`, {
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -32,7 +32,7 @@ export default function Payment() {
       const token = localStorage.getItem("token");
 
       // Mark booking as paid
-      await axios.put(
+      await api.put(
         `/bookings/${bookingId}/pay`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 import { Link } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 
@@ -7,13 +7,13 @@ export default function ManageVilla() {
   const [villas, setVillas] = useState([]);
 
   useEffect(() => {
-    axios.get("/villas")
+    api.get("/villas")
       .then((res) => setVillas(res.data));
   }, []);
 
   const delVilla = async (id) => {
     const token = localStorage.getItem("token");
-    await axios.delete(`/villas/${id}`, {
+    await api.delete(`/villas/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     setVillas(villas.filter((v) => v.id !== id));

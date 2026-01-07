@@ -1,4 +1,4 @@
-import axios from "../axios";
+import api from "../axios";
 import { useEffect, useState } from "react";
 import AdminSidebar from "./AdminSidebar";
 
@@ -16,7 +16,7 @@ export default function AdminCoupons() {
   });
 
   const loadCoupons = async () => {
-    const res = await axios.get("/coupons");
+    const res = await api.get("/coupons");
     setCoupons(res.data);
   };
 
@@ -25,7 +25,7 @@ export default function AdminCoupons() {
   }, []);
 
   const addCoupon = async () => {
-    await axios.post(
+    await api.post(
       "/coupons",
       {
         code: form.code.toUpperCase(),
@@ -51,7 +51,7 @@ export default function AdminCoupons() {
   };
 
   const deleteCoupon = async (id) => {
-    await axios.delete(
+    await api.delete(
       `/coupons/${id}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );

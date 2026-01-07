@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 import { Link, useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 import AdminTopbar from "./AdminTopbar";
@@ -30,7 +30,7 @@ if (!user || user.role !== "admin") {
     const token = localStorage.getItem("token");
     if (!token) return; // admin should be logged in
 
-    axios.get("/admin/stats", {
+    api.get("/admin/stats", {
       headers: { Authorization: `Bearer ${token}` }
     }).then(res => setStats(res.data)).catch(err => {
       console.error(err);

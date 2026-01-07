@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 
 export default function AddReviews({
   hotelId,
@@ -40,7 +40,7 @@ export default function AddReviews({
     try {
       setLoading(true);
 
-      await axios.post(
+      await api.post(
         "/reviews",
         {
           type,

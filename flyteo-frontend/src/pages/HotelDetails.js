@@ -1,4 +1,4 @@
-import axios from "../axios";
+import api from "../axios";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -36,7 +36,7 @@ const [countdown, setCountdown] = useState("");
 
   useEffect(() => {
     if (!id) return; // 🛑 important guard
-  axios.get(`/hotels/${id}`).then((res) => {
+  api.get(`/hotels/${id}`).then((res) => {
      
     const h = res.data;
 
@@ -142,7 +142,7 @@ const roomImages =
   useEffect(() => {
   if (!hotel) return;
 
-  axios
+  api
     .get("/hotels/recommend", {
       params: {
         hotelId: hotel.id,
@@ -161,8 +161,8 @@ const checkAvailability = async () => {
   
   setShowPopup(true);
 
-  // const res = await axios.post(
-  //   "/api/check-availability/hotel-room",
+  // const res = await api.post(
+  //   "/check-availability/hotel-room",
   //   {
   //     hotelId: id,
   //     roomType: selectedRoom.type,
@@ -596,10 +596,10 @@ useEffect(() => {
         </p>
 
         <a
-          href="tel:7894563521"
+          href="tel:8975995125"
           className="text-palmGreen font-bold text-lg mt-1 block"
         >
-          📱 7894563521
+          📱 8975995125
         </a>
 
         {/* ACTION BUTTON */}

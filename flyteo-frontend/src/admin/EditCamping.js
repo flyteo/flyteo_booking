@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 import { useParams, useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 import PointList from "./PointList";
@@ -15,7 +15,7 @@ export default function EditCamping() {
   useEffect(() => {
     const loadCamp = async () => {
       try {
-        const res = await axios.get(
+        const res = await api.get(
           `/campings/${id}`
         );
         const c = res.data;
@@ -88,7 +88,7 @@ export default function EditCamping() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.put(
+      await api.put(
         `/campings/${id}`,
         {
           ...camp,
@@ -185,7 +185,7 @@ export default function EditCamping() {
         const fd = new FormData();
         fd.append("image", f);
 
-        const res = await axios.post(
+        const res = await api.post(
           "/upload",
           fd,
           { headers: { "Content-Type": "multipart/form-data" } }

@@ -114,20 +114,20 @@ function NavLinks({ user, logout, mobile }) {
 
       {user ? (
         <>
-          {user.role === "user" && (
+          {/* {user.role === "user" && (
             <Link className={base} to="/my-bookings">
               My Bookings
             </Link>
-          )}
+          )} */}
 
-          {user.role === "hotel-admin" && (
+          {/* {user.role === "hotel-admin" && (
             <Link
               className={`${base} font-semibold text-palmGreen`}
               to="/hotel-admin/dashboard"
             >
               Hotel Admin
             </Link>
-          )}
+          )} */}
 
           <button
             onClick={logout}

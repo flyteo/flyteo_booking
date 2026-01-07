@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 import { useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 import PointList from "./PointList";
@@ -41,7 +41,7 @@ export default function AddCamping() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.post(
+      await api.post(
         "/campings",
         {
           ...camp,
@@ -149,7 +149,7 @@ export default function AddCamping() {
                 for (let f of files) {
                   const fd = new FormData();
                   fd.append("image", f);
-                  const res = await axios.post(
+                  const res = await api.post(
                     "/upload",
                     fd,
                     { headers: { "Content-Type": "multipart/form-data" } }

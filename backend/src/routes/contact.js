@@ -13,7 +13,7 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ msg: "Required fields missing" });
     }
 
-    const contact = await prisma.contactMessage.create({
+    const contact = await prisma.contactmessage.create({
       data: {
         name,
         email,
@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/:id/resolve", auth, async (req, res) => {
-  await prisma.contactMessage.update({
+  await prisma.contactmessage.update({
     where: { id: Number(req.params.id) },
     data: { isResolved: true }
   });

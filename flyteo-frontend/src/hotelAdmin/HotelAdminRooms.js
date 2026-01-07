@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 import HotelAdminSidebar from "./HotelAdminSidebar";
 
 export default function HotelAdminRooms() {
@@ -19,7 +19,7 @@ export default function HotelAdminRooms() {
   const loadRooms = async () => {
     const token = localStorage.getItem("token");
 
-    const res = await axios.get(
+    const res = await api.get(
       "/hotel-admin/my-rooms",
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -30,7 +30,7 @@ export default function HotelAdminRooms() {
   const updateRoom = async (id, updatedRoom) => {
     const token = localStorage.getItem("token");
 
-    await axios.put(
+    await api.put(
       `/hotel-admin/rooms/${id}`,
       updatedRoom,
       { headers: { Authorization: `Bearer ${token}` } }
@@ -42,7 +42,7 @@ export default function HotelAdminRooms() {
   const deleteRoom = async (id) => {
     const token = localStorage.getItem("token");
 
-    await axios.put(
+    await api.put(
       `/hotel-admin/rooms/${id}`,
       { _delete: true }, // You will handle this in backend later
       { headers: { Authorization: `Bearer ${token}` } }
@@ -54,7 +54,7 @@ export default function HotelAdminRooms() {
   const addRoom = async () => {
     const token = localStorage.getItem("token");
 
-    await axios.put(
+    await api.put(
       "/hotel-admin/update-hotel",
       { rooms: [...rooms, newRoom] },
       { headers: { Authorization: `Bearer ${token}` } }

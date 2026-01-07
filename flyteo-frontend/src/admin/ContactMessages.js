@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 import AdminSidebar from "./AdminSidebar";
 
 export default function ContactMessages() {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    axios.get("/contact").then(res => setMessages(res.data));
+    api.get("/contact").then(res => setMessages(res.data));
   }, []);
 
   return (
@@ -32,7 +32,7 @@ export default function ContactMessages() {
 
               <button
                 onClick={() =>
-                  axios.put(`/contact/${m.id}/resolve`)
+                  api.put(`/contact/${m.id}/resolve`)
                 }
                 className="mt-3 text-sm bg-palmGreen text-white px-3 py-1 rounded"
               >

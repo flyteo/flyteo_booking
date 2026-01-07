@@ -44,12 +44,12 @@ export default function BottomTabBar({ activePath }) {
           <p>Camping</p>
         </div>
 
-        <div onClick={() => alert("Currently not available Coming Soon...")} className={tab("/mybooking")}>
+        <div onClick={() => alert("Currently not available Coming Soon...")} className={tab("/")}>
           📖
           <p>Bookings</p>
         </div>
 
-        <div onClick={() => nav("/login")} className={tab("/login")}>
+        <div onClick={() => nav("/")} className={tab("/")}>
           👤
           <p>Profile</p>
         </div>

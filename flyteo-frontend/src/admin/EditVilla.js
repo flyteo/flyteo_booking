@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 import { useParams, useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 
@@ -11,7 +11,7 @@ export default function EditVilla() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    axios
+    api
       .get(`/api/villas/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -60,7 +60,7 @@ export default function EditVilla() {
     e.preventDefault();
     const token = localStorage.getItem("token");
 
-    await axios.put(
+    await api.put(
       `/villas/${id}`,
       {
         ...villa,

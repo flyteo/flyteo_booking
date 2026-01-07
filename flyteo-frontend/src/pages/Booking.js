@@ -1,6 +1,6 @@
 import { useEffect, useState ,useMemo} from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "../axios";
+import api from "../axios";
 
 
 export default function Booking() {
@@ -65,14 +65,14 @@ const [type] = useState(
   // Load hotel or camping details
   useEffect(() => {
     if (type === "hotel") {
-      axios.get(`/hotels/${hotelId}`)
+      api.get(`/hotels/${hotelId}`)
         .then((res) => setItem(res.data));
     } else if (type === "camping") {
-      axios.get(`/campings/${campingId}`)
+      api.get(`/campings/${campingId}`)
         .then((res) => setItem(res.data));
     }
     else if(type === "villa") {
-    axios.get(`/villas/${villaId}`)
+    api.get(`/villas/${villaId}`)
       .then(res => setItem(res.data));
   }
   }, []);
@@ -396,7 +396,7 @@ if (!fullname || !mobileno) {
   alert("Please enter full name and mobile number");
   return;
 }
-    const res = await axios.post(
+    const res = await api.post(
       "/bookings",
       payload,
       {

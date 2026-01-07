@@ -173,10 +173,10 @@ export default function VillaBookingSidebar({ villa }) {
         </p>
 
         <a
-          href="tel:7894563521"
+          href="tel:8975995125"
           className="text-palmGreen font-bold text-lg mt-1 block"
         >
-          📱 7894563521
+          📱 8975995125
         </a>
 
         {/* ACTION BUTTON */}

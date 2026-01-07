@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 import AdminSidebar from "./AdminSidebar";
 import AdminTopbar from "./AdminTopbar";
 
@@ -16,7 +16,7 @@ export default function AdminBookings() {
   });
 
   const loadBookings = async () => {
-    const res = await axios.get(
+    const res = await api.get(
       "/admin/bookings",
       {
         headers: { Authorization: `Bearer ${token}` },

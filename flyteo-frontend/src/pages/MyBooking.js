@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 import { useNavigate } from "react-router-dom";
 
 export default function MyBookings() {
@@ -12,7 +12,7 @@ export default function MyBookings() {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await axios.get(
+        const res = await api.get(
           "/bookings/my",
           {
             headers: { Authorization: `Bearer ${token}` }

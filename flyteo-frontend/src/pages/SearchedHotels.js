@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import axios from "../axios";
+import api from "../axios";
 import { Link } from "react-router-dom";
 
 export default function SearchedHotels() {
@@ -11,7 +11,7 @@ export default function SearchedHotels() {
   const [data, setData] = useState({ hotels: [], villas: [] });
 
   useEffect(() => {
-    axios
+    api
       .get("/search", {
         params: { location, guests }
       })

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 import { Link } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 
@@ -7,13 +7,13 @@ export default function ManageHotels() {
   const [hotels, setHotels] = useState([]);
 
   useEffect(() => {
-    axios.get("/hotels")
+    api.get("/hotels")
       .then((res) => setHotels(res.data));
   }, []);
 
   const delHotel = async (id) => {
     const token = localStorage.getItem("token");
-    await axios.delete(`/hotels/${id}`, {
+    await api.delete(`/hotels/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     setHotels(hotels.filter((h) => h.id !== id));

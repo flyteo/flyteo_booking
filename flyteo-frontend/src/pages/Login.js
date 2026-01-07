@@ -1,5 +1,5 @@
 import { useState ,useEffect } from "react";
-import axios from "../axios";
+import api from "../axios";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -11,7 +11,7 @@ export default function Login() {
   e.preventDefault();
 
   try {
-    const res = await axios.post("/auth/login", data);
+    const res = await api.post("/auth/login", data);
 
     // Save token + user
     localStorage.setItem("token", res.data.token);
@@ -24,10 +24,10 @@ export default function Login() {
       nav("/admin/dashboard");
 
     } else if (role === "hotel-admin") {
-      nav("/hotel-admin/dashboard");
+      return alert("Not Available Now");
 
     } else {
-      nav("/");
+      return alert("Not available Now")
     }
 
   } catch (err) {
@@ -42,7 +42,7 @@ export default function Login() {
   if (u.role === "admin") {
     nav("/admin/dashboard");
   } else if (u.role === "hotel-admin") {
-    nav("/hotel-admin/dashboard");
+    nav("/");
   }
 }, []);
 
@@ -89,7 +89,7 @@ export default function Login() {
 
       <p className="text-center mt-4 text-sm">
         Don't have an account?{" "}
-        <Link to="/" className="text-palmGreen font-semibold">
+        <Link to="/comingsoon" className="text-palmGreen font-semibold">
           Register Now
         </Link>
       </p>

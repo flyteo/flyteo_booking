@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 import { useParams, useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 
@@ -19,18 +19,18 @@ export default function EditHotel() {
   });
 
 useEffect(() => {
-  axios.get("/hotels/amenities")
+  api.get("/hotels/amenities")
     .then(res => setAmenityList(res.data));
 }, []);
 
   const [error, setError] = useState("");
 const [offerList, setOfferList] = useState([]);
 useEffect(() => {
-  axios.get("/search/activeoffers").then((res) => setOfferList(res.data));
+  api.get("/search/activeoffers").then((res) => setOfferList(res.data));
 }, []);
 const [couponList, setCouponList] = useState([]);
 useEffect(() => {
-  axios.get("/search/activecoupons").then((res) => setCouponList(res.data));
+  api.get("/search/activecoupons").then((res) => setCouponList(res.data));
 }, []);
 
   // 🔥 Load hotel data
@@ -38,7 +38,7 @@ useEffect(() => {
     const loadHotel = async () => {
       const token = localStorage.getItem("token");
 
-      const res = await axios.get(
+      const res = await api.get(
         `/hotels/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -100,7 +100,7 @@ useEffect(() => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.put(
+      await api.put(
         `/hotels/${id}`,
        {
     name: hotel.name,
@@ -497,7 +497,7 @@ room: hotel.room.map(
       const formData = new FormData();
       formData.append("image", e.target.files[0]);
 
-      const res = await axios.post(
+      const res = await api.post(
         "/upload",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
@@ -636,7 +636,7 @@ room: hotel.room.map(
             const fd = new FormData();
             fd.append("image", file);
 
-            const res = await axios.post(
+            const res = await api.post(
               "/upload",
               fd,
               { headers: { "Content-Type": "multipart/form-data" } }

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useEffect, useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 import { Link, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
@@ -30,29 +30,29 @@ const popularLocations = [...new Set([
 
     
       useEffect(() => {
-        axios.get("/hotels").then((res) =>
+        api.get("/hotels").then((res) =>
           setHotels(res.data.slice(0, 6))
         );
     
-        axios.get("/campings").then((res) =>
+        api.get("/campings").then((res) =>
           setCampings(res.data.slice(0, 6))
         );
-    
-        axios.get("/villas").then((res) =>
+
+        api.get("/villas").then((res) =>
           setVillas(res.data.slice(0, 6))
         );
       }, []);
     const [offers, setOffers] = useState([]);
     
     useEffect(() => {
-      axios.get("/search/activeoffers")
+      api.get("/search/activeoffers")
            .then(res => setOffers(res.data))
             .catch(() => setOffers([])); // safety fallback
     }, []);
     const [coupons, setCoupons] = useState([]);
     
     useEffect(() => {
-      axios.get("/search/activecoupons")
+      api.get("/search/activecoupons")
            .then((res) => setCoupons(res.data));
     }, []);
     const locationBgMap = {
@@ -421,7 +421,12 @@ const handleSearch = () => {
           </h3>
 
           <p className="font-bold text-palmGreen mt-1">
-            ₹999 / night
+            ₹{
+                  c.campingpricing?.[0]?.adultPrice || "999"
+                }
+                <span className="text-xs text-gray-500">
+                  {" "} / adult
+                </span>
           </p>
 
           <Link

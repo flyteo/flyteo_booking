@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 import { Link } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 
@@ -7,13 +7,13 @@ export default function ManageCamping() {
   const [campings, setCampings] = useState([]);
 
   useEffect(() => {
-    axios.get("/campings")
+    api.get("/campings")
       .then((res) => setCampings(res.data));
   }, []);
 
   const delHotel = async (id) => {
     const token = localStorage.getItem("token");
-    await axios.delete(`/campings/${id}`, {
+    await api.delete(`/campings/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     setCampings(campings.filter((h) => h.id !== id));

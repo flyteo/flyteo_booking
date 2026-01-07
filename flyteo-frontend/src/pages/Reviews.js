@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 
 export default function Reviews({ hotelId ,campingId, villaId}) {
   const [reviews, setReviews] = useState([]);
@@ -18,7 +18,7 @@ const loadReviews = async () => {
     id = villaId;
   }
 
-  const res = await axios.get(
+  const res = await api.get(
     `/reviews?type=${type}&id=${id}`
   );
 

@@ -1,5 +1,5 @@
 import { useState , useEffect} from "react";
-import axios from "../axios";
+import api from "../axios";
 import { useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 
@@ -52,18 +52,18 @@ export default function AddVilla() {
   }, []);
 
   const loadOfferList = async () => {
-    const res = await axios.get("/search/activeoffers");
+    const res = await api.get("/search/activeoffers");
     setOfferList(res.data);
   };
   
   const loadCouponList = async () => {
-    const res = await axios.get("/search/activecoupons");
+    const res = await api.get("/search/activecoupons");
     setCouponList(res.data);
   };
   
   
   useEffect(() => {
-    axios.get("/hotels/amenities")
+    api.get("/hotels/amenities")
       .then(res => setAmenityList(res.data));
   }, []);
   
@@ -73,7 +73,7 @@ export default function AddVilla() {
 
     const token = localStorage.getItem("token");
 
-    await axios.post(
+    await api.post(
       "/villas",
       villa,
       { headers: { Authorization: `Bearer ${token}` } }
@@ -158,7 +158,7 @@ export default function AddVilla() {
       const fd = new FormData();
       fd.append("image", file);
 
-      const res = await axios.post(
+      const res = await api.post(
         "/upload",
         fd,
         { headers: { "Content-Type": "multipart/form-data" } }

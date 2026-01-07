@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 import HotelAdminSidebar from "./HotelAdminSidebar";
 
 export default function HotelAdminDashboard() {
@@ -16,7 +16,7 @@ export default function HotelAdminDashboard() {
   const loadHotel = async () => {
     const token = localStorage.getItem("token");
 
-    const res = await axios.get(
+    const res = await api.get(
       "/hotel-admin/my-hotel",
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -35,7 +35,7 @@ export default function HotelAdminDashboard() {
   const loadBookings = async () => {
     const token = localStorage.getItem("token");
 
-    const res = await axios.get(
+    const res = await api.get(
       "/hotel-admin/bookings",
       { headers: { Authorization: `Bearer ${token}` } }
     );

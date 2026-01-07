@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 import { Link } from "react-router-dom";
 
 export default function CampingList() {
@@ -10,7 +10,7 @@ export default function CampingList() {
   const isDesktop = window.innerWidth > 1024;
 
   useEffect(() => {
-    axios
+    api
       .get("/campings")
       .then(res => setCampings(res.data))
       .finally(() => setLoading(false));

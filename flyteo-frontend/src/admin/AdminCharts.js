@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 import AdminSidebar from "./AdminSidebar"; // existing
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend
@@ -14,7 +14,7 @@ export default function AdminCharts() {
     const token = localStorage.getItem("token");
     if (!token) return; // admin should be logged in
 
-    axios.get("/admin/stats", {
+    api.get("/admin/stats", {
       headers: { Authorization: `Bearer ${token}` }
     }).then(res => setStats(res.data)).catch(err => {
       console.error(err);

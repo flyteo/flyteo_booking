@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import axios from "../axios";
+import api from "../axios";
 import { Link } from "react-router-dom";
 
 export default function HotelsList() {
   const [hotels, setHotels] = useState([]);
 
   useEffect(() => {
-    axios.get("/hotels")
+    api.get("/hotels")
       .then((res) => setHotels(res.data));
   }, []);
 

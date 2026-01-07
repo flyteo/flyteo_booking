@@ -30,10 +30,10 @@ export default function ComingSoon() {
             For any booking inquiries, contact us:
           </p>
           <a
-            href="tel:7894563521"
+            href="tel:8975995125"
             className="text-palmGreen font-bold text-lg block mt-1"
           >
-            📞 7894563521
+            📞 8975995125
           </a>
         </div>
 

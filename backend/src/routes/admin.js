@@ -32,9 +32,12 @@ router.get("/stats", auth, adminOnly, async (req, res) => {
       where: { paymentStatus: "paid" },
       select: { totalAmount: true, type: true }
     });
- const messages = await prisma.contactMessage.findMany({
+ const messages = await prisma.contactmessage.findMany({
     orderBy: { createdAt: "desc" }
   });
+  if(!messages){
+    console.log("No messages found");
+  }
     const totalRevenue = paidBookings.reduce(
       (sum, b) => sum + (b.totalAmount || 0),
       0

@@ -1,4 +1,4 @@
-import axios from "../axios";
+import api from "../axios";
 import { useEffect, useState } from "react";
 import AdminSidebar from "./AdminSidebar";
 
@@ -14,7 +14,7 @@ export default function AdminOffers() {
   });
 
   const loadOffers = async () => {
-    const res = await axios.get("/offers");
+    const res = await api.get("/offers");
     setOffers(res.data);
   };
 
@@ -23,7 +23,7 @@ export default function AdminOffers() {
   }, []);
 
   const addOffer = async () => {
-    await axios.post(
+    await api.post(
       "/offers",
       {
         title: form.title,
@@ -41,7 +41,7 @@ export default function AdminOffers() {
   };
 
   const deleteOffer = async (id) => {
-    await axios.delete(
+    await api.delete(
       `/offers/${id}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );

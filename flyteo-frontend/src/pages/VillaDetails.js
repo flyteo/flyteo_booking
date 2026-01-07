@@ -1,4 +1,4 @@
-import axios from "../axios";
+import api from "../axios";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -18,7 +18,7 @@ export default function VillaDetails() {
   const [villa, setVilla] = useState(null);
 
   useEffect(() => {
-    axios
+    api
       .get(`/villas/${id}`)
       .then(res => setVilla(res.data))
       .catch(console.error);
