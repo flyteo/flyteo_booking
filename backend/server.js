@@ -46,7 +46,7 @@ app.use("/api/search", searchableRoutes);
 app.use("/api/ebill-booking", invoiceRoutes);
 app.use("/api/contact", contactRoutes);
 
-app.listen(process.env.PORT,"0.0.0.0", () =>
+app.listen(process.env.PORT, () =>
       console.log(`Backend running on port ${process.env.PORT}`)
     );
   
