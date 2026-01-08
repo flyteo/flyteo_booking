@@ -1,5 +1,7 @@
 import bcrypt from "bcryptjs";
 import prisma from "../prisma.js";
+import dotnenv from "dotenv";
+dotnenv.config();
 
 async function createAdmin() {
   const email = process.env.ADMIN_ID ;
