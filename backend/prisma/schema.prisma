@@ -28,7 +28,7 @@ model booking {
   paymentStatus   String          @default("pending")
   createdAt       DateTime        @default(now())
   fullname        String?         @db.VarChar(255)
-  mobileno        String          @default(dbgenerated("(_cp850\\'Unknown\\')")) @db.VarChar(20)
+  mobileno        String?         @db.VarChar(20)
   villaId         Int?
   totalAmount     Float           @default(0) @db.Float
   paidAmount      Float           @default(0) @db.Float

@@ -104,9 +104,10 @@ function NavLinks({ user, logout, mobile }) {
       {mobile && (
         <>
           <hr className="my-3" />
-          <Link className={base} to="/about">About Us</Link>
+          <Link className={base} to="/aboutus">About Us</Link>
           <Link className={base} to="/privacy-policy">Privacy Policy</Link>
           <Link className={base} to="/terms-condition">Terms & Conditions</Link>
+           <Link className={base} to="/cancellation-policy">Cancellation Policy</Link>
           <Link className={base} to="/contact">Contact Us</Link>
         </>
       )}

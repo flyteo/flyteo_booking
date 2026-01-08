@@ -128,7 +128,7 @@ export default function VillaDetails() {
                 <li>⏰ Check-out: {villa.checkOutTime}</li>
               )}
               {villa.cancellationPolicy && (
-                <li>❌ {villa.cancellationPolicy}</li>
+                <li>Cancellation : {villa.cancellationPolicy}</li>
               )}
               {/* {villa.securityDeposit && (
                 <li>💰 Security Deposit: ₹{villa.securityDeposit}</li>

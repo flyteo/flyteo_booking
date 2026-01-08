@@ -302,10 +302,14 @@ router.put("/:id", auth, adminOnly, async (req, res) => {
         // ✅ Rooms
       room: {
   deleteMany: {},
-  create: room.map(({ roomimage, ...rest }) => ({
-    ...rest,
-    roomimage: roomimage?.length
-      ? { create: roomimage }
+  create: room?.map((r) => ({
+     type: r.type,
+      acType: r.acType,
+      price: Number(r.price),
+      maxPersons: Number(r.maxPersons),
+      totalRooms: Number(r.totalRooms),
+    roomimage: r.roomimage?.length
+      ? { create: r.roomimage }
       : undefined
   }))
 },

@@ -10,7 +10,8 @@ export default function AdminOffers() {
     title: "",
     discountPercent: "",
     validFrom: "",
-    validTo: ""
+    validTo: "",
+    image:""
   });
 
   const loadOffers = async () => {
@@ -31,7 +32,8 @@ export default function AdminOffers() {
         validFrom: form.validFrom
   ? new Date(form.validFrom).toISOString()
   : null,
-        validTo: form.validTo ? new Date(form.validTo).toISOString() : null
+        validTo: form.validTo ? new Date(form.validTo).toISOString() : null,
+        image: form.image || null
       },
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -91,6 +93,40 @@ export default function AdminOffers() {
             value={form.validTo}
             onChange={(e) => setForm({ ...form, validTo: e.target.value })}
           />
+          {/* IMAGE UPLOAD */}
+<div>
+  <label className="text-sm font-medium">Offer Image</label>
+
+  <input
+    type="file"
+    accept="image/*"
+    className="w-full border p-2 rounded mt-1"
+    onChange={async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const fd = new FormData();
+      fd.append("image", file);
+
+      const res = await api.post(
+        "/upload",
+        fd,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      setForm({ ...form, image: res.data.url });
+    }}
+  />
+
+  {form.image && (
+    <img
+      src={form.image}
+      className="mt-3 h-32 w-full object-cover rounded"
+      alt="Offer Preview"
+    />
+  )}
+</div>
+
 
           <button
             onClick={addOffer}
@@ -104,7 +140,15 @@ export default function AdminOffers() {
         <div className="grid md:grid-cols-2 gap-6">
           {offers.map((offer) => (
             <div key={offer.id} className="bg-white p-5 rounded-xl shadow border">
+
               <h3 className="text-xl font-semibold">{offer.title}</h3>
+              {offer.image && (
+  <img
+    src={offer.image}
+    className="w-full h-32 object-cover rounded mb-3"
+    alt={offer.title}
+  />
+)}
 
               <p className="mt-2 font-bold text-palmGreen">
                 {offer.discountPercent}% OFF

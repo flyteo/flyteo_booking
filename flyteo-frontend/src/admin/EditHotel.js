@@ -15,7 +15,8 @@ export default function EditHotel() {
     acType: "",
     price: "",
     maxPersons: "",
-    totalRooms: ""
+    totalRooms: "",
+    roomimage: [] 
   });
 
 useEffect(() => {
@@ -588,7 +589,7 @@ room: hotel.room.map(
       <input
         type="number"
         className="w-full p-2 border rounded mb-2"
-        value={r.price}
+        value={Number(r.price)}
         onChange={(e) => {
           const updated = [...hotel.room];
           updated[index].price = e.target.value;
@@ -749,6 +750,49 @@ room: hotel.room.map(
                 setRoom({ ...room, totalRooms: e.target.value })
               }
             />
+            <div>
+              <label className="font-medium">Upload Room Images</label>
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={async (e) => {
+                const urls = [];
+            
+                for (let file of e.target.files) {
+                  const fd = new FormData();
+                  fd.append("image", file);
+            
+                  const res = await api.post(
+                    "/upload",
+                    fd,
+                    { headers: { "Content-Type": "multipart/form-data" } }
+                  );
+            
+                  urls.push(res.data.url);
+                }
+            
+                setRoom(prev => ({
+                  ...prev,
+                  roomimage: urls   // ✅ STORED IN ROOM
+                }));
+              }}
+            />
+            
+            
+            
+              {room.roomimage?.length > 0 && (
+              <div className="grid grid-cols-3 gap-4 mt-2">
+                {room.roomimage.map((img, i) => (
+                  <img
+                    key={i}
+                    src={img}
+                    className="h-24 w-full object-cover rounded"
+                  />
+                ))}
+              </div>
+            )}
+            </div>
 
             <button
               type="button"
@@ -763,7 +807,8 @@ room: hotel.room.map(
                   acType: "",
                   price: "",
                   maxPersons: "",
-                  totalRooms: ""
+                  totalRooms: "",
+                  roomimage:[]
                 });
               }}
             >
