@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
-import MobileHome from "./MobileHome";
-import DesktopHome from "./DesktopHome";
+import { lazy, Suspense } from "react";
+import PageLoader from "./PageLoader";
+import useIsMobile from "../hooks/useIsmobile";
+
+const MobileHome = lazy(() => import("./MobileHome"));
+const DesktopHome = lazy(() => import("./DesktopHome"));
 
 export default function Home() {
   const [isMobile, setIsMobile] = useState(
@@ -18,5 +22,9 @@ export default function Home() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  return isMobile ? <MobileHome /> : <DesktopHome />;
+ return (
+    <Suspense fallback={<PageLoader />}>
+      {isMobile ? <MobileHome /> : <DesktopHome />}
+    </Suspense>
+  );
 }

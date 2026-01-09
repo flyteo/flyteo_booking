@@ -72,7 +72,7 @@ useEffect(() => {
 
 <button
   onClick={() => nav("/campings")}
-  className="mt-4 bg-white text-palmGreen px-6 py-2 rounded-full font-semibold"
+  className="mt-4 bg-white text-brandOrange px-6 py-2 rounded-full font-semibold"
 >
   Explore Camping
 </button>
@@ -86,7 +86,7 @@ useEffect(() => {
         <div className="bg-white text-black rounded-xl shadow-lg mt-4 p-4 space-y-3">
 
           <input
-            className="w-full border-4 border-green-200 border-x-green-500 rounded-lg p-3"
+            className="w-full border-4 border-orange-200 border-x-orange-500 rounded-lg p-3"
             placeholder="Enter destination"
             required
             value={destination}
@@ -97,14 +97,14 @@ useEffect(() => {
 <div className="flex gap-2">
   <input
     type="date"
-    className="w-1/2 border-4 border-green-200 border-x-green-500 rounded-lg p-3 text-sm"
+    className="w-1/2 border-4 border-orange-200 border-x-orange-500 rounded-lg p-3 text-sm"
     value={today}
     onChange={(e) => setCheckIn(e.target.value)}
   />
 
   <input
     type="date"
-    className="w-1/2 border-4 border-green-200 border-x-green-500 rounded-lg p-3 text-sm"
+    className="w-1/2 border-4 border-orange-200 border-x-orange-500 rounded-lg p-3 text-sm"
     value={checkIn || today}
     onChange={(e) => setCheckOut(e.target.value)}
   />
@@ -112,7 +112,7 @@ useEffect(() => {
 
 {/* GUESTS */}
 <select
-  className="w-full border-4 border-green-200 border-x-green-500 rounded-lg p-3 text-sm"
+  className="w-full border-4 border-orange-200 border-x-orange-500 rounded-lg p-3 text-sm"
   value={guests}
   onChange={(e) => setGuests(e.target.value)}
 >
@@ -127,7 +127,7 @@ useEffect(() => {
 
           <button
             onClick={handleSearch}
-            className="w-full bg-palmGreen text-white py-3 rounded-lg font-semibold text-base active:scale-95 transition"
+            className="w-full bg-brandOrange text-white py-3 rounded-lg font-semibold text-base active:scale-95 transition"
           >
             Search
           </button>

@@ -98,7 +98,7 @@ const handleSearch = () => {
       <div className="relative w-full h-[70vh] bg-cover bg-center rounded-xl shadow-lg"
         style={{
           backgroundImage:
-            "url('https://www.oberoihotels.com/-/media/oberoi-hotel/the-oberoi-mumbai/mumbai-1-8-24/overview/banner/desktop1920x980/banner3_.jpg')",
+            "url('https://t3.ftcdn.net/jpg/02/34/63/62/360_F_234636298_jTNoFrT7fHrwSjA7rkjy7UAwARjDfuJF.jpg')",
         }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-50 rounded-xl"></div>
@@ -112,7 +112,7 @@ const handleSearch = () => {
 
 <button
   onClick={() => nav("/campings")}
-  className="mt-4 bg-white text-palmGreen px-6 py-2 rounded-full font-semibold"
+  className="mt-4 bg-white text-brandOrange hover:text-orange-200 px-6 py-2 rounded-full font-semibold"
 >
   Explore Camping
 </button>
@@ -131,7 +131,7 @@ const handleSearch = () => {
             <input
               type="text"
               placeholder="Destination (e.g., Mumbai)"
-              className="p-3 border-4 border-green-200 border-x-green-500 rounded"
+              className="p-3 border-4 border-orange-200 border-x-orange-500 rounded"
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
             />
@@ -140,20 +140,20 @@ const handleSearch = () => {
                type="date"
                 min={today}
                 value={checkIn}
-              className="p-3 border-4 border-green-200 border-x-green-500 rounded"
+              className="p-3 border-4 border-orange-200 border-x-orange-500 rounded"
               onChange={(e) => setCheckIn(e.target.value)}
             />
 
             <input
               type="date"
               min={checkIn || today}
-              className="p-3 border-4 border-green-200 border-x-green-500 rounded"
+              className="p-3 border-4 border-orange-200 border-x-orange-500 rounded"
               value={checkOut}
               onChange={(e) => setCheckOut(e.target.value)}
             />
 
             <select
-              className="p-3 border-4 border-green-200 border-x-green-500 rounded"
+              className="p-3 border-4 border-orange-200 border-x-orange-500 rounded"
               value={guests}
               onChange={(e) => setGuests(e.target.value)}
             >
@@ -164,7 +164,7 @@ const handleSearch = () => {
 
             <button
               onClick={handleSearch}
-              className="bg-palmGreen text-white rounded text-lg font-semibold"
+              className="bg-orange-500 text-white rounded text-lg font-semibold"
             >
               Search
             </button>
@@ -274,7 +274,7 @@ const handleSearch = () => {
           {/* Text */}
           <div className="absolute bottom-4 left-4 text-white">
             <p className="text-lg font-bold">📍 {loc}</p>
-            <p className="text-sm opacity-90">
+            <p className="text-sm opacity-90 text-brandOrange">
               Hotels • Villas • Camping
             </p>
           </div>
@@ -372,7 +372,7 @@ const handleSearch = () => {
               {/* BUTTON */}
               <Link
                 to={`/hotels/${h.id}`}
-                className="mt-5 block bg-palmGreen text-white py-2 rounded-lg text-center font-medium hover:bg-green-700 transition"
+                className="mt-5 block bg-palmGreen text-brand py-2 rounded-lg text-center font-medium hover:bg-green-700 transition"
               >
                 View Details
               </Link>
@@ -522,7 +522,7 @@ const handleSearch = () => {
           {/* BUTTON */}
           <Link
             to={`/villas/${v.id}`}
-            className="mt-5 block bg-rusticBrown text-white py-2 rounded-lg text-center font-medium hover:bg-opacity-90 transition"
+            className="mt-5 block bg-palmGreen text-white py-2 rounded-lg text-center font-medium hover:bg-opacity-90 transition"
           >
             View Villa
           </Link>
@@ -668,21 +668,21 @@ const handleSearch = () => {
 {/* ---------------------------------------------------------------- */}
 {/* FOOTER */}
 {/* ---------------------------------------------------------------- */}
-<footer className="mt-14 bg-black text-white py-8">
+<footer className="mt-14 bg-rusticBrown text-white py-8">
   <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-6">
 
     {/* ABOUT */}
     <div>
       <h3 className="text-xl font-heading mb-3 text-palmGreen">Flyteo.in</h3>
-      <p className="text-gray-300">
+      <p className="text-stone-800">
         Your trusted partner for Hotels & Camping bookings in Mumbai and beyond.
       </p>
     </div>
 
     {/* QUICK LINKS */}
     <div>
-      <h4 className="font-heading text-lg mb-3">Quick Links</h4>
-      <ul className="space-y-2 text-gray-300">
+      <h4 className="font-heading  text-lg text-palmGreen mb-3">Quick Links</h4>
+      <ul className="space-y-2 underline decoration-solid text-stone-800">
         <li><Link to="/hotels">Hotels</Link></li>
         <li><Link to="/campings">Camping</Link></li>
         <li><Link to="/about">About Us</Link></li>
@@ -692,8 +692,8 @@ const handleSearch = () => {
 
     {/* SUPPORT */}
     <div>
-      <h4 className="font-heading text-lg mb-3">Support</h4>
-      <ul className="space-y-2 text-gray-300">
+      <h4 className="font-heading text-lg text-palmGreen mb-3">Support</h4>
+      <ul className="space-y-2 underline decoration-solid text-stone-800">
         <li>FAQ</li>
         <li><Link to="/cancellation-policy">Cancellation Policy</Link></li>
         <li><Link to="/terms-condition">Terms & Conditions</Link></li>
@@ -703,7 +703,7 @@ const handleSearch = () => {
 
     {/* SOCIAL */}
     <div>
-      <h4 className="font-heading text-lg mb-3">Follow Us</h4>
+      <h4 className="font-heading text-lg mb-3 text-palmGreen">Follow Us</h4>
       <div className="flex gap-4 text-xl">
         <a href="#" className="hover:text-palmGreen">🌐</a>
         <a href="#" className="hover:text-palmGreen">📘</a>
@@ -711,7 +711,7 @@ const handleSearch = () => {
         <a href="#" className="hover:text-palmGreen">🐦</a>
       </div>
 
-      <p className="text-gray-400 mt-4 text-sm">© 2025 Flyteo.in — All Rights Reserved</p>
+      <p className="text-stone-700 mt-4 text-sm">© 2025 Flyteo.in — All Rights Reserved</p>
     </div>
 
   </div>

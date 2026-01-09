@@ -21,7 +21,7 @@ const upload = multer({ storage });
 
 // POST /api/upload
 router.post("/", upload.single("image"), (req, res) => {
-  const fileUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+  const fileUrl = `${process.env.BACKEND_URL}/uploads/${req.file.filename}`;
   res.json({ url: fileUrl });
 });
 

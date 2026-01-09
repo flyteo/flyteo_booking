@@ -9,7 +9,7 @@ export default function AboutUs() {
           alt="Flyteo Travel"
           className="w-full h-full object-cover"
         /> */}
-        <div className="absolute inset-0 bg-black/50" />
+        <div className="absolute inset-0 bg-brandOrange" />
 
         <div className="absolute inset-0 flex items-center justify-center text-center px-4">
           <div className="text-white max-w-3xl">
@@ -62,22 +62,22 @@ export default function AboutUs() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-14 max-w-5xl mx-auto">
 
           {/* MISSION */}
-          <div className="bg-sand rounded-2xl p-6 shadow">
-            <h3 className="font-heading text-xl text-rusticBrown mb-3">
+          <div className="bg-palmGreen rounded-2xl p-6 shadow">
+            <h3 className="font-heading text-xl text-brandOrange mb-3">
               🎯 Our Mission
             </h3>
-            <p className="text-gray-700">
+            <p className="text-black-400">
               To simplify hotel bookings while empowering local hotels through
               digital solutions.
             </p>
           </div>
 
           {/* VISION */}
-          <div className="bg-sand rounded-2xl p-6 shadow">
-            <h3 className="font-heading text-xl text-rusticBrown mb-3">
+          <div className="bg-palmGreen rounded-2xl p-6 shadow">
+            <h3 className="font-heading text-xl text-brandOrange mb-3">
               🌍 Our Vision
             </h3>
-            <p className="text-gray-700">
+            <p className="text-black-400">
               To grow from Alibag to destinations across India, becoming a
               trusted name in travel and accommodation services.
             </p>

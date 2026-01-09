@@ -4,7 +4,8 @@ import dotenv from "dotenv";
 import adminRoutes from "./src/routes/admin.js";
 import hotelAdminRoutes from "./src/routes/hotelAdmin.js"
 import cron from "node-cron";
-import "./src/cron/expireOffers.js"
+import "./src/cron/expireOffers.js";
+import path from "path";
 
 dotenv.config();
 
@@ -35,7 +36,7 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/offers", adminOffersRoutes);
 app.use("/api/coupons", adminCouponsRoutes);
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use("/api/upload", uploadRoutes);
 app.use("/api/hotel-admin", hotelAdminRoutes);
 app.use("/api/admin/bookings", adminBookingsRoute);
