@@ -12,6 +12,31 @@ export default function HotelsList() {
 
 
 const isMobile = window.innerWidth <= 768;
+const getFinalRoomPrice = (roomPrice, taxes, discount, dayWisePricing, date = new Date()) => {
+  let price = roomPrice;
+
+  // 🟢 Day-wise percentage
+  const dayName = date
+    .toLocaleDateString("en-US", { weekday: "long" })
+    .toUpperCase();
+
+  const dayRule = dayWisePricing?.find(d => d.day === dayName);
+
+  if (dayRule) {
+    price = price - (price * dayRule.percentage) / 100;
+  }
+
+  // 🟢 Hotel discount
+  if (discount > 0) {
+    price = price - (price * discount) / 100;
+  }
+
+  // 🟢 Add taxes at the end
+  price = price + (taxes || 0);
+
+  return Math.round(price);
+};
+
 
 
   return (
@@ -30,9 +55,18 @@ const isMobile = window.innerWidth <= 768;
       <div className="px-4 md:px-6 py-10 space-y-6">
 
         {hotels.map((h) => {
-          const finalprice= h.room?.[0]?.price + h.taxes;
-          const price = h.room?.[0]?.price || 999;
-          const discount = h.discount || 30;
+         const basePrice = h.room?.[0]?.price || 0;
+
+const finalPrice = getFinalRoomPrice(
+  basePrice,
+  h.taxes,
+  h.discount,
+  h.dayWisePricing
+);
+
+// ❌ original price before any discount (for strike-through)
+const originalPrice = Math.round(basePrice + (h.taxes || 0));
+
 
           return isMobile ? (
     /* ================= MOBILE CARD ================= */
@@ -48,9 +82,9 @@ const isMobile = window.innerWidth <= 768;
           className="w-full h-full object-cover"
         />
 
-        {discount > 0 && (
+        {h.discount > 0 && (
           <span className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
-            {discount}% OFF
+            {h.discount}% OFF
           </span>
         )}
       </div>
@@ -85,12 +119,15 @@ const isMobile = window.innerWidth <= 768;
         {/* PRICE */}
         <div className="flex justify-between items-end mt-3">
           <div>
-            <p className="text-[15px] text-gray-500 line-through">
-              ₹{Math.round(finalprice + finalprice * (discount / 100))}
-            </p>
-            <p className="text-palmGreen font-bold text-[20px]">
-              ₹{finalprice}
-            </p>
+           {finalPrice < originalPrice && (
+      <p className="text-[15px] text-gray-500 line-through">
+        ₹{originalPrice}
+      </p>
+    )}
+
+    <p className="text-palmGreen font-bold text-[20px]">
+      ₹{finalPrice}
+    </p>
             <p className="text-[11px] text-gray-500">per night</p>
           </div>
 
@@ -115,9 +152,9 @@ const isMobile = window.innerWidth <= 768;
     />
 
     {/* DISCOUNT BADGE */}
-    {discount > 0 && (
+    {h.discount > 0 && (
       <span className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
-        {discount}% OFF
+        {h.discount}% OFF
       </span>
     )}
   </div>
@@ -127,10 +164,15 @@ const isMobile = window.innerWidth <= 768;
 
     {/* PRICE - top right */}
     <div className="absolute top-0 right-0 text-right">
-      <p className="text-gray-400 text-xs line-through">
-        ₹{Math.round(finalprice + finalprice * (discount / 100))}
-      </p>
-      <p className="text-palmGreen font-bold text-lg">₹{finalprice}</p>
+      {finalPrice < originalPrice && (
+    <p className="text-gray-400 text-xs line-through">
+      ₹{originalPrice}
+    </p>
+  )}
+
+  <p className="text-palmGreen font-bold text-lg">
+    ₹{finalPrice}
+  </p>
       <p className="text-gray-500 text-[11px]">per night</p>
     </div>
 

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import logo from "../assets/flyteo-logo.png";
+import { FaWhatsapp } from "react-icons/fa";
+import { MdLocalPhone } from "react-icons/md";
 
 export default function Navbar() {
   const nav = useNavigate();
@@ -27,63 +29,104 @@ export default function Navbar() {
   if (user?.role === "admin") return null;
 
   return (
-    <header className="bg-sand shadow sticky top-0 z-50">
-      <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+  <header className="bg-sand shadow sticky top-0 z-50">
+  {/* ================= MOBILE NAVBAR ================= */}
+  <div className="md:hidden px-4 py-3 flex items-center justify-between relative">
 
-        {/* LOGO */}
-        <Link to="/" className="flex items-center gap-3">
-          <img src={logo} alt="Flyteo" className="w-12 h-12" />
-          <div className="hidden sm:block">
-            <h1 className="font-heading text-xl text-palmGreen">
-              FLYTEO.IN
-            </h1>
-            <p className="text-xs text-rusticBrown">
-              Hotel · Camping · Villas
-            </p>
-          </div>
-        </Link>
+    {/* LEFT: MENU TOGGLE */}
+    <button
+      className="text-3xl text-palmGreen"
+      onClick={() => setMenuOpen(true)}
+      aria-label="Open menu"
+    >
+      ☰
+    </button>
 
-        {/* DESKTOP NAV */}
-        <nav className="hidden md:flex items-center gap-6 font-body">
-          <NavLinks user={user} logout={logout} />
-        </nav>
+    {/* CENTER: LOGO + NAME */}
+    <Link
+      to="/"
+      className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2"
+    >
+      <img
+        src={logo}
+        alt="Flyteo"
+        className="w-9 h-9 object-contain"
+      />
+      <span className="font-heading text-lg text-palmGreen">
+        Flyteo.in
+      </span>
+    </Link>
 
-        {/* MOBILE MENU BUTTON */}
-        <button
-          className="md:hidden text-3xl text-palmGreen"
-          onClick={() => setMenuOpen(true)}
-        >
-          ☰
-        </button>
-      </div>
-
-      {/* MOBILE MENU OVERLAY */}
-      {menuOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 z-40"
-          onClick={() => setMenuOpen(false)}
-        />
-      )}
-
-      {/* MOBILE MENU */}
-      <div
-        className={`fixed top-0 right-0 w-72 h-full bg-white shadow-2xl z-50 transform transition-transform duration-300
-        ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
+    {/* RIGHT: WHATSAPP + CALL */}
+    <div className="flex items-center gap-3">
+      <a
+        href="https://wa.me/918975995125"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-green-600 text-2xl"
+        aria-label="WhatsApp"
       >
-        <div className="p-6 flex flex-col gap-4">
+        <FaWhatsapp/>
+      </a>
 
-          {/* CLOSE */}
-          <button
-            className="self-end text-2xl"
-            onClick={() => setMenuOpen(false)}
-          >
-            ✕
-          </button>
+      <a
+        href="tel:+918975995125"
+        className="text-blue-600 text-2xl"
+        aria-label="Call"
+      >
+        <MdLocalPhone/>
+      </a>
+    </div>
+  </div>
 
-          <NavLinks user={user} logout={logout} mobile />
-        </div>
+  {/* ================= DESKTOP NAVBAR (UNCHANGED) ================= */}
+  <div className="hidden md:flex container mx-auto px-6 py-4 items-center justify-between">
+
+    {/* LEFT: LOGO */}
+    <Link to="/" className="flex items-center gap-3">
+      <img src={logo} alt="Flyteo" className="w-12 h-12" />
+      <div>
+        <h1 className="font-heading text-xl text-palmGreen">
+          FLYTEO.IN
+        </h1>
+        <p className="text-xs text-rusticBrown">
+          Hotel · Camping · Villas
+        </p>
       </div>
-    </header>
+    </Link>
+
+    {/* RIGHT: DESKTOP LINKS */}
+    <nav className="flex items-center gap-6 font-body">
+      <NavLinks user={user} logout={logout} />
+    </nav>
+  </div>
+
+  {/* ================= MOBILE DRAWER ================= */}
+  {menuOpen && (
+    <div
+      className="fixed inset-0 bg-black/40 z-40"
+      onClick={() => setMenuOpen(false)}
+    />
+  )}
+
+  <div
+    className={`fixed top-0 right-0 w-72 h-full bg-white shadow-2xl z-50 transform transition-transform duration-300
+    ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
+  >
+    <div className="p-6 flex flex-col gap-4">
+      <button
+        className="self-end text-2xl"
+        onClick={() => setMenuOpen(false)}
+      >
+        ✕
+      </button>
+
+      <NavLinks user={user} logout={logout} mobile />
+    </div>
+  </div>
+</header>
+
+
   );
 }
 

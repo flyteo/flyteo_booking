@@ -42,6 +42,7 @@ import OfferList from "./pages/OfferList";
 import Contact from "./pages/Contact";
 import AboutUs from "./pages/AboutUs";
 import ComingSoon from "./pages/ComingSoon";
+import FloatingWhatsApp from "./components/FloatingWhatsapp";
 
 function App() {
   return (
@@ -160,9 +161,11 @@ function App() {
 
   </Route>
           </Route>
- 
+         
         </Routes>
+        <FloatingWhatsApp/>
       </div>
+    
     </div>
   );
 }

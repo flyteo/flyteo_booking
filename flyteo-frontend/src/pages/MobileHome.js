@@ -3,7 +3,10 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import api from "../axios";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
-
+import h1 from "../assets/hotel_back.jpg";
+import v1 from "../assets/villa_back.jpg";
+import c1 from "../assets/camp_back.jpg";
+import o1 from "../assets/offer1.jpg";
 
 import "swiper/css";
 
@@ -11,7 +14,7 @@ export default function MobileHome() {
   const nav = useNavigate();
   const location = useLocation();
 
-  const [destination, setDestination] = useState("Mumbai");
+  const [destination, setDestination] = useState("Alibag");
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(1);
@@ -37,25 +40,60 @@ export default function MobileHome() {
                 setVillas(res.data.slice(0, 6))
               );
   }, []);
+  const getFinalRoomPrice = (roomPrice, taxes, discount, dayWisePricing, date = new Date()) => {
+  let price = roomPrice;
+
+  // 🟢 Day-wise percentage
+  const dayName = date
+    .toLocaleDateString("en-US", { weekday: "long" })
+    .toUpperCase();
+
+  const dayRule = dayWisePricing?.find(d => d.day === dayName);
+
+  if (dayRule) {
+    price = price - (price * dayRule.percentage) / 100;
+  }
+
+  // 🟢 Hotel discount
+  if (discount > 0) {
+    price = price - (price * discount) / 100;
+  }
+
+  // 🟢 Add taxes at the end
+  price = price + (taxes || 0);
+
+  return Math.round(price);
+};
 useEffect(() => {
   api.get("/hotels")
     .then(res => {
       const hotelsData = res.data;
       setHotels(hotelsData.slice(0, 8));
 
-      // 👉 Extract unique city names
-      const cities = [
-        ...new Set(
-          hotelsData
-            .map(h => h.location)
-            .filter(Boolean)
-        )
-      ];
+       const cityMap = new Map();
 
-      setPopularCities(cities.slice(0, 6)); // limit for UI
+      hotelsData.forEach(hotel => {
+        if (!hotel.location) return;
+
+        const normalized = hotel.location.trim().toLowerCase();
+
+        // store only once
+        if (!cityMap.has(normalized)) {
+          const formatted =
+            normalized.charAt(0).toUpperCase() +
+            normalized.slice(1);
+
+          cityMap.set(normalized, formatted);
+        }
+      });
+
+      const uniqueCities = Array.from(cityMap.values());
+
+      setPopularCities(uniqueCities.slice(0, 6)); // limit for UI
     });
 
 }, []);
+
 
   const handleSearch = () => {
     nav(`/hotels?destination=${destination}&checkIn=${checkIn}&checkOut=${checkOut}&guests=1`);
@@ -63,7 +101,75 @@ useEffect(() => {
 
   return (
     <div className="min-h-screen bg-gray-100 pb-20">
-      
+      {/* ================= COUPON STRIP ================= */}
+{/* ================= IMAGE OFFERS / COUPONS ================= */}
+<div className="px-4">
+  <h3 className="text-lg text-center font-semibold text-gray-800 mb-2">
+    Ongoing Offers
+  </h3>
+
+  <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+
+    {/* OFFER CARD 1 */}
+    <div
+      onClick={() => nav("/offers")}
+      className="bg-stone-600 min-w-[280px] h-[140px] rounded-2xl overflow-hidden relative shadow-lg cursor-pointer active:scale-95 transition"
+    >
+      {/* <img
+        src={o1}
+        alt="Offer"
+        className="w-full h-full object-cover"
+      /> */}
+
+      {/* DARK OVERLAY */}
+      <div className="absolute inset-0 bg-black/40" />
+
+      {/* TEXT */}
+      <div className="absolute inset-0 p-4 flex flex-col justify-between text-white">
+        <div className="text-xs text-rusticBrown font-semibold uppercase tracking-wide">
+          Flyteo Special
+        </div>
+
+        <div>
+          <p className="text-3xl text-palmGreen font-bold">Flat 20% OFF</p>
+          <p className="text-sm mt-1">
+            Use Code: <span className="text-brandOrange font-bold">FLYTEO20</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {/* OFFER CARD 2 */}
+    <div
+      onClick={() => nav("/offers")}
+      className="bg-stone-600 min-w-[280px] h-[140px] rounded-2xl overflow-hidden relative shadow-lg cursor-pointer active:scale-95 transition"
+    >
+      {/* <img
+        src={o1}
+        alt="Offer"
+        className="w-full h-full object-cover"
+      /> */}
+
+      <div className="absolute inset-0 bg-black/40" />
+
+      <div className="absolute inset-0 p-4 flex flex-col justify-between text-white">
+        <div className="text-xs text-rusticBrown font-semibold uppercase tracking-wide">
+          Weekend Deal
+        </div>
+
+        <div>
+          <p className="text-3xl text-palmGreen font-bold">Up to 30% OFF</p>
+          <p className="text-sm mt-1">
+            Code: <span className="text-brandOrange font-bold">WEEKEND30</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
       <div className="pb-8 rounded-b-3xl">
  <p className="mt-3 text-sm opacity-90">
   🌲 Camping available in 
@@ -147,10 +253,12 @@ useEffect(() => {
       onClick={() =>
         nav(`/hotels?destination=${encodeURIComponent(destination)}`)
       }
-      className="bg-white rounded-xl p-4 shadow"
+      className="relative bg-white rounded-xl p-4 shadow"
+      style={{ backgroundImage: `url(${h1})` }}
     >
-      🏨
-      <p className="mt-1 text-sm">Hotels</p>
+       <div className="absolute inset-0 bg-black bg-opacity-50 rounded-xl"></div>
+    
+      <p className="mt-1 text-lg text-white">Hotels</p>
     </div>
 
     {/* CAMPING */}
@@ -158,10 +266,11 @@ useEffect(() => {
       onClick={() =>
         nav(`/campings?destination=${encodeURIComponent(destination)}`)
       }
-      className="bg-white rounded-xl p-4 shadow"
+      className="relative bg-white rounded-xl p-4 shadow"
+      style={{ backgroundImage: `url(${c1})` }}
     >
-      ⛺
-      <p className="mt-1 text-sm">Camping</p>
+       <div className="absolute inset-0 bg-black bg-opacity-50 rounded-xl"></div>
+      <p className="mt-1 text-lg text-white">Camping</p>
     </div>
 
     {/* VILLAS */}
@@ -169,10 +278,11 @@ useEffect(() => {
       onClick={() =>
         nav(`/villas?destination=${encodeURIComponent(destination)}`)
       }
-      className="bg-white rounded-xl p-4 shadow"
+      className="relative bg-white rounded-xl p-4 shadow "
+      style={{backgroundImage: `url(${v1})`}}
     >
-      🏡
-      <p className="mt-1 text-sm">Villas</p>
+      <div className="absolute inset-0 bg-black bg-opacity-50 rounded-xl"></div>
+      <p className="mt-1 text-lg text-white">Villas</p>
     </div>
 
   </div>
@@ -193,9 +303,36 @@ useEffect(() => {
         onClick={() =>
           nav(`/hotels?destination=${encodeURIComponent(city)}`)
         }
-        className="bg-white rounded-xl p-4 shadow active:scale-95 transition"
+        className="bg-[#308b6a8c] rounded-xl p-4 shadow active:scale-95 transition"
       >
-        <div className="text-2xl">📍</div>
+        <div className="flex flex-col items-center text-2xl">
+          <svg  width="48" height="48" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="flyteoPro" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFE3C2"/>
+      <stop offset="100%" stop-color="#FFA94D"/>
+    </linearGradient>
+  </defs>
+
+
+  <path d="M12 2.5c-3.9 0-7 2.9-7 6.7C5 14.6 12 21.5 12 21.5s7-6.9 7-12.3c0-3.8-3.1-6.7-7-6.7z"
+        fill="url(#flyteoPro)"/>
+
+
+  <rect x="6.2" y="8.3" width="11.6" height="4.6" rx="2.3"
+        fill="#FFFFFF" opacity="0.95"/>
+
+
+  <text x="12" y="11.4"
+        text-anchor="middle"
+        font-size="2.85"
+        font-weight="800"
+        fill="#FF8C00"
+        letter-spacing="0.3"
+        font-family="Arial, Helvetica, sans-serif">
+    FLYTEO.IN
+  </text>
+</svg></div>
         <p className="text-sm mt-2 font-medium">{city}</p>
       </div>
     ))}
@@ -244,7 +381,21 @@ useEffect(() => {
   }}
   className="px-4"
 >
-  {villas.map((v) => (
+  {villas.map((v) => {
+             const discount = v.discount || 30;
+             const basePrice = v.basePrice || 0;
+
+const finalPrice = getFinalRoomPrice(
+  basePrice,
+  v.taxes,
+  v.discount,
+  v.dayWisePricing
+);
+
+// ❌ original price before any discount (for strike-through)
+const originalPrice = Math.round(basePrice + (v.taxes || 0));
+       
+             return (
     <SwiperSlide key={v.id}>
       <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 border border-gray-100">
 
@@ -263,7 +414,7 @@ useEffect(() => {
 
           {/* PRICE */}
           <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-4 py-1 rounded-full text-sm font-semibold text-palmGreen shadow">
-            ₹{v.basePrice}/night
+            ₹{finalPrice}/night
           </div>
         </div>
 
@@ -316,7 +467,7 @@ useEffect(() => {
         </div>
       </div>
     </SwiperSlide>
-  ))}
+  )})}
 </Swiper>
 
     </div>
@@ -394,6 +545,17 @@ useEffect(() => {
          >
            {hotels.map((h) => {
              const discount = h.discount || 30;
+             const basePrice = h.room?.[0]?.price || 0;
+
+const finalPrice = getFinalRoomPrice(
+  basePrice,
+  h.taxes,
+  h.discount,
+  h.dayWisePricing
+);
+
+// ❌ original price before any discount (for strike-through)
+const originalPrice = Math.round(basePrice + (h.taxes || 0));
        
              return (
                <SwiperSlide key={h.id}>
@@ -417,9 +579,9 @@ useEffect(() => {
                      )}
        
                      {/* PRICE */}
-                     {h.room?.[0]?.price && (
+                     {finalPrice < originalPrice && (
                        <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-4 py-1 rounded-full text-sm font-semibold text-palmGreen shadow">
-                         ₹{h.room[0].price}/night
+                         ₹{finalPrice}/night
                        </div>
                      )}
                    </div>

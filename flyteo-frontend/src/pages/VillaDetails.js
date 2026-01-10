@@ -56,20 +56,7 @@ export default function VillaDetails() {
         </Swiper>
 
         {/* FLOATING PRICE CARD */}
-        <div className="absolute bottom-6 right-6 bg-white rounded-2xl shadow-2xl p-6 w-72 hidden md:block">
-          <p className="text-gray-500 text-sm">Starting from</p>
-          <p className="text-3xl font-bold text-palmGreen">
-            ₹{villa.basePrice}
-          </p>
-          <p className="text-sm text-gray-500">per night</p>
-
-          <button
-            onClick={() => nav(`/booking?villaId=${villa.id}`)}
-            className="mt-4 w-full bg-rusticBrown text-white py-3 rounded-lg text-lg hover:opacity-90"
-          >
-            Book This Villa
-          </button>
-        </div>
+       
       </div>
 
       {/* CONTENT */}

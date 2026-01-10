@@ -21,7 +21,7 @@ export default function MobileLayout() {
       <Navbar />
 
       {/* PAGE CONTENT */}
-      <main className="pt-16 pb-20 w-full">
+      <main className="pt-8 pb-20 w-full">
         <Outlet />
       </main>
 

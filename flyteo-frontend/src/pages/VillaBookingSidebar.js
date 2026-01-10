@@ -9,6 +9,33 @@ export default function VillaBookingSidebar({ villa }) {
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
 
+  const getFinalVillaBasePrice = () => {
+  if (!checkIn) return villa.basePrice;
+
+  const dayName = new Date(checkIn)
+    .toLocaleDateString("en-US", { weekday: "long" })
+    .toUpperCase();
+
+  let price = villa.basePrice;
+
+  // 🔹 Day-wise percentage
+  const dayRule = villa.dayWisePricing?.find(
+    d => d.day === dayName
+  );
+
+  if (dayRule) {
+    price = price - (price * dayRule?.percentage) / 100;
+  }
+
+  // 🔹 Villa discount (same as hotel logic)
+  if (villa.discount > 0) {
+    price = price - (price * villa.discount) / 100;
+  }
+
+  return Math.round(price);
+};
+
+const today = new Date().toISOString().split("T")[0];
   const nights = useMemo(() => {
     if (!checkIn || !checkOut) return 0;
     const s = new Date(checkIn);
@@ -25,7 +52,7 @@ export default function VillaBookingSidebar({ villa }) {
   const totalPrice = useMemo(() => {
     if (!nights) return 0;
     return (
-      villa.basePrice * nights +
+      getFinalVillaBasePrice() * nights +
       extraGuests * villa.extraGuestPrice * nights
     );
   }, [nights, extraGuests, villa]);
@@ -54,11 +81,21 @@ export default function VillaBookingSidebar({ villa }) {
       {/* PRICE */}
       <p className="text-gray-500 text-sm">Starting from</p>
       <p className="text-3xl font-bold text-palmGreen">
-        ₹{villa.basePrice}
-        <span className="text-base font-normal text-gray-500">
-          /night
-        </span>
-      </p>
+  ₹{getFinalVillaBasePrice()}
+  <span className="text-base font-normal text-gray-500">
+    /night
+  </span>
+</p>
+
+{checkIn && (
+  <p className="text-xs text-green-600 mt-1">
+    Special price for{" "}
+    {new Date(checkIn).toLocaleDateString("en-US", {
+      weekday: "long"
+    })}
+  </p>
+)}
+
 
       {/* DATES */}
       <div className="mt-4 space-y-3">
@@ -66,6 +103,7 @@ export default function VillaBookingSidebar({ villa }) {
           type="date"
           className="w-full p-3 border rounded"
           placeholder="Check-in Date"
+          min={today}
           value={checkIn}
           onChange={e => setCheckIn(e.target.value)}
         />
@@ -114,8 +152,8 @@ export default function VillaBookingSidebar({ villa }) {
       {nights > 0 && (
         <div className="mt-4 border-t pt-4 space-y-2 text-sm">
           <div className="flex justify-between">
-            <span>₹{villa.basePrice} × {nights} nights</span>
-            <span>₹{villa.basePrice * nights}</span>
+            <span>₹{getFinalVillaBasePrice()} × {nights} nights</span>
+            <span>₹{getFinalVillaBasePrice() * nights}</span>
           </div>
 
           {extraGuests > 0 && (

@@ -56,7 +56,8 @@ router.get("/:id", async (req, res) => {
         hotelpolicy: true,
         hotelsafety: true,
         hotelrule: true,
-        hotelhighlight: true
+        hotelhighlight: true,
+        day_wise_percentage: true
       }
     });
 
@@ -99,7 +100,8 @@ router.post("/", auth, adminOnly, async (req, res) => {
       hoteloffer,
       hotelcoupon,
       advancePaymentAllowed,
-      advancePercent
+      advancePercent,
+      dayWisePercentage
     } = req.body;
 
     if (!name || !location || !description) {
@@ -186,6 +188,16 @@ router.post("/", auth, adminOnly, async (req, res) => {
       }))
     }
   : undefined,
+    day_wise_percentage: dayWisePercentage
+          ? {
+              create: Object.entries(dayWisePercentage)
+                .filter(([_, v]) => Number(v) > 0)
+                .map(([day, percentage]) => ({
+                  day,
+                  percentage: Number(percentage)
+                }))
+            }
+          : undefined
 
         }
       });
@@ -238,6 +250,7 @@ router.put("/:id", auth, adminOnly, async (req, res) => {
       taxes,
       advancePaymentAllowed,
       advancePercent,
+      dayWisePercentage,
 
       hotelamenity, // [amenityId]
       hoteloffer,    // [offerId]
@@ -320,6 +333,13 @@ router.put("/:id", auth, adminOnly, async (req, res) => {
       create: hotelimage.map((img) => ({ url: img.url ?? img }))
     }
   : undefined,
+
+  day_wise_percentage: {
+          deleteMany: {},
+          create: Object.entries(dayWisePercentage || {}).map(
+            ([day, percentage]) => ({ day, percentage })
+          )
+        },
 
 
         // ✅ One-to-one tables

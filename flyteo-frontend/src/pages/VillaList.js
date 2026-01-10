@@ -28,7 +28,41 @@ const discountPercent = Math.max(
   villa.discount || 0,
   offerDiscount || 0
 );
+const getFinalRoomPrice = (villaPrice, taxes, discount, dayWisePricing, date = new Date()) => {
+  let price = villaPrice;
 
+  // 🟢 Day-wise percentage
+  const dayName = date
+    .toLocaleDateString("en-US", { weekday: "long" })
+    .toUpperCase();
+
+  const dayRule = dayWisePricing?.find(d => d.day === dayName);
+
+  if (dayRule) {
+    price = price - (price * dayRule?.percentage) / 100;
+  }
+
+  // 🟢 Hotel discount
+  if (discount > 0) {
+    price = price - (price * discount) / 100;
+  }
+
+  // 🟢 Add taxes at the end
+  price = price + (taxes || 0);
+
+  return Math.round(price);
+};
+ const basePrice = villa.basePrice || 0;
+
+const finalPrice = getFinalRoomPrice(
+  basePrice,
+  villa.taxes,
+  villa.discount,
+  villa.dayWisePricing
+);
+
+// ❌ original price before any discount (for strike-through)
+const originalPrice = Math.round(basePrice + (villa.taxes || 0));
   return (
     <div className="rounded-2xl hover:shadow-2xl transition overflow-hidden flex flex-col md:flex-row">
 
@@ -84,7 +118,7 @@ const discountPercent = Math.max(
   <div>
     <p className="text-sm text-gray-500">Starting from</p>
     <p className="text-2xl font-bold text-palmGreen">
-      ₹{villa.basePrice}
+      ₹{finalPrice}
       <span className="text-sm font-normal text-gray-500"> / night</span>
     </p>
   </div>

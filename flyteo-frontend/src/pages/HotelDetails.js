@@ -55,6 +55,7 @@ const [countdown, setCountdown] = useState("");
         starCategory: h.starCategory,
         discount: h.discount,
         taxes: h.taxes,
+        dayWisePricing: h.day_wise_percentage || [],
       // normalize relations
       hotelimage: h.hotelimage?.map((i) => i.url) || [],
       room:
@@ -128,8 +129,10 @@ useEffect(() => {
     const start = new Date(checkIn);
     const end = new Date(checkOut);
     const nights = (end - start) / (1000 * 60 * 60 * 24);
-    setTotalPrice(nights > 0 ? nights * selectedRoom.price * rooms : 0);
+    setTotalPrice(nights > 0 ? nights * getFinalRoomPrice(selectedRoom.price) * rooms : 0);
   }, [checkIn, checkOut, selectedRoom]);
+
+  const todayCheck = new Date().toISOString().split("T")[0];
 
 const roomImages =
   hotel?.room?.flatMap(room =>
@@ -141,6 +144,8 @@ const roomImages =
 
   useEffect(() => {
   if (!hotel) return;
+
+
 
   api
     .get("/hotels/recommend", {
@@ -155,7 +160,44 @@ const roomImages =
     .then(res => setNearbyHotels(res.data))
     .catch(console.error);
 }, [hotel, selectedRoom]);
+
 const [showPopup, setShowPopup] = useState(false);
+
+const getDayName = () => {
+  return new Date().toLocaleDateString("en-US", {
+    weekday: "long"
+  }).toUpperCase();
+};
+
+const todayDay = getDayName();
+
+const getFinalRoomPrice = (roomBasePrice) => {
+  if (!checkIn) return roomBasePrice;
+
+  const dayName = new Date(checkIn)
+    .toLocaleDateString("en-US", { weekday: "long" })
+    .toUpperCase();
+
+  let price = roomBasePrice;
+
+  // 🔹 Day-wise percentage
+  const dayRule = hotel.dayWisePricing?.find(
+    d => d.day === dayName
+  );
+
+  if (dayRule) {
+    price = price - (price * dayRule?.percentage) / 100;
+  }
+
+  // 🔹 Hotel discount
+  if (hotel.discount > 0) {
+    price = price - (price * hotel.discount) / 100;
+  }
+
+  return Math.round(price);
+};
+
+
 
 const checkAvailability = async () => {
   
@@ -351,34 +393,47 @@ useEffect(() => {
 
 
           {/* ROOMS */}
-         <section>
+       <section>
   <h2 className="section-title">Available Rooms</h2>
 
   <div className="space-y-4">
-    {hotel.room.map(room => (
-      <div
-        key={room.id}
-        className="bg-white border rounded-xl p-5 flex justify-between items-center hover:shadow-lg transition"
-      >
-        <div>
-          <h3 className="font-semibold text-lg">
-            {room.type} ({room.acType})
-          </h3>
-          <p className="text-sm text-gray-500">
-            Max {room.maxPersons} Guests
-          </p>
-        </div>
+    {hotel.room.map(room => {
+      const finalPrice = getFinalRoomPrice(room.price);
 
-        <div className="text-right">
-          <p className="text-2xl font-bold text-palmGreen">
-            ₹{room.price}
-          </p>
-          <p className="text-xs text-gray-500">per night</p>
+      return (
+        <div
+          key={room.id}
+          className="bg-white border rounded-xl p-5 flex justify-between items-center hover:shadow-lg transition"
+        >
+          <div>
+            <h3 className="font-semibold text-lg">
+              {room.type} ({room.acType})
+            </h3>
+            <p className="text-sm text-gray-500">
+              Max {room.maxPersons} Guests
+            </p>
+          </div>
+
+          <div className="text-right">
+            {finalPrice !== room.price && (
+              <p className="text-sm text-gray-400 line-through">
+                ₹{room.price}
+              </p>
+            )}
+
+            <p className="text-2xl font-bold text-palmGreen">
+              ₹{finalPrice}
+            </p>
+
+            <p className="text-xs text-gray-500">per night</p>
+
+          </div>
         </div>
-      </div>
-    ))}
+      );
+    })}
   </div>
 </section>
+
 
 
           {/* POLICIES */}
@@ -435,13 +490,18 @@ useEffect(() => {
        {/* BOOKING SIDEBAR */}
 <div>
   <div className="bg-white shadow p-6 rounded-xl sticky top-24">
-
+     
     {/* ROOM PRICE */}
     <p className="text-3xl font-bold text-palmGreen">
-      ₹{selectedRoom?.price || 0} 
-      <span className="text-palmGreen-200 text-sm"> + ₹{hotel.taxes}</span>
-      <span className="text-gray-500 text-sm"> (incl. taxes) / night</span>
-    </p>
+  ₹{selectedRoom ? getFinalRoomPrice(selectedRoom.price) : "—"}
+  <span className="text-palmGreen-200 text-sm">
+    {" "}+ ₹{hotel.taxes}
+  </span>
+  <span className="text-gray-500 text-sm">
+    {" "}(incl. taxes) / night
+  </span>
+</p>
+
 
     {/* DATE SECTION */}
     <div className="space-y-4 mt-6">
@@ -452,6 +512,7 @@ useEffect(() => {
         <input
           type="date"
           className="w-full border p-2 rounded mt-1"
+          min={todayCheck}
           value={checkIn}
           onChange={(e) => setCheckIn(e.target.value)}
         />

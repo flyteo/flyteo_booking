@@ -97,6 +97,7 @@ router.post("/", auth, adminOnly, async (req, res) => {
       discount,
       advancePaymentAllowed,
       advancePercent,
+      dayWisePercentage,
 
       maxGuests,
       includedGuests,
@@ -187,6 +188,17 @@ router.post("/", auth, adminOnly, async (req, res) => {
       }))
     }
   : undefined,
+day_wise_percentage: dayWisePercentage
+          ? {
+              create: Object.entries(dayWisePercentage)
+                .filter(([_, v]) => Number(v) > 0)
+                .map(([day, percentage]) => ({
+                  day,
+                  percentage: Number(percentage)
+                }))
+            }
+          : undefined
+  
       }
     });
 
@@ -216,6 +228,7 @@ router.put("/:id", auth, adminOnly, async (req, res) => {
       includedGuests,
       basePrice,
       extraGuestPrice,
+      dayWisePercentage,
 
       checkInTime,
       checkOutTime,
@@ -319,7 +332,14 @@ router.put("/:id", auth, adminOnly, async (req, res) => {
                 }
               }
             }
-          : undefined
+          : undefined,
+          day_wise_percentage: {
+          deleteMany: {},
+          create: Object.entries(dayWisePercentage || {}).map(
+            ([day, percentage]) => ({ day, percentage })
+          )
+        },
+
       }
     });
 

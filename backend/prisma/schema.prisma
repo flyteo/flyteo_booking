@@ -28,7 +28,7 @@ model booking {
   paymentStatus   String          @default("pending")
   createdAt       DateTime        @default(now())
   fullname        String?         @db.VarChar(255)
-  mobileno        String?         @db.VarChar(20)
+  mobileno        String          @default(dbgenerated("(_cp850\\'Unknown\\')")) @db.VarChar(20)
   villaId         Int?
   totalAmount     Float           @default(0) @db.Float
   paidAmount      Float           @default(0) @db.Float
@@ -161,9 +161,9 @@ model coupon {
 }
 
 model hotel {
-  id                    Int              @id @default(autoincrement())
+  id                    Int                   @id @default(autoincrement())
   name                  String
-  slug                  String           @unique(map: "Hotel_slug_key")
+  slug                  String                @unique(map: "Hotel_slug_key")
   location              String
   description           String
   address               String?
@@ -173,15 +173,16 @@ model hotel {
   nearby                String?
   hotelType             String?
   starCategory          Int?
-  discount              Int              @default(0)
-  ratingAverage         Float            @default(0)
-  ratingCount           Int              @default(0)
-  createdAt             DateTime         @default(now())
-  updatedAt             DateTime         @updatedAt
-  taxes                 Float?           @default(0) @db.Float
-  advancePaymentAllowed Boolean?         @default(false)
+  discount              Int                   @default(0)
+  ratingAverage         Float                 @default(0)
+  ratingCount           Int                   @default(0)
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+  taxes                 Float?                @default(0) @db.Float
+  advancePaymentAllowed Boolean?              @default(false)
   advancePercent        Int?
   booking               booking[]
+  day_wise_percentage   day_wise_percentage[]
   hotelamenity          hotelamenity[]
   hotelcoupon           hotelcoupon[]
   hotelhighlight        hotelhighlight[]
@@ -326,26 +327,27 @@ model user {
 }
 
 model villa {
-  id                    Int            @id @default(autoincrement())
-  name                  String         @db.VarChar(255)
-  description           String         @db.Text
-  location              String         @db.VarChar(255)
-  address               String?        @db.VarChar(255)
-  mapLocation           String?        @db.VarChar(255)
+  id                    Int                   @id @default(autoincrement())
+  name                  String                @db.VarChar(255)
+  description           String                @db.Text
+  location              String                @db.VarChar(255)
+  address               String?               @db.VarChar(255)
+  mapLocation           String?               @db.VarChar(255)
   maxGuests             Int
   includedGuests        Int
-  basePrice             Decimal        @db.Decimal(10, 2)
-  discount              Int?           @default(0)
-  extraGuestPrice       Decimal        @db.Decimal(10, 2)
-  checkInTime           String?        @db.VarChar(50)
-  checkOutTime          String?        @db.VarChar(50)
-  cancellationPolicy    String?        @db.Text
-  securityDeposit       Decimal?       @db.Decimal(10, 2)
-  createdAt             DateTime?      @default(now()) @db.DateTime(0)
-  updatedAt             DateTime?      @default(now()) @db.DateTime(0)
-  advancePaymentAllowed Boolean?       @default(false)
+  basePrice             Decimal               @db.Decimal(10, 2)
+  discount              Int?                  @default(0)
+  extraGuestPrice       Decimal               @db.Decimal(10, 2)
+  checkInTime           String?               @db.VarChar(50)
+  checkOutTime          String?               @db.VarChar(50)
+  cancellationPolicy    String?               @db.Text
+  securityDeposit       Decimal?              @db.Decimal(10, 2)
+  createdAt             DateTime?             @default(now()) @db.DateTime(0)
+  updatedAt             DateTime?             @default(now()) @db.DateTime(0)
+  advancePaymentAllowed Boolean?              @default(false)
   advancePercent        Int?
   booking               booking[]
+  day_wise_percentage   day_wise_percentage[]
   reviews               reviews[]
   villaamenity          villaamenity[]
   villacoupon           villacoupon[]
@@ -441,4 +443,30 @@ model contactmessage {
 
   @@index([email], map: "idx_contact_email")
   @@index([isResolved], map: "idx_contact_resolved")
+}
+
+model day_wise_percentage {
+  id         Int                     @id @default(autoincrement())
+  day        day_wise_percentage_day
+  percentage Float                   @default(0) @db.Float
+  hotelId    Int?
+  villaId    Int?
+  createdAt  DateTime?               @default(now()) @db.Timestamp(0)
+  hotel      hotel?                  @relation(fields: [hotelId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_day_hotel")
+  villa      villa?                  @relation(fields: [villaId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_day_villa")
+
+  @@unique([day, hotelId], map: "unique_hotel_day")
+  @@unique([day, villaId], map: "unique_villa_day")
+  @@index([hotelId], map: "fk_day_hotel")
+  @@index([villaId], map: "fk_day_villa")
+}
+
+enum day_wise_percentage_day {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
 }

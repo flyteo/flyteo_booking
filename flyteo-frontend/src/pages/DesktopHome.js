@@ -5,9 +5,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 
+
 import "swiper/css";
 import Contact from './Contact';
 import AboutUs from './AboutUs';
+import { FaFacebook, FaInstagram, FaWhatsapp } from 'react-icons/fa';
 
 function DesktopHome() {
 
@@ -15,7 +17,7 @@ function DesktopHome() {
       const [campings, setCampings] = useState([]);
       const [villas, setVillas] = useState([]);
     
-      const [destination, setDestination] = useState("Mumbai");
+      const [destination, setDestination] = useState("Alibag");
       const [checkIn, setCheckIn] = useState("");
       const [checkOut, setCheckOut] = useState("");
       const [guests, setGuests] = useState(1);
@@ -23,10 +25,27 @@ function DesktopHome() {
       const nav = useNavigate();
     const today = new Date().toISOString().split("T")[0];
 
-const popularLocations = [...new Set([
-  ...hotels.map(h => h.location),
-  ...villas.map(v => v.location)
-])].slice(0, 6);
+const popularLocations = Array.from(
+  new Map(
+    [
+      ...hotels.map(h => h.location),
+      ...villas.map(v => v.location),
+    ]
+      .filter(Boolean)
+      .map(loc => {
+        const normalized = loc.trim().toLowerCase();
+
+        // Proper Case for UI
+        const formatted = normalized
+          .split(" ")
+          .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" ");
+
+        return [normalized, formatted];
+      })
+  ).values()
+).slice(0, 6);
+
 
     
       useEffect(() => {
@@ -55,6 +74,31 @@ const popularLocations = [...new Set([
       api.get("/search/activecoupons")
            .then((res) => setCoupons(res.data));
     }, []);
+
+    const getFinalRoomPrice = (roomPrice, taxes, discount, dayWisePricing, date = new Date()) => {
+  let price = roomPrice;
+
+  // 🟢 Day-wise percentage
+  const dayName = date
+    .toLocaleDateString("en-US", { weekday: "long" })
+    .toUpperCase();
+
+  const dayRule = dayWisePricing?.find(d => d.day === dayName);
+
+  if (dayRule) {
+    price = price - (price * dayRule.percentage) / 100;
+  }
+
+  // 🟢 Hotel discount
+  if (discount > 0) {
+    price = price - (price * discount) / 100;
+  }
+
+  // 🟢 Add taxes at the end
+  price = price + (taxes || 0);
+
+  return Math.round(price);
+};
     const locationBgMap = {
   Mumbai:
     "https://www.oberoihotels.com/-/media/oberoi-hotel/the-oberoi-mumbai/mumbai-1-8-24/overview/banner/desktop1920x980/banner3_.jpg",
@@ -311,6 +355,17 @@ const handleSearch = () => {
   >
     {hotels.map((h) => {
       const discount = h.discount || 30;
+      const basePrice = h.room?.[0]?.price || 0;
+
+const finalPrice = getFinalRoomPrice(
+  basePrice,
+  h.taxes,
+  h.discount,
+  h.dayWisePricing
+);
+
+// ❌ original price before any discount (for strike-through)
+const originalPrice = Math.round(basePrice + (h.taxes || 0));
 
       return (
         <SwiperSlide key={h.id}>
@@ -332,9 +387,9 @@ const handleSearch = () => {
               )}
 
               {/* PRICE */}
-              {h.room?.[0]?.price && (
+              {finalPrice < originalPrice && (
                 <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-4 py-1 rounded-full text-sm font-semibold text-palmGreen shadow">
-                  ₹{h.room[0].price}/night
+                  ₹{finalPrice}/night
                 </div>
               )}
             </div>
@@ -457,7 +512,21 @@ const handleSearch = () => {
   }}
   className="px-4"
 >
-  {villas.map((v) => (
+ {villas.map((v) => {
+      const discount = v.discount || 30;
+      const basePrice = v.basePrice || 0;
+
+const finalPrice = getFinalRoomPrice(
+  basePrice,
+  v.taxes,
+  v.discount,
+  v.dayWisePricing
+);
+
+// ❌ original price before any discount (for strike-through)
+const originalPrice = Math.round(basePrice + (v.taxes || 0));
+
+      return (
     <SwiperSlide key={v.id}>
       <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 border border-gray-100">
 
@@ -476,7 +545,7 @@ const handleSearch = () => {
 
           {/* PRICE */}
           <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-4 py-1 rounded-full text-sm font-semibold text-palmGreen shadow">
-            ₹{v.basePrice}/night
+            ₹{finalPrice}/night
           </div>
         </div>
 
@@ -529,7 +598,8 @@ const handleSearch = () => {
         </div>
       </div>
     </SwiperSlide>
-  ))}
+  );
+    })}
 </Swiper>
 
     </div>
@@ -668,7 +738,7 @@ const handleSearch = () => {
 {/* ---------------------------------------------------------------- */}
 {/* FOOTER */}
 {/* ---------------------------------------------------------------- */}
-<footer className="mt-14 bg-rusticBrown text-white py-8">
+<footer className="mt-14 bg-[#c18357] text-white py-8">
   <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-6">
 
     {/* ABOUT */}
@@ -705,10 +775,10 @@ const handleSearch = () => {
     <div>
       <h4 className="font-heading text-lg mb-3 text-palmGreen">Follow Us</h4>
       <div className="flex gap-4 text-xl">
-        <a href="#" className="hover:text-palmGreen">🌐</a>
-        <a href="#" className="hover:text-palmGreen">📘</a>
-        <a href="#" className="hover:text-palmGreen">📸</a>
-        <a href="#" className="hover:text-palmGreen">🐦</a>
+        <a href="https://wa.me/918975995125" className="hover:text-palmGreen"><FaWhatsapp/></a>
+        <a href="https://www.facebook.com/flyteo.in" className="hover:text-palmGreen"><FaFacebook/></a>
+        <a href="https://www.instagram.com/flyteo.in?igsh=OGd6OWV5ZWVndTZv" className="hover:text-palmGreen"><FaInstagram/></a>
+        {/* <a href="#" className="hover:text-palmGreen">🐦</a> */}
       </div>
 
       <p className="text-stone-700 mt-4 text-sm">© 2025 Flyteo.in — All Rights Reserved</p>

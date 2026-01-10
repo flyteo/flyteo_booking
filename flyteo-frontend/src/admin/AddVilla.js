@@ -42,6 +42,16 @@ export default function AddVilla() {
     }
   });
 
+  const [dayWisePercentage, setDayWisePercentage] = useState({
+    SUNDAY: "",
+    MONDAY: "",
+    TUESDAY: "",
+    WEDNESDAY: "",
+    THURSDAY: "",
+    FRIDAY: "",
+    SATURDAY: ""
+  });
+
   const [amenityList, setAmenityList] = useState([]);
   const [offerList, setOfferList] = useState([]);
   const [couponList, setCouponList] = useState([]);
@@ -75,7 +85,11 @@ export default function AddVilla() {
 
     await api.post(
       "/villas",
-      villa,
+      {...villa, dayWisePercentage: Object.fromEntries(
+      Object.entries(dayWisePercentage)
+        .filter(([_, v]) => v !== "" && Number(v) > 0)
+        .map(([day, v]) => [day, Number(v)])
+    )},
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
@@ -142,6 +156,30 @@ export default function AddVilla() {
     onChange={(e) => setVilla({ ...villa, mapLocation: e.target.value })}
   />
         </div>
+
+        <div className="border p-4 rounded">
+  <h2 className="font-heading text-xl mb-3">
+    Day-wise Price Percentage
+  </h2>
+
+  {Object.keys(dayWisePercentage).map((day) => (
+    <div key={day} className="flex items-center gap-3 mb-2">
+      <label className="w-32 font-medium">{day}</label>
+      <input
+        type="number"
+        placeholder="%"
+        className="p-2 border rounded w-full"
+        value={dayWisePercentage[day]}
+        onChange={(e) =>
+          setDayWisePercentage({
+            ...dayWisePercentage,
+            [day]: e.target.value
+          })
+        }
+      />
+    </div>
+  ))}
+</div>
 
         {/* IMAGES */}
         <div className="mt-6">
