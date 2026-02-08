@@ -5,11 +5,9 @@ import prisma from "../prisma.js";
 import crypto from "crypto";
 const router = express.Router();
 
-const cashfree = new Cashfree(
-  CFEnvironment.SANDBOX,
-  process.env.CASHFREE_APP_ID,
-  process.env.CASHFREE_SECRET_KEY
-);
+Cashfree.XClientId = process.env.CASHFREE_APP_ID;
+Cashfree.XClientSecret = process.env.CASHFREE_SECRET_KEY;
+Cashfree.XEnvironment = Cashfree.Environment.SANDBOX;
 
 
 function genrateOrderId(){
@@ -265,24 +263,25 @@ const blockedRooms = blocked.reduce(
     }
     const orderID = await genrateOrderId();
 // Save temp order (IMPORTANT)
-  await prisma.payment_order.create({
-    data: {
-      orderId: orderID,
-      userId: req.user.id,
-      payload: req.body, // store full booking payload
-      amount: totalAmount,
-      status: "PENDING"
-    }
-  });
+  // await prisma.payment_order.create({
+  //   data: {
+  //     orderId: orderID,
+  //     userId: req.user.id,
+  //     payload: req.body, // store full booking payload
+  //     amount: totalAmount,
+  //     status: "PENDING"
+  //   }
+  // });
   
-    const response = await cashfree.PGCreateOrder({
+    const response = await Cashfree.PGCreateOrder({
       order_id: orderID,
       order_amount: payNowAmount,
       order_currency: "INR",
       customer_details: {
         customer_id: String(req.user.id),
         customer_name: fullname,
-        customer_phone: mobileno
+        customer_phone: mobileno,
+        customer_email: "test@gmail.com"
       }
     });
 
