@@ -10,10 +10,6 @@ const cashfree = new Cashfree(
   process.env.CASHFREE_APP_ID,
   process.env.CASHFREE_SECRET_KEY
 );
-<<<<<<< HEAD
-
-=======
->>>>>>> b9c86f5fee68628bb3a01a6d889703bfe53585ac
 
 function genrateOrderId(){
   const uniqueId=crypto.randomBytes(16).toString('hex');
