@@ -5,9 +5,11 @@ import prisma from "../prisma.js";
 import crypto from "crypto";
 const router = express.Router();
 
-Cashfree.XClientId = process.env.CASHFREE_APP_ID;
-Cashfree.XClientSecret = process.env.CASHFREE_SECRET_KEY;
-Cashfree.XEnvironment = Cashfree.Environment.SANDBOX;
+const cashfree = new Cashfree(
+  CFEnvironment.SANDBOX,
+  process.env.CASHFREE_APP_ID,
+  process.env.CASHFREE_SECRET_KEY
+);
 
 
 function genrateOrderId(){
@@ -280,8 +282,7 @@ const blockedRooms = blocked.reduce(
       customer_details: {
         customer_id: String(req.user.id),
         customer_name: fullname,
-        customer_phone: mobileno,
-        customer_email: "test@gmail.com"
+        customer_phone: mobileno
       }
     });
 
