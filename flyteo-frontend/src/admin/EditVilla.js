@@ -7,12 +7,31 @@ export default function EditVilla() {
   const { id } = useParams();
   const nav = useNavigate();
   const [villa, setVilla] = useState(null);
+   const DAYS = [
+    "SUNDAY",
+    "MONDAY",
+    "TUESDAY",
+    "WEDNESDAY",
+    "THURSDAY",
+    "FRIDAY",
+    "SATURDAY"
+  ];
+  
+  const [dayWisePercentage, setDayWisePercentage] = useState({
+    SUNDAY: "",
+    MONDAY: "",
+    TUESDAY: "",
+    WEDNESDAY: "",
+    THURSDAY: "",
+    FRIDAY: "",
+    SATURDAY: ""
+  });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     api
-      .get(`/api/villas/${id}`, {
+      .get(`/villas/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => {
@@ -44,6 +63,7 @@ export default function EditVilla() {
           layout: {
             bedrooms: v.villalayout?.bedrooms || "",
             bathrooms: v.villalayout?.bathrooms || "",
+            beds:v.villalayout?.beds || "",
             livingRoom: v.villalayout?.livingRoom || false,
             kitchen: v.villalayout?.kitchen || false,
             privatePool: v.villalayout?.privatePool || false,
@@ -51,10 +71,32 @@ export default function EditVilla() {
             parkingSlots: v.villalayout?.parkingSlots || 0
           }
         });
+        // ✅ Convert array → object with all days
+const dayMap = {
+  SUNDAY: "",
+  MONDAY: "",
+  TUESDAY: "",
+  WEDNESDAY: "",
+  THURSDAY: "",
+  FRIDAY: "",
+  SATURDAY: ""
+};
+
+(v.day_wise_percentage || []).forEach(d => {
+  dayMap[d.day] = d.percentage;
+});
+
+setDayWisePercentage(dayMap);
       });
   }, [id]);
 
   if (!villa) return <div className="p-10">Loading...</div>;
+
+  const cleanDayWisePercentage = Object.fromEntries(
+  Object.entries(dayWisePercentage)
+    .filter(([_, v]) => v !== "" && Number(v) > 0)
+    .map(([k, v]) => [k, Number(v)])
+);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,7 +115,8 @@ export default function EditVilla() {
           : null,
         advancePercent: villa.advancePaymentAllowed
           ? Number(villa.advancePercent)
-          : null
+          : null,
+          dayWisePercentage: cleanDayWisePercentage,
       },
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -128,6 +171,11 @@ export default function EditVilla() {
             value={villa.extraGuestPrice}
             onChange={e => setVilla({ ...villa, extraGuestPrice: e.target.value })}
           />
+          <label>Taxes</label>
+          <input type="number" className="w-full p-2 border rounded mb-3" placeholder="Taxes"
+            value={villa.taxes}
+            onChange={e => setVilla({ ...villa, taxes: e.target.value })}
+          />
         </div>
 
         <div className="">
@@ -147,6 +195,46 @@ export default function EditVilla() {
             onChange={e => setVilla({ ...villa, securityDeposit: e.target.value })}
           />
         </div>
+        <div className="bg-white shadow rounded-xl p-6 mt-8">
+  <h2 className="text-xl font-heading text-palmGreen mb-4">
+    Day-wise Pricing Percentage
+  </h2>
+
+  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+    {DAYS.map(day => (
+      <div key={day}>
+        <label className="block text-sm font-semibold mb-1">
+          {day}
+        </label>
+
+        <input
+          type="number"
+          min="0"
+          max="100"
+          placeholder="0"
+          value={dayWisePercentage[day]}
+          onChange={(e) =>
+            setDayWisePercentage({
+              ...dayWisePercentage,
+              [day]:
+                e.target.value === ""
+                  ? ""
+                  : Math.min(100, Math.max(0, Number(e.target.value)))
+            })
+          }
+          className="w-full border p-2 rounded"
+        />
+
+        {dayWisePercentage[day] !== "" && (
+  <p className="text-xs text-green-600 mt-1">
+    Existing value
+  </p>
+)}
+
+      </div>
+    ))}
+  </div>
+</div>
 
         {/* ADVANCE PAYMENT */}
         <div className="border p-4 rounded">
@@ -190,6 +278,16 @@ export default function EditVilla() {
                 setVilla({
                   ...villa,
                   layout: { ...villa.layout, bedrooms: e.target.value }
+                })
+              }
+            />
+            <label>Beds</label>
+            <input type="number" className="w-full p-2 border rounded mb-3" placeholder="Beds"
+              value={villa.layout.beds}
+              onChange={e =>
+                setVilla({
+                  ...villa,
+                  layout: { ...villa.layout, beds: e.target.value }
                 })
               }
             />

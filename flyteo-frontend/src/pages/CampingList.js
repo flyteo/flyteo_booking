@@ -28,7 +28,7 @@ export default function CampingList() {
         {isMobile && (
   <div className="sticky top-0 z-40 bg-white px-4 py-3 shadow">
     <h1 className="font-heading text-md text-palmGreen">
-      Camping Experiences
+      Adventure activities ,camping & event
     </h1>
     <p className="text-xs text-gray-500">
       {campings.length} stays found
@@ -37,7 +37,7 @@ export default function CampingList() {
 )}
   {isDesktop && (   <div className="container mx-auto px-6 py-8">
           <h1 className="font-heading text-4xl text-palmGreen">
-            Camping Experiences
+            Adventure activities ,camping & event
           </h1>
           <p className="text-gray-600 mt-2">
             Nature stays, bonfires & unforgettable outdoor adventures

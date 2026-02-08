@@ -31,8 +31,8 @@ export default function BottomTabBar({ activePath }) {
       <div className="grid grid-cols-5 text-center text-xs py-2">
 
       {/* HOME */}
-        <div onClick={() => nav("/")} className={tab("/")}>
-          <HomeIcon active={activePath === "/"} />
+        <div onClick={() => nav("/home")} className={tab("/home")}>
+          <HomeIcon active={activePath === "/home"} />
           <p>Home</p>
         </div>
 
@@ -51,7 +51,7 @@ export default function BottomTabBar({ activePath }) {
         {/* BOOKINGS */}
         <div
           onClick={() => alert("Currently booking is not available. Coming soon…")}
-          className={tab("/")}
+          className={tab("/home")}
         >
           <BookingIcon />
           <p>Bookings</p>

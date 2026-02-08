@@ -70,7 +70,8 @@ router.post("/login", async (req, res) => {
         id: user.id,          // ✅ Prisma uses id
         email: user.email,
         role: user.role,
-        hotelId: user.hotelId // useful for hotel-admin
+        hotelId: user.hotelId, // useful for hotel-admin
+        villaId: user.villaId // useful for villa-admin
       },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
@@ -83,7 +84,8 @@ router.post("/login", async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        hotelId: user.hotelId
+        hotelId: user.hotelId,
+        villaId: user.villaId
       }
     });
 

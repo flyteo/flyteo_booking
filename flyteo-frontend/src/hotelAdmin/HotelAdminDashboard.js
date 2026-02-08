@@ -4,112 +4,127 @@ import HotelAdminSidebar from "./HotelAdminSidebar";
 
 export default function HotelAdminDashboard() {
   const [hotel, setHotel] = useState(null);
+  const [occupancy, setOccupancy] = useState([]);
   const [bookings, setBookings] = useState([]);
-  const [available, setAvailable] = useState(0);
-  const [booked, setBooked] = useState(0);
+  const token = localStorage.getItem("token");
+
+  const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
     loadHotel();
+    loadOccupancy();
     loadBookings();
   }, []);
 
   const loadHotel = async () => {
-    const token = localStorage.getItem("token");
+    const res = await api.get("/hotel-admin/my-hotel", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    setHotel(res.data);
+  };
 
+  const loadOccupancy = async () => {
     const res = await api.get(
-      "/hotel-admin/my-hotel",
+      `/occupancy/calendar?from=${today}&to=${today}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
-
-    setHotel(res.data);
-
-    // calculate rooms
-    let total = 0;
-    res.data.rooms.forEach((r) => {
-      total += r.totalRooms;
-    });
-
-    setAvailable(total); // will update after bookings load
+    setOccupancy(res.data[0]?.rooms || []);
   };
 
   const loadBookings = async () => {
-    const token = localStorage.getItem("token");
-
-    const res = await api.get(
-      "/hotel-admin/bookings",
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
+    const res = await api.get("/hotel-admin/bookings", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
     setBookings(res.data);
-
-    // booked rooms
-    let bookedCount = res.data.length;
-    setBooked(bookedCount);
-    setAvailable((prev) => prev - bookedCount);
   };
 
-  if (!hotel) return <p className="p-10 text-center text-xl">Loading…</p>;
+  if (!hotel) {
+    return <p className="p-10 text-center text-xl">Loading…</p>;
+  }
+
+  const totalRooms = occupancy.reduce((sum, r) => sum + r.total, 0);
+  const bookedRooms = occupancy.reduce((sum, r) => sum + r.booked, 0);
+  const blockedRooms = occupancy.reduce((sum, r) => sum + r.blocked, 0);
+  const availableRooms = occupancy.reduce((sum, r) => sum + r.available, 0);
+
+  const todaysBookings = bookings.filter(
+    (b) =>
+      new Date(b.checkIn) <= new Date(today) &&
+      new Date(b.checkOut) > new Date(today)
+  );
 
   return (
-    <div className="p-8 ml-72">
-        <HotelAdminSidebar/>
-      <h1 className="text-3xl font-heading text-palmGreen">
-        {hotel.name} — Hotel Dashboard
-      </h1>
+    <div className="flex min-h-screen bg-gray-100">
+           <div className="md:block">
+           <HotelAdminSidebar />
+         </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-4 gap-6 mt-8">
+      <div className="flex-1 md:ml-72 px-4 md:px-8">
+        <h1 className="text-3xl font-heading text-palmGreen">
+          {hotel.name} — Dashboard
+        </h1>
 
-        <div className="bg-white p-6 shadow rounded">
-          <h2 className="text-xl">Total Rooms</h2>
-          <p className="text-3xl font-bold">
-            {hotel.rooms.reduce((sum, r) => sum + r.totalRooms, 0)}
-          </p>
+        {/* STATS */}
+        <div className="grid grid-cols-3 gap-4 mt-8">
+          <Stat title="Total Rooms" value={totalRooms} />
+          <Stat title="Booked Today" value={bookedRooms} />
+          <Stat title="Blocked Today" value={blockedRooms} />
+          <Stat
+            title="Available Today"
+            value={availableRooms}
+            highlight
+          />
         </div>
 
-        <div className="bg-white p-6 shadow rounded">
-          <h2 className="text-xl">Booked Rooms</h2>
-          <p className="text-3xl font-bold">{booked}</p>
-        </div>
+        {/* RECENT BOOKINGS */}
+        <h2 className="text-2xl font-heading mt-10 mb-3">
+          Active Bookings (Today)
+        </h2>
 
-        <div className="bg-white p-6 shadow rounded">
-          <h2 className="text-xl">Available Rooms</h2>
-          <p className="text-3xl font-bold text-green-600">{available}</p>
-        </div>
+        <div className="bg-white shadow p-4 rounded">
+          {todaysBookings.length === 0 && (
+            <p>No active bookings today.</p>
+          )}
 
-        <div className="bg-white p-6 shadow rounded">
-          <h2 className="text-xl">Today's Bookings</h2>
-          <p className="text-3xl font-bold">
-            {bookings.filter(
-              (b) => new Date(b.date).toDateString() === new Date().toDateString()
-            ).length}
-          </p>
+          {todaysBookings.map((b) => (
+            <div key={b.id} className="border-b py-3">
+              <p>
+                <strong>Guest:</strong> {b.user?.name}
+              </p>
+              <p>
+                <strong>Rooms:</strong> {b.roomType} × {b.roomCount}
+              </p>
+              <p>
+                <strong>Stay:</strong>{" "}
+                {new Date(b.checkIn).toLocaleDateString()} →{" "}
+                {new Date(b.checkOut).toLocaleDateString()}
+              </p>
+              <p>
+                <strong>Status:</strong>{" "}
+                <span className="font-semibold">
+                  {b.checkInStatus || "Not Checked In"}
+                </span>
+              </p>
+            </div>
+          ))}
         </div>
-
       </div>
+    </div>
+  );
+}
 
-
-      {/* Booking list */}
-      <h2 className="text-2xl font-heading mt-10 mb-3">Recent Bookings</h2>
-
-      <div className="bg-white shadow p-4 rounded">
-        {bookings.length === 0 && <p>No bookings found.</p>}
-
-        {bookings.map((b, i) => (
-          <div key={i} className="border-b py-3">
-            <p>
-              <strong>User:</strong> {b.userName}
-            </p>
-            <p>
-              <strong>Room Type:</strong> {b.roomType}
-            </p>
-            <p>
-              <strong>Date:</strong>{" "}
-              {new Date(b.date).toLocaleDateString()}
-            </p>
-          </div>
-        ))}
-      </div>
+/* Small stat card */
+function Stat({ title, value, highlight }) {
+  return (
+    <div className="bg-white p-6 shadow rounded">
+      <h2 className="text-xl">{title}</h2>
+      <p
+        className={`text-3xl font-bold ${
+          highlight ? "text-green-600" : ""
+        }`}
+      >
+        {value}
+      </p>
     </div>
   );
 }

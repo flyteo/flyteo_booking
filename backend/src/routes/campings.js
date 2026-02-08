@@ -69,7 +69,8 @@ router.post("/", auth, adminOnly, async (req, res) => {
       campingitinerary,
       campingpricing,
       advancePaymentAllowed,
-      advancePercent
+      advancePercent,
+      taxes
       // defaultPrice
     } = req.body;
 
@@ -78,6 +79,7 @@ router.post("/", auth, adminOnly, async (req, res) => {
         name,
         description,
         location,
+        taxes,
         advancePaymentAllowed: Boolean(advancePaymentAllowed),
       advancePercent:
         advancePaymentAllowed && advancePercent
@@ -141,6 +143,7 @@ router.put("/:id", auth, adminOnly, async (req, res) => {
         name: req.body.name,
         description: req.body.description,
         location: req.body.location,
+        taxes: req.body.taxes,
         advancePaymentAllowed: Boolean(advancePaymentAllowed),
     advancePercent:
       advancePaymentAllowed && advancePercent
@@ -207,5 +210,24 @@ router.delete("/:id", auth, adminOnly, async (req, res) => {
     res.status(500).json({ msg: "Delete failed" });
   }
 });
+
+router.post("/check-availability", async (req, res) => {
+  const { campingId, date } = req.body;
+
+  if (!campingId || !date) {
+    return res.status(400).json({ msg: "Missing data" });
+  }
+
+  const blocked = await prisma.camping_availability.findFirst({
+    where: {
+      campingId: Number(campingId),
+      date: new Date(date),
+      status: "blocked"
+    }
+  });
+
+  res.json({ available: !blocked });
+});
+
 
 export default router;

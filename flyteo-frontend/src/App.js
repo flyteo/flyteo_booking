@@ -43,6 +43,16 @@ import Contact from "./pages/Contact";
 import AboutUs from "./pages/AboutUs";
 import ComingSoon from "./pages/ComingSoon";
 import FloatingWhatsApp from "./components/FloatingWhatsapp";
+import HotelAdminBookings from "./hotelAdmin/HotelAdminBookings";
+import VillaAdminDashboard from "./villaAdmin/VillaAdminDashboard";
+import VillaAdminBookings from "./villaAdmin/VillaAdminBookings";
+import VillaAvailabilityCalendar from "./villaAdmin/VillaAvailabilityCalendar";
+import ProtectedVillaAdminRoute from "./villaAdmin/ProtectedVillaAdminRoute";
+import AdminVillaAvailability from "./admin/AdminVillaAvailability";
+import AdminRoomAvailability from "./admin/AdminRoomAvailability";
+import AdminCampingAvailability from "./admin/AdminCampingAvailability";
+import ProtectedRoute from "./context/ProtectedRoute";
+import RoleRedirect from "./RoleRedirect";
 
 function App() {
   return (
@@ -53,8 +63,8 @@ function App() {
         <Routes>
           <Route element={<MobileLayout/>}>
           <Route element={<DeskTopLayout/>}>
-         
-          <Route path="/" element={<Home />} />
+         <Route path="/" element={<RoleRedirect />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/hotels" element={<HotelsList />} />
            <Route path="/villas" element={<VillaList />} />
            <Route path="/campings" element={<CampingList />} />
@@ -64,10 +74,10 @@ function App() {
           <Route path="/campings/:id" element={<CampingDetails />} />
           <Route path="/login" element={<Login />} />
           <Route path="/comingsoon" element ={<ComingSoon/>}/>
-          {/* <Route path="/register" element={<Register />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/my-bookings" element={<MyBooking />} />
-          <Route path="/payment" element={<Payment />} /> */}
+          <Route path="/payment" element={<Payment />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/contact" element={<Contact/>}/>
           <Route path="/aboutus" element={<AboutUs/>}/>
@@ -76,88 +86,132 @@ function App() {
  <Route path="/cancellation-policy" element={<CancellationPolicy />} />
  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
          
+
+
           <Route
   path="/hotel-admin/dashboard"
   element={
-    <ProtectedHotelAdminRoute>
+    <ProtectedRoute role="hotel-admin">
       <HotelAdminDashboard />
-    </ProtectedHotelAdminRoute>
+    </ProtectedRoute>
   }
 />
 <Route
   path="/hotel-admin/rooms"
   element={
-    <ProtectedHotelAdminRoute>
+    <ProtectedRoute role="hotel-admin">
       <HotelAdminRooms />
-    </ProtectedHotelAdminRoute>
+    </ProtectedRoute>
   }
 />
 <Route
+  path="/hotel-admin/check-in"
+  element={
+    <ProtectedRoute role="hotel-admin">
+      <HotelAdminBookings />
+    </ProtectedRoute>
+  }
+/>
+<Route path="/villa-admin/dashboard"
+       element={
+        <ProtectedRoute role="villa-admin">
+          <VillaAdminDashboard />
+        </ProtectedRoute>
+       } 
+/>
+<Route path="/villa-admin/bookings" 
+      element={
+        <ProtectedRoute role="villa-admin">
+          <VillaAdminBookings/>
+          </ProtectedRoute>
+      }/>
+<Route path="/villa-admin/calendar" 
+      element={
+        <ProtectedRoute role="villa-admin">
+          <VillaAvailabilityCalendar/>
+          </ProtectedRoute>
+      }/>
+<Route
   path="/admin/dashboard"
   element={
-    <ProtectedAdminRoute>
+    <ProtectedRoute role="admin">
       <AdminDashboard />
-    </ProtectedAdminRoute>
+    </ProtectedRoute>
   }
 />
 <Route path="/admin/hotels" element={
-  <ProtectedAdminRoute> 
+  <ProtectedRoute role="admin"> 
     <ManageHotels />
-  </ProtectedAdminRoute>
+  </ProtectedRoute>
  } />
  <Route path="/admin/villas" element={
-  <ProtectedAdminRoute> 
+  <ProtectedRoute role="admin"> 
     <ManageVilla />
-  </ProtectedAdminRoute>
+  </ProtectedRoute>
  } />
 <Route path="/admin/camping" element={
-  <ProtectedAdminRoute>
+  <ProtectedRoute role="admin">
   <ManageCamping />
-  </ProtectedAdminRoute>
+  </ProtectedRoute>
   } />
   <Route path="/admin/bookings" element={
-  <ProtectedAdminRoute>
+  <ProtectedRoute role="admin">
   <AdminBookings />
-  </ProtectedAdminRoute>
+  </ProtectedRoute>
   } />
 <Route path="/admin/hotels/add" element={
-  <ProtectedAdminRoute>
+  <ProtectedRoute role="admin">
   <AddHotel />
-  </ProtectedAdminRoute>} />
+  </ProtectedRoute>} />
 <Route path="/admin/hotels/edit/:id" element={
-  <ProtectedAdminRoute>
+  <ProtectedRoute role="admin">
   <EditHotel />
-  </ProtectedAdminRoute>} />
+  </ProtectedRoute>} />
   <Route path="/admin/villas/add" element={
-  <ProtectedAdminRoute>
+  <ProtectedRoute role="admin">
   <AddVilla />
-  </ProtectedAdminRoute>} />
+  </ProtectedRoute>} />
 <Route path="/admin/villas/edit/:id" element={
-  <ProtectedAdminRoute>
+  <ProtectedRoute role="admin">
   <EditVilla />
-  </ProtectedAdminRoute>} />
+  </ProtectedRoute>} />
 <Route path="/admin/camping/add" element={
-  <ProtectedAdminRoute>
+  <ProtectedRoute role="admin">
   <AddCamping />
-  </ProtectedAdminRoute>} />
+  </ProtectedRoute>} />
 <Route path="/admin/campings/edit/:id" element={
-  <ProtectedAdminRoute>
+  <ProtectedRoute role="admin">
   <EditCamping />
-  </ProtectedAdminRoute>} />
+  </ProtectedRoute>} />
 <Route path="/admin/charts" element={
-  <ProtectedAdminRoute>
+  <ProtectedRoute role="admin">
   <AdminCharts />
-  </ProtectedAdminRoute>} />
+  </ProtectedRoute>} />
   <Route path="/admin/coupons" element={
-  <ProtectedAdminRoute> 
+  <ProtectedRoute role="admin"> 
     <AdminCoupons />
-  </ProtectedAdminRoute>
+  </ProtectedRoute>
  } />
  <Route path="/admin/offers" element={
-  <ProtectedAdminRoute> 
+  <ProtectedRoute role="admin"> 
     <AdminOffers />
-  </ProtectedAdminRoute>
+  </ProtectedRoute>
  } />
+ <Route path="/admin/room-availability" element={
+  <ProtectedRoute role="admin"> 
+    <AdminRoomAvailability />
+  </ProtectedRoute>
+ } />
+ <Route path="/admin/villa-availability" element={
+  <ProtectedRoute role="admin"> 
+    <AdminVillaAvailability />
+  </ProtectedRoute>
+ } />
+ <Route path="/admin/camping-availability" element={
+  <ProtectedRoute role="admin"> 
+    <AdminCampingAvailability />
+  </ProtectedRoute>    
+ }/>
 
   </Route>
           </Route>

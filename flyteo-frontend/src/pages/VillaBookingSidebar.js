@@ -59,20 +59,20 @@ const today = new Date().toISOString().split("T")[0];
 
   const [showPopup, setShowPopup] = useState(false);
   const proceedBooking = () => {
-    setShowPopup(true);
-    // if (!checkIn || !checkOut) {
-    //   alert("Please select dates");
-    //   return;
-    // }
+    // setShowPopup(true);
+    if (!checkIn || !checkOut) {
+      alert("Please select dates");
+      return;
+    }
 
-    // nav(
-    //   `/booking?villaId=${villa.id}` +
-    //   `&checkIn=${checkIn}` +
-    //   `&checkOut=${checkOut}` +
-    //   `&adults=${adults}` +
-    //   `&children=${children}` +
-    //   `&price=${totalPrice}`
-    // );
+    nav(
+      `/booking?villaId=${villa.id}` +
+      `&checkIn=${checkIn}` +
+      `&checkOut=${checkOut}` +
+      `&adults=${adults}` +
+      `&children=${children}` +
+      `&price=${totalPrice}`
+    );
   };
 
   return (
@@ -111,6 +111,7 @@ const today = new Date().toISOString().split("T")[0];
           type="date"
           placeholder="Check-out Date"
           className="w-full p-3 border rounded"
+          min={checkIn || today}
           value={checkOut}
           onChange={e => setCheckOut(e.target.value)}
         />

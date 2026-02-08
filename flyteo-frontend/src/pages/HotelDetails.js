@@ -8,7 +8,7 @@ import "swiper/css/navigation";
 import "swiper/css/thumbs";
 import AddReviews from "./AddReviews";
 import Reviews from "./Reviews";
-import CancellationPolicy from "./CancellationPolicy";
+import { calculateRoomPrice } from "../hooks/priceUtils";
 
 
 export default function HotelDetails() {
@@ -129,7 +129,12 @@ useEffect(() => {
     const start = new Date(checkIn);
     const end = new Date(checkOut);
     const nights = (end - start) / (1000 * 60 * 60 * 24);
-    setTotalPrice(nights > 0 ? nights * getFinalRoomPrice(selectedRoom.price) * rooms : 0);
+    setTotalPrice(nights > 0 ? nights * calculateRoomPrice({
+        basePrice: selectedRoom?.price,
+        checkIn,
+        dayWisePricing: hotel.dayWisePricing,
+        hotelDiscount: hotel.discount
+      }) * rooms : 0);
   }, [checkIn, checkOut, selectedRoom]);
 
   const todayCheck = new Date().toISOString().split("T")[0];
@@ -163,64 +168,29 @@ const roomImages =
 
 const [showPopup, setShowPopup] = useState(false);
 
-const getDayName = () => {
-  return new Date().toLocaleDateString("en-US", {
-    weekday: "long"
-  }).toUpperCase();
-};
-
-const todayDay = getDayName();
-
-const getFinalRoomPrice = (roomBasePrice) => {
-  if (!checkIn) return roomBasePrice;
-
-  const dayName = new Date(checkIn)
-    .toLocaleDateString("en-US", { weekday: "long" })
-    .toUpperCase();
-
-  let price = roomBasePrice;
-
-  // 🔹 Day-wise percentage
-  const dayRule = hotel.dayWisePricing?.find(
-    d => d.day === dayName
-  );
-
-  if (dayRule) {
-    price = price - (price * dayRule?.percentage) / 100;
-  }
-
-  // 🔹 Hotel discount
-  if (hotel.discount > 0) {
-    price = price - (price * hotel.discount) / 100;
-  }
-
-  return Math.round(price);
-};
-
-
 
 const checkAvailability = async () => {
   
-  setShowPopup(true);
+  // setShowPopup(true);
 
-  // const res = await api.post(
-  //   "/check-availability/hotel-room",
-  //   {
-  //     hotelId: id,
-  //     roomType: selectedRoom.type,
-  //     acType: selectedRoom.acType,
-  //     checkIn,
-  //     checkOut,
-  //     roomsRequested: rooms
-  //   }
-  // );
+  const res = await api.post(
+    "/check-availability/hotel-room",
+    {
+      hotelId: id,
+      roomType: selectedRoom.type,
+      acType: selectedRoom.acType,
+      checkIn,
+      checkOut,
+      roomsRequested: rooms
+    }
+  );
 
-  // setAvailability(res.data.available);
-  // setAvailabilityMsg(
-  //   res.data.available
-  //     ? `✅ ${res.data.availableRooms} rooms available`
-  //     : "❌ Not enough rooms available"
-  // );
+  setAvailability(res.data.available);
+  setAvailabilityMsg(
+    res.data.available
+      ? `✅ ${res.data.availableRooms} rooms available`
+      : "❌ Not enough rooms available"
+  );
 };
 const maxGuests =
   selectedRoom && rooms
@@ -398,7 +368,12 @@ useEffect(() => {
 
   <div className="space-y-4">
     {hotel.room.map(room => {
-      const finalPrice = getFinalRoomPrice(room.price);
+      const finalPrice = calculateRoomPrice({
+        basePrice: room.price,
+        checkIn,
+        dayWisePricing: hotel.dayWisePricing,
+        hotelDiscount: hotel.discount
+      }) ;
 
       return (
         <div
@@ -493,12 +468,17 @@ useEffect(() => {
      
     {/* ROOM PRICE */}
     <p className="text-3xl font-bold text-palmGreen">
-  ₹{selectedRoom ? getFinalRoomPrice(selectedRoom.price) : "—"}
+  ₹{selectedRoom ? calculateRoomPrice({
+        basePrice: selectedRoom?.price,
+        checkIn,
+        dayWisePricing: hotel.dayWisePricing,
+        hotelDiscount: hotel.discount
+      }): "—"}
   <span className="text-palmGreen-200 text-sm">
     {" "}+ ₹{hotel.taxes}
   </span>
   <span className="text-gray-500 text-sm">
-    {" "}(incl. taxes) / night
+    {" "}(excl. taxes) / night
   </span>
 </p>
 
@@ -525,7 +505,7 @@ useEffect(() => {
           type="date"
           className="w-full border p-2 rounded mt-1"
           value={checkOut}
-          min={checkIn || undefined}
+          min={checkIn || todayCheck}
           onChange={(e) => setCheckOut(e.target.value)}
         />
       </div>
@@ -544,9 +524,15 @@ useEffect(() => {
           }}
         >
           {hotel.room.map((room) => (
-            <option key={room.id} value={room.id}>
-              {room.type} ({room.acType}) — ₹{room.price}
-            </option>
+           <option
+  key={room.id}
+  value={room.id}
+  disabled={room.availableRooms <= 0}
+>
+  {room.type} ({room.acType}) — ₹{room.price}
+  {room.availableRooms <= 0 ? " (Sold Out)" : ""}
+</option>
+
           ))}
         </select>
       </div>
@@ -701,10 +687,7 @@ useEffect(() => {
     </div>
   </div>
 </div>
-  <div className="space-y-4">
-<AddReviews hotelId={hotel.id} onReviewAdded={() => {}} />
-<Reviews hotelId={hotel.id} />
-  </div>
+ 
 
 {nearbyHotels.length > 0 && (
   <div className="mt-16">
@@ -749,7 +732,10 @@ useEffect(() => {
 )}
 
       </div>
-      <CancellationPolicy/>
+     <div className="grid grid-cols-1 md:grid-cols-1 gap-2">
+<AddReviews hotelId={hotel.id} onReviewAdded={() => {}} />
+<Reviews hotelId={hotel.id} />
+  </div>
     </div>
   );
 }

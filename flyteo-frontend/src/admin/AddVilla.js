@@ -15,6 +15,8 @@ export default function AddVilla() {
     discount:"",
     advancePaymentAllowed: false,
     advancePercent: "",
+    adminEmail: "",
+    adminPassword: "",
 
     maxGuests: "",
     includedGuests: "",
@@ -156,7 +158,16 @@ export default function AddVilla() {
     onChange={(e) => setVilla({ ...villa, mapLocation: e.target.value })}
   />
         </div>
-
+<div>
+  <label className="font-medium">Taxes of Villa</label>
+  <input
+    type="number"
+    className="w-full p-3 border rounded"
+    value={villa.taxes || ""}
+    onChange={(e) => setVilla({ ...villa, taxes: Number(e.target.value) })}
+    placeholder="Example: 10"
+  />
+</div>
         <div className="border p-4 rounded">
   <h2 className="font-heading text-xl mb-3">
     Day-wise Price Percentage
@@ -180,6 +191,7 @@ export default function AddVilla() {
     </div>
   ))}
 </div>
+
 
         {/* IMAGES */}
         <div className="mt-6">
@@ -442,6 +454,17 @@ export default function AddVilla() {
     setVilla({ ...villa, securityDeposit: e.target.value })
   }
 />
+<div>
+  <label className="font-medium">Viila Admin Email</label>
+  <input type="email" className="w-full p-3 border rounded"
+    onChange={(e) => setVilla({ ...villa, adminEmail: e.target.value })}/>
+</div>
+
+<div>
+  <label className="font-medium">Viila Admin Password</label>
+  <input type="password" className="w-full p-3 border rounded"
+    onChange={(e) => setVilla({ ...villa, adminPassword: e.target.value })}/>
+</div>
 {/* ADVANCE PAYMENT SETTINGS */}
 <div className="border p-4 rounded">
   <h2 className="font-heading text-xl mb-3">

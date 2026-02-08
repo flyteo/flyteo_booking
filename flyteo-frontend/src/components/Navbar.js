@@ -3,30 +3,27 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import logo from "../assets/flyteo-logo.png";
 import { FaWhatsapp } from "react-icons/fa";
 import { MdLocalPhone } from "react-icons/md";
+import  { useAuth }  from "../context/AuthContext";
 
 export default function Navbar() {
   const nav = useNavigate();
   const location = useLocation();
-
-  const [user, setUser] = useState(null);
+  const { user, logout, loading } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Refresh navbar on route change
-  useEffect(() => {
-    const u = localStorage.getItem("user");
-    setUser(u ? JSON.parse(u) : null);
-    setMenuOpen(false); // close menu on route change
-  }, [location]);
+   // 🚨 wait until auth is restored
+  if (loading) return null;
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setUser(null);
-    nav("/login");
-  };
+  // 🚫 hide navbar for admin dashboards
+  if (
+    user &&
+    (user.role === "admin" ||
+      user.role === "hotel-admin" ||
+      user.role === "villa-admin")
+  ) {
+    return null;
+  }
 
-  // Hide navbar for admin users
-  if (user?.role === "admin") return null;
 
   return (
   <header className="bg-sand shadow sticky top-0 z-50">
@@ -44,7 +41,7 @@ export default function Navbar() {
 
     {/* CENTER: LOGO + NAME */}
     <Link
-      to="/"
+      to="/home"
       className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2"
     >
       <img
@@ -83,7 +80,7 @@ export default function Navbar() {
   <div className="hidden md:flex container mx-auto px-6 py-4 items-center justify-between">
 
     {/* LEFT: LOGO */}
-    <Link to="/" className="flex items-center gap-3">
+    <Link to="/home" className="flex items-center gap-3">
       <img src={logo} alt="Flyteo" className="w-12 h-12" />
       <div>
         <h1 className="font-heading text-xl text-palmGreen">
@@ -158,20 +155,28 @@ function NavLinks({ user, logout, mobile }) {
 
       {user ? (
         <>
-          {/* {user.role === "user" && (
+          {user.role === "user" && (
             <Link className={base} to="/my-bookings">
               My Bookings
             </Link>
-          )} */}
+          )}
 
-          {/* {user.role === "hotel-admin" && (
+          {user.role === "hotel-admin" && (
             <Link
               className={`${base} font-semibold text-palmGreen`}
               to="/hotel-admin/dashboard"
             >
               Hotel Admin
             </Link>
-          )} */}
+          )}
+           {user.role === "villa-admin" && (
+            <Link
+              className={`${base} font-semibold text-palmGreen`}
+              to="/villa-admin/dashboard"
+            >
+              Villa Admin
+            </Link>
+          )}
 
           <button
             onClick={logout}

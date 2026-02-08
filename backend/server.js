@@ -23,6 +23,9 @@ import availabilityRoutes from "./src/routes/availabilityRoom.js";
 import searchableRoutes from "./src/routes/search.js";
 import invoiceRoutes from "./src/routes/invoice.js";
 import contactRoutes from "./src/routes/contact.js";
+import calenderRoutes from "./src/controller/calender.js";
+import villaAdminRoutes from "./src/routes/villaAdmin.js";
+import paymentRoutes from "./src/payment/gateway_order.js"
 
 const app = express();
 app.use(express.json());
@@ -46,6 +49,9 @@ app.use("/api/check-availability", availabilityRoutes);
 app.use("/api/search", searchableRoutes);
 app.use("/api/ebill-booking", invoiceRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/occupancy", calenderRoutes);
+app.use("/api/villa-admin", villaAdminRoutes);
+app.use("/api/payment",paymentRoutes);
 
 app.listen(process.env.PORT, () =>
       console.log(`Backend running on port ${process.env.PORT}`)

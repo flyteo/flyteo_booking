@@ -49,6 +49,7 @@ export default function AddCamping() {
     advancePercent: camp.advancePaymentAllowed
       ? Number(camp.advancePercent)
       : null,
+      taxes: Number(camp.taxes || 0),
           // defaultPrice: Number(camp.defaultPrice),
          campingpricing: Object.fromEntries(
       Object.entries(camp.campingpricing).map(([day, v]) => [
@@ -265,6 +266,16 @@ export default function AddCamping() {
       />
     </div>
   ))}
+</div>
+<div>
+  <label className="font-medium">Taxes of Camping</label>
+  <input
+    type="number"
+    className="w-full p-3 border rounded"
+    value={camp.taxes || ""}
+    onChange={(e) => setCamp({ ...camp, taxes: e.target.value })}
+    placeholder="Example: 10"
+  />
 </div>
 {/* ADVANCE PAYMENT SETTINGS */}
 <div className="border p-4 rounded">

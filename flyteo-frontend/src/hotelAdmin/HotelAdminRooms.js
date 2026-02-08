@@ -3,201 +3,192 @@ import api from "../axios";
 import HotelAdminSidebar from "./HotelAdminSidebar";
 
 export default function HotelAdminRooms() {
-  const [rooms, setRooms] = useState([]);
-  const [newRoom, setNewRoom] = useState({
-    type: "",
-    acType: "",
-    price: "",
-    maxPersons: "",
-    totalRooms: ""
-  });
+  const token = localStorage.getItem("token");
 
-  useEffect(() => {
-    loadRooms();
-  }, []);
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [confirmData,setConfirmData] =useState(null);
+  const [calendar, setCalendar] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const loadRooms = async () => {
-    const token = localStorage.getItem("token");
+  const loadCalendar = async () => {
+    if (!from || !to) return;
+
+    setLoading(true);
 
     const res = await api.get(
-      "/hotel-admin/my-rooms",
+      `/occupancy/calendar?from=${from}&to=${to}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    setRooms(res.data);
+    setCalendar(res.data);
+    setLoading(false);
   };
 
-  const updateRoom = async (id, updatedRoom) => {
-    const token = localStorage.getItem("token");
+  const normalizeDate = (dateStr) => {
+  const [year, month, day] = dateStr.split("-").map(Number);
 
-    await api.put(
-      `/hotel-admin/rooms/${id}`,
-      updatedRoom,
+  // month - 1 because JS months are 0-based
+  return new Date(year, month - 1, day);
+};
+
+  const updateBlockedRooms = async (roomId, date, blockedRooms, maxAllowed) => {
+    if (blockedRooms < 0 || blockedRooms > maxAllowed) {
+      alert(`Blocked rooms must be between 0 and ${maxAllowed}`);
+      return;
+    }
+
+    await api.post(
+      "/hotel-admin/availability/block",
+      { roomId, date, blockedRooms },
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    loadRooms();
+    loadCalendar();
   };
 
-  const deleteRoom = async (id) => {
-    const token = localStorage.getItem("token");
-
-    await api.put(
-      `/hotel-admin/rooms/${id}`,
-      { _delete: true }, // You will handle this in backend later
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    loadRooms();
-  };
-
-  const addRoom = async () => {
-    const token = localStorage.getItem("token");
-
-    await api.put(
-      "/hotel-admin/update-hotel",
-      { rooms: [...rooms, newRoom] },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    setNewRoom({ type: "", acType: "", price: "", maxPersons: "", totalRooms: "" });
-    loadRooms();
-  };
+  
 
   return (
     <div className="flex">
       <HotelAdminSidebar />
 
-      <div className="ml-72 w-full p-8">
-
-        <h1 className="text-3xl text-palmGreen font-heading mb-6">
-          Manage Rooms
+      <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow">
+        <h1 className="text-3xl font-heading text-palmGreen mb-6">
+          Room Availability Calendar
         </h1>
 
-        {/* EXISTING ROOMS */}
-        <div className="space-y-6">
+        {/* DATE RANGE */}
+        <div className="flex flex-wrap gap-4 mb-6">
+          <div>
+            <label className="block text-sm font-medium">From</label>
+            <input
+              type="date"
+              className="border p-2 rounded"
+              value={from}
+              onChange={(e) => setFrom(e.target.value)}
+            />
+          </div>
 
-          {rooms.map((room) => (
-            <div key={room._id} className="bg-white shadow p-6 rounded">
-              <h2 className="font-heading text-xl mb-3">{room.type} ({room.acType})</h2>
+          <div>
+            <label className="block text-sm font-medium">To</label>
+            <input
+              type="date"
+              className="border p-2 rounded"
+              value={to}
+              onChange={(e) => setTo(e.target.value)}
+            />
+          </div>
 
-              <div className="grid grid-cols-2 gap-4">
+          <button
+            onClick={loadCalendar}
+            className="bg-palmGreen text-white px-6 py-2 rounded mt-6"
+          >
+            Load Availability
+          </button>
+        </div>
 
-                <div>
-                  <label>Price</label>
-                  <input
-                    type="number"
-                    className="p-2 border rounded w-full"
-                    value={room.price}
-                    onChange={(e) =>
-                      updateRoom(room._id, { ...room, price: e.target.value })
-                    }
-                  />
-                </div>
+        {loading && <p>Loading availability…</p>}
 
-                <div>
-                  <label>Max Persons</label>
-                  <input
-                    type="number"
-                    className="p-2 border rounded w-full"
-                    value={room.maxPersons}
-                    onChange={(e) =>
-                      updateRoom(room._id, { ...room, maxPersons: e.target.value })
-                    }
-                  />
-                </div>
+        {/* CALENDAR */}
+        {calendar.map((day) => (
+          <div key={day.date} className="mb-8">
+            <h2 className="font-semibold text-xl mb-3">
+             {day.date}
+            </h2>
 
-                <div>
-                  <label>Total Rooms</label>
-                  <input
-                    type="number"
-                    className="p-2 border rounded w-full"
-                    value={room.totalRooms}
-                    onChange={(e) =>
-                      updateRoom(room._id, { ...room, totalRooms: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
+            <div className="space-y-4">
+              {day.rooms.map((r) => {
+                const maxBlockable = r.total - r.booked;
 
-              <button
-                className="mt-3 bg-red-600 text-white px-4 py-2 rounded"
-                onClick={() => deleteRoom(room._id)}
-              >
-                Delete Room Type
-              </button>
+                return (
+                  <div
+                    key={r.roomId}
+                    className="bg-white shadow rounded p-4 flex flex-col md:flex-row justify-between items-center"
+                  >
+                    <div>
+                      <p className="font-semibold">{r.roomType}</p>
+                      <p className="text-sm text-gray-600">
+                        Total: {r.total} | Booked: {r.booked} | Available:{" "}
+                        <span className="font-bold text-green-600">
+                          {r.available}
+                        </span>
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-3 mt-3 md:mt-0">
+                      <input
+                        type="number"
+                        min="0"
+                        max={maxBlockable}
+                        defaultValue={r.blocked}
+                        className="w-20 border p-2 rounded"
+                        onBlur={(e) => {
+  const value = Number(e.target.value);
+
+  if (value < 0 || value > maxBlockable) {
+    alert(`Max blockable rooms: ${maxBlockable}`);
+    return;
+  }
+
+  setConfirmData({
+    roomId: r.roomId,
+    date: day.date,
+    blockedRooms: value,
+    maxBlockable
+  });
+}}
+
+                      />
+                      <span className="text-sm text-gray-500">
+                        Blocked
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          ))}
-
-        </div>
-
-        {/* ADD NEW ROOM */}
-        <h2 className="font-heading text-xl mt-10 mb-3">Add New Room Type</h2>
-
-        <div className="bg-white shadow p-6 rounded grid grid-cols-2 gap-4">
-
-          <div>
-            <label>Room Type</label>
-            <select
-              className="p-2 border rounded w-full"
-              value={newRoom.type}
-              onChange={(e) => setNewRoom({ ...newRoom, type: e.target.value })}
-            >
-              <option>Deluxe</option>
-              <option>Double Bed</option>
-              <option>Single Bed</option>
-            </select>
           </div>
+        ))}
+        {confirmData && (
+  <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+    <div className="bg-white rounded-xl p-6 w-full max-w-sm shadow-xl">
 
-          <div>
-            <label>AC Type</label>
-            <select
-              className="p-2 border rounded w-full"
-              value={newRoom.acType}
-              onChange={(e) => setNewRoom({ ...newRoom, acType: e.target.value })}
-            >
-              <option>AC</option>
-              <option>Non-AC</option>
-            </select>
-          </div>
+      <h2 className="text-xl font-semibold mb-3 text-palmGreen">
+        Confirm Room Blocking
+      </h2>
 
-          <div>
-            <label>Price</label>
-            <input
-              type="number"
-              className="p-2 border rounded w-full"
-              value={newRoom.price}
-              onChange={(e) => setNewRoom({ ...newRoom, price: e.target.value })}
-            />
-          </div>
+      <p className="text-sm text-gray-700 mb-4">
+        Are you sure you want to block{" "}
+        <b>{confirmData.blockedRooms}</b> room(s) for this date?
+      </p>
 
-          <div>
-            <label>Max Persons</label>
-            <input
-              type="number"
-              className="p-2 border rounded w-full"
-              value={newRoom.maxPersons}
-              onChange={(e) => setNewRoom({ ...newRoom, maxPersons: e.target.value })}
-            />
-          </div>
-
-          <div>
-            <label>Total Rooms</label>
-            <input
-              type="number"
-              className="p-2 border rounded w-full"
-              value={newRoom.totalRooms}
-              onChange={(e) => setNewRoom({ ...newRoom, totalRooms: e.target.value })}
-            />
-          </div>
-        </div>
+      <div className="flex justify-end gap-3 mt-6">
+        <button
+          onClick={() => setConfirmData(null)}
+          className="px-4 py-2 border rounded"
+        >
+          Cancel
+        </button>
 
         <button
-          className="bg-palmGreen text-white px-6 py-3 rounded mt-4"
-          onClick={addRoom}
+          onClick={async () => {
+            await updateBlockedRooms(
+              confirmData.roomId,
+              confirmData.date,
+              confirmData.blockedRooms,
+              confirmData.maxBlockable
+            );
+            setConfirmData(null);
+          }}
+          className="bg-red-600 text-white px-4 py-2 rounded"
         >
-          + Add Room Type
+          Confirm
         </button>
+      </div>
+    </div>
+  </div>
+)}
 
       </div>
     </div>

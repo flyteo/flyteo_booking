@@ -38,3 +38,18 @@ export const hotelAdminOnly = (req, res, next) => {
 
   next();
 };
+export const villaAdminOnly = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ msg: "Not logged in" });
+  }
+
+  if (req.user.role !== "villa-admin") {
+    return res.status(403).json({ msg: "Villa admin access only" });
+  }
+
+  if (!req.user.villaId) {
+    return res.status(403).json({ msg: "Villa not assigned" });
+  }
+
+  next();
+};

@@ -12,7 +12,7 @@ const [open, setOpen] = useState(false);
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    nav("/");    // redirect to website home page
+    window.location.href = "/"; // redirect to website home page
   };
 
   return (
@@ -113,6 +113,20 @@ const [open, setOpen] = useState(false);
           label="Analytics"
           close={setOpen}
         />
+        <NavLink
+          to="/admin/room-availability"
+          label="Room Availability"
+          close={setOpen}
+        />
+        <NavLink
+          to="/admin/villa-availability"
+          label="Villa Availability"
+          close={setOpen}
+          />
+          <NavLink 
+          to="/admin/camping-availability"
+          label="Camping Availability"
+          close={setOpen} />
 
         <button
           onClick={logout}

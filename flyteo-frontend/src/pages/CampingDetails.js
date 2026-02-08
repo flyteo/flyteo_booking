@@ -9,7 +9,6 @@ import Reviews from "./Reviews";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import CancellationPolicy from "./CancellationPolicy";
 
 export default function CampingDetails() {
   const { id } = useParams();
@@ -17,6 +16,10 @@ export default function CampingDetails() {
 
   const [camp, setCamp] = useState(null);
   const [date, setDate] = useState("");
+const [available, setAvailable] = useState(true);
+const [checking, setChecking] = useState(false);
+const [dateError, setDateError] = useState("");
+
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [showPopup, setShowPopup] = useState(false);
@@ -27,9 +30,36 @@ export default function CampingDetails() {
       .catch(console.error);
   }, [id]);
 
+  const checkCampingAvailability = async (selectedDate) => {
+  if (!selectedDate) return;
+
+  try {
+    setChecking(true);
+    setDateError("");
+
+    const res = await api.post("/campings/check-availability", {
+      campingId: id,
+      date: selectedDate
+    });
+
+    if (!res.data.available) {
+      setAvailable(false);
+      setDateError("Camping is not available on this date");
+    } else {
+      setAvailable(true);
+    }
+  } catch {
+    setAvailable(false);
+    setDateError("Unable to check availability");
+  } finally {
+    setChecking(false);
+  }
+};
+
   if (!camp) return <div className="p-10 text-center">Loading...</div>;
 
   const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
+  const todaydate = new Date().toISOString().split("T")[0];
   const todayPrice = camp.campingpricing?.find(p => p.day === today);
 
   const adultPrice = todayPrice?.adultPrice || 0;
@@ -41,7 +71,6 @@ export default function CampingDetails() {
       {/* 🔥 HERO SLIDER */}
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
-        navigation
         pagination={{ clickable: true }}
         autoplay={{ delay: 3500 }}
         loop
@@ -137,13 +166,6 @@ export default function CampingDetails() {
             </div>
           )}
 
-          {/* REVIEWS */}
-          <div className="space-y-4">
-            <AddReviews campingId={camp.id} onReviewAdded={() => {}} />
-            <Reviews campingId={camp.id} />
-          </div>
-
-         
         </div>
 
         {/* RIGHT BOOKING CARD */}
@@ -153,7 +175,34 @@ export default function CampingDetails() {
               Book This Camping
             </h3>
 
-            <Input label="Select Date" type="date" value={date} onChange={setDate} />
+<Input
+  label="Select Date"
+  type="date"
+  value={date}
+  min={todaydate}
+  onChange={(val) => {
+    setDate(val);
+    checkCampingAvailability(val);
+  }}
+/>
+            {checking && (
+  <p className="text-sm text-gray-500 mt-1">
+    Checking availability…
+  </p>
+)}
+
+{dateError && (
+  <p className="text-sm text-red-600 mt-1">
+    {dateError}
+  </p>
+)}
+
+{available && date && !checking && (
+  <p className="text-sm text-green-600 mt-1">
+    Camping available on selected date
+  </p>
+)}
+
             <Input label="Adults" type="number" value={adults} onChange={setAdults} min={1} />
             <Input label="Children" type="number" value={children} onChange={setChildren} min={0} />
 
@@ -165,16 +214,20 @@ export default function CampingDetails() {
               <Row label="Total Payable" value={`₹${total}`} bold />
             </div>
 
-            {/* <button
-              disabled={!date}
-              onClick={() =>
-                nav(`/booking?campingId=${id}&date=${date}&adults=${adults}&children=${children}`)
-              }
-              className="mt-4 w-full bg-palmGreen text-white py-3 rounded-lg text-lg disabled:opacity-50"
-            >
-              Proceed to Booking
-            </button> */}
-             <button
+            <button
+  disabled={!date || !available || checking}
+  onClick={() =>
+    nav(
+      `/booking?campingId=${id}&date=${date}&adults=${adults}&children=${children}`
+    )
+  }
+  className="mt-4 w-full bg-palmGreen text-white py-3 rounded-lg text-lg disabled:opacity-50"
+>
+  {available ? "Proceed to Booking" : "Not Available"}
+</button>
+ {/* REVIEWS */}
+         
+             {/* <button
               disabled={!date}
               onClick={() =>
                 setShowPopup(true)
@@ -182,7 +235,7 @@ export default function CampingDetails() {
               className="mt-4 w-full bg-palmGreen text-white py-3 rounded-lg text-lg disabled:opacity-50"
             >
               Proceed to Booking
-            </button>
+            </button> */}
             {showPopup && (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
     <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 relative">
@@ -232,9 +285,12 @@ export default function CampingDetails() {
 
           </div>
         </div>
-
+ 
       </div>
-       <CancellationPolicy />
+   <div className="grid grid-cols-1 md:grid-cols-1 gap-2">
+            <AddReviews campingId={camp.id} onReviewAdded={() => {}} />
+            <Reviews campingId={camp.id} />
+          </div>
     </div>
   );
 }

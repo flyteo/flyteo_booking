@@ -10,7 +10,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import VillaBookingSidebar from "./VillaBookingSidebar";
-import CancellationPolicy from "./CancellationPolicy";
+
 
 export default function VillaDetails() {
   const { id } = useParams();
@@ -144,7 +144,6 @@ export default function VillaDetails() {
       <AddReviews villaId={villa.id} onReviewAdded={()=>{}} />
       <Reviews villaId={villa.id} />
         </div>
-      <CancellationPolicy/>
     </div>
   );
 }

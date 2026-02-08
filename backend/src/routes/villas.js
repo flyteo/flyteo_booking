@@ -1,6 +1,7 @@
 import express from "express";
 import auth, { adminOnly } from "../middlewares/auth.js";
 import prisma from '../prisma.js';
+import bcrypt from "bcryptjs";
 
 const router = express.Router();
 
@@ -51,6 +52,7 @@ router.get("/:id", async (req, res) => {
       include: {
         villaimage: true,
         villalayout: true,
+        day_wise_percentage:true,
 
         // ✅ AMENITIES
         villaamenity: {
@@ -93,6 +95,7 @@ router.post("/", auth, adminOnly, async (req, res) => {
       description,
       location,
       address,
+      taxes,
       mapLocation,
       discount,
       advancePaymentAllowed,
@@ -108,6 +111,8 @@ router.post("/", auth, adminOnly, async (req, res) => {
       checkOutTime,
       cancellationPolicy,
       securityDeposit,
+      adminEmail,
+      adminPassword,
 
       images = [],
       villaoffer = [],
@@ -116,11 +121,14 @@ router.post("/", auth, adminOnly, async (req, res) => {
       layout
     } = req.body;
 
+const hashedPassword = await bcrypt.hash(adminPassword, 10);
+    const resultVilla = await prisma.$transaction(async (tx) => {
     const villa = await prisma.villa.create({
       data: {
         name,
         description,
         location,
+        taxes:Number(taxes),
          advancePaymentAllowed: Boolean(advancePaymentAllowed),
       advancePercent:
         advancePaymentAllowed && advancePercent
@@ -202,7 +210,27 @@ day_wise_percentage: dayWisePercentage
       }
     });
 
-    res.json(villa);
+     const villaAdmin = await tx.user.create({
+        data: {
+          name: `${name} Villa Admin`,
+          email: adminEmail,
+          passwordHash: hashedPassword,
+          role: "villa-admin",
+          villaId: villa.id
+        }
+      });
+
+      await tx.user.update({
+    where: { id: villaAdmin.id },
+    data: {
+      villaId: villa.id
+    }
+  });
+
+      return villa;
+  })
+
+      res.json({ msg: "Villa added successfully", villa: resultVilla });
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: "Villa creation failed" });
@@ -250,6 +278,7 @@ router.put("/:id", auth, adminOnly, async (req, res) => {
         location,
         address,
         mapLocation,
+        taxes,
         discount: Number(discount),
         advancePaymentAllowed: Boolean(advancePaymentAllowed),
     advancePercent:

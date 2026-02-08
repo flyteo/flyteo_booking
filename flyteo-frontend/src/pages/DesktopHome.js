@@ -295,37 +295,49 @@ const handleSearch = () => {
     Popular Destinations
   </h2>
 
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-    {popularLocations.map((loc) => {
-      const bgImage =
-        locationBgMap[loc] ||
-        "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80";
+  <div className="flex gap-6 overflow-x-auto scrollbar-hide pb-4">
+  {popularLocations.map((loc) => {
+    const bgImage =
+      locationBgMap[loc] ||
+      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80";
 
-      return (
-        <div
-          key={loc}
-          onClick={() => nav(`/search?location=${loc}`)}
-          className="cursor-pointer relative h-48 rounded-xl overflow-hidden shadow group"
-          style={{
-            backgroundImage: `url(${bgImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          {/* Dark overlay */}
-          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition" />
+    return (
+      <div
+        key={loc}
+        onClick={() => nav(`/search?location=${encodeURIComponent(loc)}`)}
+        className="
+          cursor-pointer
+          relative
+          min-w-[260px] md:min-w-[320px]
+          h-48
+          rounded-xl
+          overflow-hidden
+          shadow
+          group
+          active:scale-95
+          transition
+        "
+        style={{
+          backgroundImage: `url(${bgImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition" />
 
-          {/* Text */}
-          <div className="absolute bottom-4 left-4 text-white">
-            <p className="text-lg font-bold">📍 {loc}</p>
-            <p className="text-sm opacity-90 text-brandOrange">
-              Hotels • Villas • Camping
-            </p>
-          </div>
+        {/* Text */}
+        <div className="absolute bottom-4 left-4 text-white">
+          <p className="text-lg font-bold">📍 {loc}</p>
+          <p className="text-sm opacity-90 text-brandOrange">
+            Hotels • Villas • Camping
+          </p>
         </div>
-      );
-    })}
-  </div>
+      </div>
+    );
+  })}
+</div>
+
 </div>
 
 

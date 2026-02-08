@@ -19,6 +19,26 @@ export default function EditHotel() {
     roomimage: [] 
   });
 
+  const DAYS = [
+  "SUNDAY",
+  "MONDAY",
+  "TUESDAY",
+  "WEDNESDAY",
+  "THURSDAY",
+  "FRIDAY",
+  "SATURDAY"
+];
+
+const [dayWisePercentage, setDayWisePercentage] = useState({
+  SUNDAY: "",
+  MONDAY: "",
+  TUESDAY: "",
+  WEDNESDAY: "",
+  THURSDAY: "",
+  FRIDAY: "",
+  SATURDAY: ""
+});
+
 useEffect(() => {
   api.get("/hotels/amenities")
     .then(res => setAmenityList(res.data));
@@ -87,12 +107,36 @@ useEffect(() => {
     loudMusicAllowed: false
   }
 });
+// ✅ Convert array → object with all days
+const dayMap = {
+  SUNDAY: "",
+  MONDAY: "",
+  TUESDAY: "",
+  WEDNESDAY: "",
+  THURSDAY: "",
+  FRIDAY: "",
+  SATURDAY: ""
+};
+
+(res.data.day_wise_percentage || []).forEach(d => {
+  dayMap[d.day] = d.percentage;
+});
+
+setDayWisePercentage(dayMap);
+
+
     };
 
     loadHotel();
   }, [id]);
 
   if (!hotel) return <div className="p-10">Loading...</div>;
+
+  const cleanDayWisePercentage = Object.fromEntries(
+  Object.entries(dayWisePercentage)
+    .filter(([_, v]) => v !== "" && Number(v) > 0)
+    .map(([k, v]) => [k, Number(v)])
+);
 
   // 🔥 Handle Submit
   const handleSubmit = async (e) => {
@@ -118,7 +162,7 @@ useEffect(() => {
     advancePercent: hotel.advancePaymentAllowed
       ? Number(hotel.advancePercent)
       : null,
-
+    dayWisePercentage: cleanDayWisePercentage,
     hotelamenity: hotel.hotelamenity, // [Int]
     hoteloffer: hotel.hoteloffer,       // [Int]
     hotelcoupon: hotel.hotelcoupon,     // [Int]
@@ -261,6 +305,48 @@ room: hotel.room.map(
               }
             />
           </div>
+          {/* DAY WISE PRICING */}
+<div className="bg-white shadow rounded-xl p-6 mt-8">
+  <h2 className="text-xl font-heading text-palmGreen mb-4">
+    Day-wise Pricing Percentage
+  </h2>
+
+  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+    {DAYS.map(day => (
+      <div key={day}>
+        <label className="block text-sm font-semibold mb-1">
+          {day}
+        </label>
+
+        <input
+          type="number"
+          min="0"
+          max="100"
+          placeholder="0"
+          value={dayWisePercentage[day]}
+          onChange={(e) =>
+            setDayWisePercentage({
+              ...dayWisePercentage,
+              [day]:
+                e.target.value === ""
+                  ? ""
+                  : Math.min(100, Math.max(0, Number(e.target.value)))
+            })
+          }
+          className="w-full border p-2 rounded"
+        />
+
+        {dayWisePercentage[day] !== "" && (
+  <p className="text-xs text-green-600 mt-1">
+    Existing value
+  </p>
+)}
+
+      </div>
+    ))}
+  </div>
+</div>
+
 
           {/* Description */}
           <div>

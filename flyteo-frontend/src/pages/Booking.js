@@ -1,14 +1,22 @@
 import { useEffect, useState ,useMemo} from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api from "../axios";
-
+import {load} from "@cashfreepayments/cashfree-js";
 
 export default function Booking() {
+  let cashfree;
+  let initializeSDK=async function(){
+    cashfree = await load({
+      mode: "sandbox"
+    })
+  }
+  initializeSDK();
   const nav = useNavigate();
   const query = new URLSearchParams(useLocation().search);
  const [couponCode, setCouponCode] = useState("");
 const [appliedCoupon, setAppliedCoupon] = useState(null);
 const [couponMessage, setCouponMessage] = useState("");
+const [paymentChoice,setPaymentChoice] = useState("full");
 
 const [fullname, setFullname] = useState("");
 const [mobileno, setMobileno] = useState("");
@@ -32,7 +40,7 @@ const [selectedRoom, setSelectedRoom] = useState(null);
 const [adults, setAdults] = useState(Number(query.get("adults")) || 1);
 const [children, setChildren] = useState(Number(query.get("children")) || 0);
 const [roomCount,setRoomCount] = useState(Number(query.get("rooms")) || 1)
-
+const [orderId,setOrderId] = useState(null);
 
   // const selectedRoomType = query.get("roomType");
   // const selectedAcType = query.get("acType");
@@ -56,6 +64,33 @@ const villaAdults = Number(query.get("adults")) || 1;
 const villaChildren = Number(query.get("children")) || 0;
 const villaPriceFromUrl = Number(query.get("price")) || 0;
 
+const getDayWiseRoomPrice = ({
+  roomBasePrice,
+  checkIn,
+  dayWisePricing = [],
+  hotelDiscount = 0
+}) => {
+  let price = roomBasePrice;
+
+  if (checkIn) {
+    const dayName = new Date(checkIn)
+      .toLocaleDateString("en-US", { weekday: "long" })
+      .toUpperCase();
+
+    const rule = dayWisePricing.find(d => d.day === dayName);
+
+    if (rule) {
+      price = price - (price * rule.percentage) / 100;
+    }
+  }
+
+  // Hotel discount AFTER day-wise
+  if (hotelDiscount > 0) {
+    price = price - (price * hotelDiscount) / 100;
+  }
+
+  return Math.round(price);
+};
 
 const [type] = useState(
   hotelId ? "hotel" : campingId ? "camping" : "villa"
@@ -89,23 +124,40 @@ useEffect(() => {
 
   // Price calculation
  useEffect(() => {
-  if (!item || !selectedRoom || !checkIn || !checkOut || type !== "hotel") return;
+  if (
+    !item ||
+    !selectedRoom ||
+    !checkIn ||
+    !checkOut ||
+    type !== "hotel"
+  ) return;
 
   const sd = new Date(checkIn);
   const ed = new Date(checkOut);
+
   const nights = Math.ceil(
     (ed.getTime() - sd.getTime()) / (1000 * 60 * 60 * 24)
   );
-  if (nights <= 0) return;
-  const taxAmount = item.taxes || 0;
-  const base = [(selectedRoom.price * nights * roomCount) + (taxAmount)];
- 
-  // 🟢 HOTEL DISCOUNT
-  const hotelDiscount = item.discount
-    ? Math.round((base * item.discount) / 100)
-    : 0;
 
-  // 🟢 BEST ACTIVE OFFER
+  if (nights <= 0) return;
+
+  // 🔹 Day-wise + hotel discount price PER NIGHT
+  const pricePerNight = getDayWiseRoomPrice({
+    roomBasePrice: selectedRoom?.price,
+    checkIn,
+    dayWisePricing: item.day_wise_percentage,
+    hotelDiscount: item.discount
+  });
+
+  // 🔹 Room total
+  const roomTotal = pricePerNight * nights * roomCount;
+
+  // 🔹 Taxes
+  const taxAmount = item.taxes || 0;
+
+  const base = roomTotal + taxAmount;
+
+  // 🔹 BEST ACTIVE OFFER
   let offerDiscount = 0;
   const today = new Date();
 
@@ -128,13 +180,11 @@ useEffect(() => {
     }
   }
 
-  const final = Math.max(base - hotelDiscount - offerDiscount, 0);
+  const final = Math.max(base - offerDiscount, 0);
 
   setPrice({
     base,
-    adultPrice: 0,
-    childPrice: 0,
-    hotelDiscount,
+    hotelDiscount: 0, // already applied in pricePerNight
     offerDiscount,
     couponDiscount: 0,
     final
@@ -142,7 +192,16 @@ useEffect(() => {
 
   setAppliedCoupon(null);
   setCouponMessage("");
-}, [item,selectedRoom, checkIn, checkOut,roomCount]);
+
+}, [
+  item,
+  selectedRoom,
+  checkIn,
+  checkOut,
+  roomCount,
+  type
+]);
+
 
 const applyCoupon = () => {
   if (!couponCode) return;
@@ -217,6 +276,8 @@ useEffect(() => {
   const childTotal = children * priceRow.childPrice;
   const total = adultTotal + childTotal;
 
+  const taxtotal = total + item.taxes;
+
   setPrice({
     base: total,
     adultPrice:priceRow.adultPrice,
@@ -224,7 +285,7 @@ useEffect(() => {
     hotelDiscount: 0,
     offerDiscount: 0,
     couponDiscount: 0,
-    final: total
+    final: taxtotal
   });
 }, [item, type, date, adults, children]);
 
@@ -243,7 +304,9 @@ useEffect(() => {
   const extraGuestCost =
     extraGuests * item.extraGuestPrice * villaNights;
 
-  const baseTotal = baseVillaPrice + extraGuestCost;
+  const taxesVilla = item.taxes;
+
+  const baseTotal = baseVillaPrice + extraGuestCost + taxesVilla;
 
   // 🟢 VILLA DISCOUNT
   const villaDiscount = item.discount
@@ -309,6 +372,20 @@ const extraGuests =
     ? Math.max(totalGuestsVilla - item.includedGuests, 0)
     : 0;
 
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+
+  params.set("checkIn", checkIn);
+  params.set("checkOut", checkOut);
+  params.set("rooms", roomCount);
+  params.set("roomId", selectedRoom?.id || "");
+
+  window.history.replaceState(
+    null,
+    "",
+    `${window.location.pathname}?${params.toString()}`
+  );
+}, [checkIn, checkOut, roomCount, selectedRoom]);
 
 
 // const selectedRoom = useMemo(() => {
@@ -325,7 +402,7 @@ const advancePercent =
     : null;
 
 const payNowAmount =
-  advancePercent
+  paymentChoice === "advance"
     ? Math.round((price.final * advancePercent) / 100)
     : price.final;
 
@@ -334,14 +411,142 @@ const remainingAmount =
     ? price.final - payNowAmount
     : 0;
 
-
+useEffect(()=>{
+  if(!item?.advancePaymentAllowed){
+    setPaymentChoice("full");
+  }
+},[item]);
   // Submit booking
-  const handleBooking = async () => {
+
+  const getSessionId= async()=>{
+    try {
+      let res= await api.post("/payment/create-order");
+      if(res.data && res.data.payment_session_id){
+        console.log(res.data)
+        setOrderId(res.data.order_id);
+        return res.data.payment_session_id;
+      }
+      
+    } catch (error) {
+      
+    }
+  }
+
+
+//   const handleBooking = async () => {
+//   try {
+//     const token = localStorage.getItem("token");
+
+//      let payload = {};
+//     //  let sessionId = await getSessionId();
+//     //  let checkoutOptions = {
+//     //   paymentSessionId:sessionId,
+//     //   redirectTarget:"_modal"
+//     //  }
+
+//     //  cashfree.checkout(checkoutOptions).then((res)=>{
+//     //   console.log("payment Initiated");
+//     //  })
+
+//     if (type === "hotel") {
+//       payload = {
+//         type: "hotel",
+//         hotel: hotelId,
+//         camping: null,
+//         roomType: selectedRoom?.type,
+//         acType: selectedRoom?.acType,
+//         checkIn,
+//         checkOut,
+//         guests,
+//         fullname,
+//         mobileno,
+//         remainingAmount,
+//         roomCount:roomCount,
+//         totalAmount: price.final,
+//         paymentChoice
+//       };
+//     }
+
+//     if (type === "camping") {
+//       payload = {
+//         type: "camping",
+//         hotel: null,
+//         camping: campingId,
+//         roomType: null,
+//         acType: null,
+//         checkIn:date,
+//         checkOut: null,
+//         guests: adults + children,
+//         fullname,
+//         mobileno,
+//         remainingAmount,
+//       totalAmount: price.final,
+//       paymentChoice
+//       };
+//     }
+
+//     if (type === "villa") {
+//       payload = {
+//         type: "villa",
+//         hotel: null,
+//         camping: null,
+//         villa: villaId,
+//         roomType: null,
+//         acType: null,
+//         checkIn,
+//         checkOut,
+//         guests: totalGuestsVilla,
+//         fullname,
+//         mobileno,
+//         remainingAmount,
+//        totalAmount: price.final,
+//        paymentChoice
+//       };
+//     }
+
+// if (!fullname || !mobileno) {
+//   alert("Please enter full name and mobile number");
+//   return;
+// }
+// const res1 = await api.post(
+//       "/payment/create-order",
+//       payload,
+//       { headers: { Authorization: `Bearer ${token}` } }
+//     );
+
+//     const cashfree = new window.Cashfree();
+//     cashfree.checkout({
+//       paymentSessionId: res1.data.payment_session_id,
+//       redirectTarget: "_self"
+//     });
+//     const res = await api.post(
+//       "/bookings",
+//       payload,
+//       {
+//         headers: { Authorization: `Bearer ${token}` }
+//       }
+//     );
+
+//     const bookingId = res.data.id;
+    
+
+// //     nav(
+// //   `/payment?bookingId=${bookingId}` +
+// //   `&total=${price.final}` +
+// //   `&payNow=${payNowAmount}` +
+// //   `&remaining=${remainingAmount}`
+// // );
+
+//   } catch (err) {
+//     alert(err.response?.data?.msg || "Error creating booking");
+//     // nav("/login");
+//   }
+// };
+const handleBooking = async () => {
   try {
+    let payload;
+  
     const token = localStorage.getItem("token");
-
-     let payload = {};
-
     if (type === "hotel") {
       payload = {
         type: "hotel",
@@ -354,8 +559,10 @@ const remainingAmount =
         guests,
         fullname,
         mobileno,
+        remainingAmount,
         roomCount:roomCount,
-        totalAmount: price.final
+        totalAmount: price.final,
+        paymentChoice
       };
     }
 
@@ -366,12 +573,14 @@ const remainingAmount =
         camping: campingId,
         roomType: null,
         acType: null,
-        checkIn,
+        checkIn:date,
         checkOut: null,
         guests: adults + children,
         fullname,
         mobileno,
-      totalAmount: price.final
+        remainingAmount,
+      totalAmount: price.final,
+      paymentChoice
       };
     }
 
@@ -388,31 +597,47 @@ const remainingAmount =
         guests: totalGuestsVilla,
         fullname,
         mobileno,
-       totalAmount: price.final
+        remainingAmount,
+       totalAmount: price.final,
+       paymentChoice
       };
     }
 
-if (!fullname || !mobileno) {
-  alert("Please enter full name and mobile number");
-  return;
-}
-    const res = await api.post(
-      "/bookings",
-      payload,
-      {
-        headers: { Authorization: `Bearer ${token}` }
-      }
+    if (!fullname || !mobileno) {
+      alert("Please enter full name and mobile number");
+      return;
+    }
+    /* =======================
+       STEP 2️⃣ CREATE PAYMENT
+    ======================= */
+    const paymentRes = await api.post(
+      "/payment/create-order",
+     payload,
+      { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    const bookingId = res.data.id;
+    /* =======================
+       STEP 3️⃣ OPEN GATEWAY
+    ======================= */
+    cashfree.checkout({
+      paymentSessionId: paymentRes.data.payment_session_id,
+      redirectTarget: "_modal"
+    });
+    // const bookingId = res1.data.id;
 
-    nav(`/payment?bookingId=${bookingId}&amount=${price.final}`);
   } catch (err) {
-    alert("Booking failed. Please login first.");
-    nav("/login");
+    alert(err.response?.data?.msg || "Payment initiation failed");
   }
 };
 
+const todaydate = new Date().toISOString().split("T")[0];
+
+const Row = ({ label, value, bold }) => (
+  <div className={`flex justify-between ${bold ? "font-bold text-lg text-palmGreen" : ""}`}>
+    <span>{label}</span>
+    <span>{value}</span>
+  </div>
+);
 
   if (!item) return <div className="p-10 text-center">Loading…</div>;
 
@@ -477,9 +702,15 @@ if (!fullname || !mobileno) {
       }}
     >
       {item.room.map((r) => (
-        <option key={r.id} value={r.id}>
-          {r.type} ({r.acType}) – ₹{r.price}
-        </option>
+        <option
+  key={r.id}
+  value={r.id}
+  disabled={r.availableRooms <= 0}
+>
+  {r.type} — ₹{r.price}
+  {r.availableRooms <= 0 ? " (Sold Out)" : ""}
+</option>
+
       ))}
     </select>
   </div>
@@ -494,6 +725,7 @@ if (!fullname || !mobileno) {
           <input
             type="date"
             className="w-full mt-1 p-3 border rounded"
+            min={todaydate}
             value={checkIn}
             onChange={(e) => setCheckIn(e.target.value)}
           />
@@ -505,6 +737,7 @@ if (!fullname || !mobileno) {
             <input
               type="date"
               className="w-full mt-1 p-3 border rounded"
+              min={checkIn || todaydate}
               value={checkOut}
               onChange={(e) => setCheckOut(e.target.value)}
             />
@@ -518,6 +751,7 @@ if (!fullname || !mobileno) {
       <input
         type="date"
         className="w-full p-3 border rounded"
+        min={todaydate}
         value={checkIn}
         onChange={(e) => setCheckIn(e.target.value)}
       />
@@ -528,6 +762,7 @@ if (!fullname || !mobileno) {
       <input
         type="date"
         className="w-full p-3 border rounded"
+        min={checkIn || todaydate}
         value={checkOut}
         onChange={(e) => setCheckOut(e.target.value)}
       />
@@ -540,6 +775,7 @@ if (!fullname || !mobileno) {
     <input
       type="date"
       className="w-full p-3 border rounded"
+      min={todaydate}
       value={date}
       onChange={(e) => setDate(e.target.value)}
     />
@@ -674,21 +910,55 @@ if (!fullname || !mobileno) {
 
 {/* PERSON DETAILS (CAMPING ONLY) */}
 
+{item?.advancePaymentAllowed && (
+  <div className="mt-4">
+    <p className="font-semibold mb-2">Payment Option</p>
+
+    <label className="flex items-center gap-2">
+      <input
+        type="radio"
+        name="payment"
+        value="full"
+        checked={paymentChoice === "full"}
+        onChange={() => setPaymentChoice("full")}
+      />
+      Pay Full Amount (₹{price.final})
+    </label>
+
+    <label className="flex items-center gap-2 mt-2">
+      <input
+        type="radio"
+        name="payment"
+        value="advance"
+        checked={paymentChoice === "advance"}
+        onChange={() => setPaymentChoice("advance")}
+      />
+      Pay Advance ({item.advancePercent}% – ₹
+      {Math.round((price.final * item.advancePercent) / 100)})
+    </label>
+  </div>
+)}
 
 
         {/* Total */}
       <div className="bg-sand p-4 rounded border">
         {type === "hotel" && (
    <div className="flex justify-between">
-    <span>
-      Base Price ({roomCount} room × {selectedRoom?.price } night + {item?.taxes})
-    </span>
-    <span>₹{price.base}</span>
-  </div>)}
+  <span>
+    ₹{getDayWiseRoomPrice({
+      roomBasePrice: selectedRoom?.price,
+      checkIn,
+      dayWisePricing: item?.day_wise_percentage,
+      hotelDiscount: item?.discount
+    })} × {roomCount} room + ₹{item?.taxes}
+  </span>
+  <span>₹{price.base}</span>
+</div>
+)}
 
   {price.hotelDiscount > 0 && (
     <div className="flex justify-between text-green-700">
-      <span>Hotel Discount</span>
+      <span>Discount</span>
       <span>-₹{price.hotelDiscount}</span>
     </div>
   )}
@@ -739,7 +1009,10 @@ if (!fullname || !mobileno) {
     </div>
 
     <hr />
-
+<div className="flex justify-between font-bold text-lg text-palmGreen">
+      <span>Taxes</span>
+      <span>₹{item.taxes}</span>
+    </div>
     <div className="flex justify-between font-bold text-lg text-palmGreen">
       <span>Total Payable</span>
       <span>₹{price.final}</span>
@@ -754,7 +1027,10 @@ if (!fullname || !mobileno) {
       <span>Villa Price ({villaNights} nights)</span>
       <span>₹{item.basePrice * villaNights}</span>
     </div>
-
+<div className="flex justify-between font-bold text-lg text-palmGreen">
+      <span>Taxes</span>
+      <span>₹{item.taxes}</span>
+    </div>
     <div className="flex justify-between">
       <span>Total Guests</span>
       <span>{adults + children}</span>
@@ -805,33 +1081,32 @@ if (!fullname || !mobileno) {
     </div>
   </div>
 )}
+
 {/* ADVANCE PAYMENT INFO */}
 {advancePercent && (
   <div className="bg-yellow-50 border border-yellow-300 p-4 rounded mb-4">
-    <p className="font-semibold text-yellow-800">
-      Advance Payment Required
-    </p>
+    <div className="bg-sand p-3 rounded mt-4">
+  <Row label="Total Amount" value={`₹${price.final}`} />
 
-    <p className="text-sm text-gray-700 mt-1">
-      Pay <b>{advancePercent}%</b> now to confirm your booking.
-    </p>
+  {paymentChoice === "advance" && (
+    <>
+      <Row
+        label="Advance Paid"
+        value={`₹${Math.round(
+          (price.final * item.advancePercent) / 100
+        )}`}
+      />
+      <Row
+        label="Remaining at Property"
+        value={`₹${
+          price.final -
+          Math.round((price.final * item.advancePercent) / 100)
+        }`}
+      />
+    </>
+  )}
+</div>
 
-    <div className="mt-2 space-y-1 text-sm">
-      <div className="flex justify-between">
-        <span>Total Amount</span>
-        <span>₹{price.final}</span>
-      </div>
-
-      <div className="flex justify-between font-semibold text-palmGreen">
-        <span>Pay Now</span>
-        <span>₹{payNowAmount}</span>
-      </div>
-
-      <div className="flex justify-between text-gray-600">
-        <span>Pay at Property</span>
-        <span>₹{remainingAmount}</span>
-      </div>
-    </div>
   </div>
 )}
 
@@ -842,9 +1117,15 @@ if (!fullname || !mobileno) {
   onClick={handleBooking}
   className="w-full bg-rusticBrown text-white py-3 rounded text-lg"
 >
-  {advancePercent
-    ? `Pay ₹${payNowAmount} to Confirm Booking`
-    : `Pay ₹${price.final}`}
+ {advancePercent ? (
+    paymentChoice === "advance" ? (
+      `Pay ₹${payNowAmount} (Advance)`
+    ) : (
+      `Pay ₹${price.final} (Full Payment)`
+    )
+  ) : (
+    `Pay ₹${price.final}`
+  )}
 </button>
 
       </div>

@@ -15,32 +15,39 @@ model amenity {
 }
 
 model booking {
-  id              Int             @id @default(autoincrement())
-  userId          Int
-  type            String
-  hotelId         Int?
-  campingId       Int?
-  roomType        String?
-  acType          String?
-  checkIn         DateTime
-  checkOut        DateTime?
-  guests          Int
-  paymentStatus   String          @default("pending")
-  createdAt       DateTime        @default(now())
-  fullname        String?         @db.VarChar(255)
-  mobileno        String          @default(dbgenerated("(_cp850\\'Unknown\\')")) @db.VarChar(20)
-  villaId         Int?
-  totalAmount     Float           @default(0) @db.Float
-  paidAmount      Float           @default(0) @db.Float
-  remainingAmount Float           @default(0) @db.Float
-  paymentType     String?         @default("full") @db.VarChar(20)
-  advancePercent  Int?
-  roomCount       Int?            @default(1)
-  camping         camping?        @relation(fields: [campingId], references: [id], map: "Booking_campingId_fkey")
-  hotel           hotel?          @relation(fields: [hotelId], references: [id], map: "Booking_hotelId_fkey")
-  user            user            @relation(fields: [userId], references: [id], map: "Booking_userId_fkey")
-  villa           villa?          @relation(fields: [villaId], references: [id], onUpdate: NoAction, map: "fk_booking_villa")
-  bookingperson   bookingperson[]
+  id                 Int                  @id @default(autoincrement())
+  userId             Int
+  type               String
+  hotelId            Int?
+  campingId          Int?
+  roomType           String?
+  acType             String?
+  checkIn            DateTime
+  checkOut           DateTime?
+  guests             Int
+  paymentStatus      String               @default("pending")
+  createdAt          DateTime             @default(now())
+  fullname           String?              @db.VarChar(255)
+  mobileno           String               @default(dbgenerated("(_cp850\\'Unknown\\')")) @db.VarChar(20)
+  villaId            Int?
+  totalAmount        Float                @default(0) @db.Float
+  paidAmount         Float                @default(0) @db.Float
+  remainingAmount    Float                @default(0) @db.Float
+  paymentType        String?              @default("full") @db.VarChar(20)
+  advancePercent     Int?
+  roomCount          Int?                 @default(1)
+  stayStatus         String               @default("BOOKED") @db.VarChar(20)
+  checkInStatus      String               @default("BOOKED") @db.VarChar(20)
+  checkinAt          DateTime?            @db.DateTime(0)
+  checkoutAt         DateTime?            @db.DateTime(0)
+  collectedAmount    Float                @default(0) @db.Float
+  paymentChoice      String               @db.VarChar(20)
+  camping            camping?             @relation(fields: [campingId], references: [id], map: "Booking_campingId_fkey")
+  hotel              hotel?               @relation(fields: [hotelId], references: [id], map: "Booking_hotelId_fkey")
+  user               user                 @relation(fields: [userId], references: [id], map: "Booking_userId_fkey")
+  villa              villa?               @relation(fields: [villaId], references: [id], onDelete: Restrict, map: "fk_booking_villa")
+  bookingperson      bookingperson[]
+  villa_availability villa_availability[]
 
   @@index([campingId], map: "Booking_campingId_fkey")
   @@index([hotelId], map: "Booking_hotelId_fkey")
@@ -61,15 +68,17 @@ model bookingperson {
 }
 
 model camping {
-  id                    Int                @id @default(autoincrement())
+  id                    Int                    @id @default(autoincrement())
   name                  String
   description           String
   location              String
-  createdAt             DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
-  advancePaymentAllowed Boolean?           @default(false)
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  advancePaymentAllowed Boolean?               @default(false)
   advancePercent        Int?
+  taxes                 Float?                 @db.Float
   booking               booking[]
+  camping_availability  camping_availability[]
   campingactivity       campingactivity[]
   campingexclusion      campingexclusion[]
   campingimage          campingimage[]
@@ -193,6 +202,7 @@ model hotel {
   hotelsafety           hotelsafety?
   reviews               reviews[]
   room                  room[]
+  room_availability     room_availability[]
   user                  user[]
 }
 
@@ -288,15 +298,16 @@ model offer {
 }
 
 model room {
-  id         Int         @id @default(autoincrement())
-  hotelId    Int
-  type       String
-  acType     String
-  price      Float
-  maxPersons Int
-  totalRooms Int
-  hotel      hotel       @relation(fields: [hotelId], references: [id], onDelete: Cascade, map: "Room_hotelId_fkey")
-  roomimage  roomimage[]
+  id                Int                 @id @default(autoincrement())
+  hotelId           Int
+  type              String
+  acType            String
+  price             Float
+  maxPersons        Int
+  totalRooms        Int
+  hotel             hotel               @relation(fields: [hotelId], references: [id], onDelete: Cascade, map: "Room_hotelId_fkey")
+  room_availability room_availability[]
+  roomimage         roomimage[]
 
   @@index([hotelId], map: "Room_hotelId_fkey")
 }
@@ -319,11 +330,14 @@ model user {
   hotelId      Int?
   passwordHash String
   mobileNo     String?   @db.VarChar(20)
+  villaId      Int?
   booking      booking[]
   reviews      reviews[]
   hotel        hotel?    @relation(fields: [hotelId], references: [id], map: "User_hotelId_fkey")
+  villa        villa?    @relation(fields: [villaId], references: [id], map: "fk_user_villa")
 
   @@index([hotelId], map: "User_hotelId_fkey")
+  @@index([villaId], map: "idx_user_villaId")
 }
 
 model villa {
@@ -346,9 +360,12 @@ model villa {
   updatedAt             DateTime?             @default(now()) @db.DateTime(0)
   advancePaymentAllowed Boolean?              @default(false)
   advancePercent        Int?
+  taxes                 Float?                @db.Float
   booking               booking[]
   day_wise_percentage   day_wise_percentage[]
   reviews               reviews[]
+  user                  user[]
+  villa_availability    villa_availability[]
   villaamenity          villaamenity[]
   villacoupon           villacoupon[]
   villaimage            villaimage[]
@@ -461,6 +478,58 @@ model day_wise_percentage {
   @@index([villaId], map: "fk_day_villa")
 }
 
+model room_availability {
+  id            Int       @id @default(autoincrement())
+  roomId        Int
+  hotelId       Int
+  date          DateTime  @db.Date
+  blocked_rooms Int       @default(0)
+  created_at    DateTime? @default(now()) @db.Timestamp(0)
+  updated_at    DateTime? @default(now()) @db.Timestamp(0)
+  hotel         hotel     @relation(fields: [hotelId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ra_hotel")
+  room          room      @relation(fields: [roomId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ra_room")
+
+  @@unique([roomId, date], map: "uniq_room_date")
+  @@index([hotelId], map: "fk_ra_hotel")
+}
+
+model villa_availability {
+  id        Int                       @id @default(autoincrement())
+  villaId   Int
+  date      DateTime                  @db.Date
+  status    villa_availability_status @default(available)
+  bookingId Int?
+  createdAt DateTime?                 @default(now()) @db.DateTime(0)
+  booking   booking?                  @relation(fields: [bookingId], references: [id], onUpdate: NoAction, map: "fk_villa_availability_booking")
+  villa     villa                     @relation(fields: [villaId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "villa_availability_ibfk_1")
+
+  @@unique([villaId, date], map: "unique_villa_date")
+  @@index([bookingId], map: "fk_villa_availability_booking")
+}
+
+model camping_availability {
+  id         Int                          @id @default(autoincrement())
+  campingId  Int
+  date       DateTime                     @db.Date
+  status     camping_availability_status? @default(blocked)
+  created_at DateTime?                    @default(now()) @db.Timestamp(0)
+  updated_at DateTime?                    @default(now()) @db.Timestamp(0)
+  camping    camping                      @relation(fields: [campingId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "camping_availability_ibfk_1")
+
+  @@unique([campingId, date], map: "uniq_camping_date")
+}
+
+model payment_order {
+  id        Int                   @id @default(autoincrement())
+  orderId   String?               @unique(map: "orderId") @db.VarChar(50)
+  userId    Int?
+  bookingId Int?
+  amount    Float?                @db.Float
+  payload   Json?
+  status    payment_order_status?
+  createdAt DateTime?             @default(now()) @db.Timestamp(0)
+}
+
 enum day_wise_percentage_day {
   SUNDAY
   MONDAY
@@ -469,4 +538,21 @@ enum day_wise_percentage_day {
   THURSDAY
   FRIDAY
   SATURDAY
+}
+
+enum villa_availability_status {
+  available
+  booked
+  blocked
+}
+
+enum camping_availability_status {
+  open
+  blocked
+}
+
+enum payment_order_status {
+  PENDING
+  PAID
+  FAILED
 }

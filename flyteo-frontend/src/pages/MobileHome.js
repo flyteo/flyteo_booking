@@ -64,6 +64,26 @@ export default function MobileHome() {
 
   return Math.round(price);
 };
+const popularLocations = Array.from(
+  new Map(
+    [
+      ...hotels.map(h => h.location),
+      ...villas.map(v => v.location),
+    ]
+      .filter(Boolean)
+      .map(loc => {
+        const normalized = loc.trim().toLowerCase();
+
+        // Proper Case for UI
+        const formatted = normalized
+          .split(" ")
+          .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" ");
+
+        return [normalized, formatted];
+      })
+  ).values()
+).slice(0, 6);
 useEffect(() => {
   api.get("/hotels")
     .then(res => {
@@ -180,7 +200,7 @@ useEffect(() => {
   onClick={() => nav("/campings")}
   className="mt-4 bg-white text-brandOrange px-6 py-2 rounded-full font-semibold"
 >
-  Explore Camping
+  Explore flyteo camping , events & activities
 </button>
 </div>
       {/* ================= HERO + SEARCH ================= */}
@@ -295,50 +315,80 @@ useEffect(() => {
     Popular Destinations
   </h2>
 
-  <div className="grid grid-cols-3 gap-4 text-center">
+  {/* HORIZONTAL SCROLL ONLY */}
+  <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
 
-    {popularCities.map((city) => (
+    {popularLocations.map((city) => (
       <div
         key={city}
         onClick={() =>
-          nav(`/hotels?destination=${encodeURIComponent(city)}`)
+          nav(`/search?location=${encodeURIComponent(city)}`)
         }
-        className="bg-[#308b6a8c] rounded-xl p-4 shadow active:scale-95 transition"
+        className="
+          min-w-[110px]
+          bg-[#308b6a8c]
+          rounded-xl
+          p-4
+          shadow
+          flex flex-col items-center justify-center
+          active:scale-95
+          transition
+          cursor-pointer
+        "
       >
-        <div className="flex flex-col items-center text-2xl">
-          <svg  width="48" height="48" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="flyteoPro" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#FFE3C2"/>
-      <stop offset="100%" stop-color="#FFA94D"/>
-    </linearGradient>
-  </defs>
+        {/* ICON */}
+        <svg
+          width="42"
+          height="42"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <linearGradient id="flyteoPro" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#FFE3C2" />
+              <stop offset="100%" stopColor="#FFA94D" />
+            </linearGradient>
+          </defs>
 
+          <path
+            d="M12 2.5c-3.9 0-7 2.9-7 6.7C5 14.6 12 21.5 12 21.5s7-6.9 7-12.3c0-3.8-3.1-6.7-7-6.7z"
+            fill="url(#flyteoPro)"
+          />
 
-  <path d="M12 2.5c-3.9 0-7 2.9-7 6.7C5 14.6 12 21.5 12 21.5s7-6.9 7-12.3c0-3.8-3.1-6.7-7-6.7z"
-        fill="url(#flyteoPro)"/>
+          <rect
+            x="6.2"
+            y="8.3"
+            width="11.6"
+            height="4.6"
+            rx="2.3"
+            fill="#FFFFFF"
+            opacity="0.95"
+          />
 
+          <text
+            x="12"
+            y="11.4"
+            textAnchor="middle"
+            fontSize="2.85"
+            fontWeight="800"
+            fill="#FF8C00"
+            letterSpacing="0.3"
+            fontFamily="Arial, Helvetica, sans-serif"
+          >
+            FLYTEO
+          </text>
+        </svg>
 
-  <rect x="6.2" y="8.3" width="11.6" height="4.6" rx="2.3"
-        fill="#FFFFFF" opacity="0.95"/>
-
-
-  <text x="12" y="11.4"
-        text-anchor="middle"
-        font-size="2.85"
-        font-weight="800"
-        fill="#FF8C00"
-        letter-spacing="0.3"
-        font-family="Arial, Helvetica, sans-serif">
-    FLYTEO.IN
-  </text>
-</svg></div>
-        <p className="text-sm mt-2 font-medium">{city}</p>
+        {/* CITY NAME */}
+        <p className="text-sm mt-2 font-medium whitespace-nowrap">
+          {city}
+        </p>
       </div>
     ))}
 
   </div>
 </div>
+
 
 
       {/* ================= OFFERS ================= */}
@@ -365,7 +415,113 @@ useEffect(() => {
           </div>
         </div>
       )}
+  <div className="mt-6 px-2">
+        <h2 className="font-heading text-lg mb-3">Recommended for You</h2>
 
+        <Swiper
+           modules={[Navigation, Autoplay]}
+           // navigation
+           autoplay={{
+             delay: 3500,
+             disableOnInteraction: false
+           }}
+           spaceBetween={24}
+           slidesPerView={1.1}
+           breakpoints={{
+             640: { slidesPerView: 1.3 },
+             768: { slidesPerView: 2.2 },
+             1024: { slidesPerView: 3.2 }
+           }}
+           className="px-4"
+         >
+           {hotels.map((h) => {
+             const discount = h.discount || 30;
+             const basePrice = h.room?.[0]?.price || 0;
+
+const finalPrice = getFinalRoomPrice(
+  basePrice,
+  h.taxes,
+  h.discount,
+  h.dayWisePricing
+);
+
+// ❌ original price before any discount (for strike-through)
+const originalPrice = Math.round(basePrice + (h.taxes || 0));
+       
+             return (
+               <SwiperSlide key={h.id}>
+                 <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition duration-300 border border-gray-100">
+                   <Link
+                       to={`/hotels/${h.id}`}
+                     >
+                   {/* IMAGE */}
+                   <div className="relative group">
+                     <img
+                       src={h.hotelimage?.[0]?.url || "/hotel.jpg"}
+                       alt={h.name}
+                       className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
+                     />
+       
+                     {/* DISCOUNT */}
+                     {discount > 0 && (
+                       <div className="absolute top-3 left-3 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow">
+                         {discount}% OFF
+                       </div>
+                     )}
+       
+                     {/* PRICE */}
+                     {finalPrice < originalPrice && (
+                       <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-4 py-1 rounded-full text-sm font-semibold text-palmGreen shadow">
+                         ₹{finalPrice}/night
+                       </div>
+                     )}
+                   </div>
+       
+                   {/* BODY */}
+                   <div className="p-5">
+                     <h3 className="font-heading text-lg text-gray-800">
+                       {h.name}
+                     </h3>
+       
+                     <p className="text-gray-500 mt-1 flex items-center gap-1">
+                       📍 {h.location || "Mumbai"}
+                     </p>
+       
+                     {/* Rating */}
+                     <div className="mt-2 flex items-center text-yellow-500 text-sm">
+                       ⭐⭐⭐⭐⭐ <span className="text-gray-500 ml-2">(4.8)</span>
+                     </div>
+       
+                     {/* Amenities */}
+                     <div className="mt-3 flex gap-2 text-gray-500 text-xs flex-wrap">
+                        {h.hotelamenity?.slice(0, 3).map((a) => (
+                         <span
+             key={a.amenityId} className="px-3 py-1 bg-sand rounded-full">
+                           {a.amenity.name}
+                         </span>
+                       ))}
+                       {h.hotelamenity?.length > 3 && (
+                         <span className="px-2 py-1 bg-sand rounded-full">
+                           +{h.hotelamenity.length - 3} more
+                         </span>
+                       )} 
+                     </div>
+       
+                     {/* BUTTON */}
+                     <Link
+                       
+                       className="mt-3 block bg-palmGreen text-white py-2 rounded-lg text-center font-medium hover:bg-green-700 transition"
+                     >
+                       Book Now →
+                     </Link>
+                   </div>
+                   </Link>
+                 </div>
+               </SwiperSlide>
+             );
+           })}
+         </Swiper>
+      </div>
       { /*  Villas Spots */}
    <div className="mt-6 px-2">
     <h2 className="font-heading text-lg mb-3">Luxury Villas for Private Stays</h2>
@@ -473,7 +629,7 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
     </div>
  {/* Camping SPots */}
 <div className="mt-6 px-2">
-  <h2 className="font-heading text-lg mb-3">Camping Spots</h2>
+  <h2 className="font-heading text-lg mb-3">Adventure activities,camping & event</h2>
 
   <Swiper
     modules={[Navigation, Autoplay]}
@@ -524,113 +680,7 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
 </div>
    
       {/* ================= RECOMMENDED HOTELS ================= */}
-      <div className="mt-6 px-2">
-        <h2 className="font-heading text-lg mb-3">Recommended for You</h2>
-
-        <Swiper
-           modules={[Navigation, Autoplay]}
-           // navigation
-           autoplay={{
-             delay: 3500,
-             disableOnInteraction: false
-           }}
-           spaceBetween={24}
-           slidesPerView={1.1}
-           breakpoints={{
-             640: { slidesPerView: 1.3 },
-             768: { slidesPerView: 2.2 },
-             1024: { slidesPerView: 3.2 }
-           }}
-           className="px-4"
-         >
-           {hotels.map((h) => {
-             const discount = h.discount || 30;
-             const basePrice = h.room?.[0]?.price || 0;
-
-const finalPrice = getFinalRoomPrice(
-  basePrice,
-  h.taxes,
-  h.discount,
-  h.dayWisePricing
-);
-
-// ❌ original price before any discount (for strike-through)
-const originalPrice = Math.round(basePrice + (h.taxes || 0));
-       
-             return (
-               <SwiperSlide key={h.id}>
-                 <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition duration-300 border border-gray-100">
-                   <Link
-                       to={`/hotels/${h.id}`}
-                     >
-                   {/* IMAGE */}
-                   <div className="relative group">
-                     <img
-                       src={h.hotelimage?.[0]?.url || "/hotel.jpg"}
-                       alt={h.name}
-                       className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
-                     />
-       
-                     {/* DISCOUNT */}
-                     {discount > 0 && (
-                       <div className="absolute top-3 left-3 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow">
-                         {discount}% OFF
-                       </div>
-                     )}
-       
-                     {/* PRICE */}
-                     {finalPrice < originalPrice && (
-                       <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-4 py-1 rounded-full text-sm font-semibold text-palmGreen shadow">
-                         ₹{finalPrice}/night
-                       </div>
-                     )}
-                   </div>
-       
-                   {/* BODY */}
-                   <div className="p-5">
-                     <h3 className="font-heading text-lg text-gray-800">
-                       {h.name}
-                     </h3>
-       
-                     <p className="text-gray-500 mt-1 flex items-center gap-1">
-                       📍 {h.location || "Mumbai"}
-                     </p>
-       
-                     {/* Rating */}
-                     <div className="mt-2 flex items-center text-yellow-500 text-sm">
-                       ⭐⭐⭐⭐⭐ <span className="text-gray-500 ml-2">(4.8)</span>
-                     </div>
-       
-                     {/* Amenities */}
-                     <div className="mt-3 flex gap-2 text-gray-500 text-xs flex-wrap">
-                        {h.hotelamenity?.slice(0, 3).map((a) => (
-                         <span
-             key={a.amenityId} className="px-3 py-1 bg-sand rounded-full">
-                           {a.amenity.name}
-                         </span>
-                       ))}
-                       {h.hotelamenity?.length > 3 && (
-                         <span className="px-2 py-1 bg-sand rounded-full">
-                           +{h.hotelamenity.length - 3} more
-                         </span>
-                       )} 
-                     </div>
-       
-                     {/* BUTTON */}
-                     <Link
-                       
-                       className="mt-3 block bg-palmGreen text-white py-2 rounded-lg text-center font-medium hover:bg-green-700 transition"
-                     >
-                       Book Now →
-                     </Link>
-                   </div>
-                   </Link>
-                 </div>
-               </SwiperSlide>
-             );
-           })}
-         </Swiper>
-      </div>
+    
 
       {/* ================= BOTTOM TAB BAR ================= */}
       {/* <BottomTabBar activePath={location.pathname} /> */}

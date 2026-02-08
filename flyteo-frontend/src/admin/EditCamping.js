@@ -24,6 +24,7 @@ export default function EditCamping() {
   name: c.name || "",
   location: c.location || "",
   description: c.description || "",
+  taxes:c.taxes || "",
 
   // ✅ images as string[]
   campingimage: c.campingimage?.map(i => i.url) || [],
@@ -150,15 +151,6 @@ export default function EditCamping() {
             placeholder="Location"
           />
 
-          <input
-            type="number"
-            className="w-full p-3 border rounded"
-            value={camp.defaultPrice}
-            onChange={(e) =>
-              setCamp({ ...camp, defaultPrice: Number(e.target.value) })
-            }
-            placeholder="Default Price"
-          />
 
           <textarea
             className="w-full p-3 border rounded h-32"
@@ -322,6 +314,15 @@ export default function EditCamping() {
     </div>
   ))}
 </div>
+ <input
+            type="number"
+            className="w-full p-3 border rounded"
+            value={camp.taxes}
+            onChange={(e) =>
+              setCamp({ ...camp, taxes: Number(e.target.value) })
+            }
+            placeholder="Taxes"
+          />
 <div className="border p-4 rounded">
   <h2 className="font-heading text-xl mb-3">Advance Payment</h2>
 

@@ -65,7 +65,25 @@ router.post("/hotel-room", async (req, res) => {
     0
   );
 
-  const availableRooms = room.totalRooms - bookedRooms;
+   // 🔹 Blocked rooms (admin / hotel-admin)
+        const blocked = await prisma.room_availability.findMany({
+          where: {
+            roomId: room.id,
+            date: {
+              gte: new Date(checkIn),
+              lt: new Date(checkOut)
+            }
+          },
+          select: { blocked_rooms: true }
+        });
+
+        // 🔹 Find max blocked on any day (safe rule)
+const blockedRooms = blocked.reduce(
+  (max, b) => Math.max(max, b.blocked_rooms),
+  0
+);
+
+  const availableRooms = room.totalRooms - bookedRooms - blockedRooms;
 
   res.json({
     available: availableRooms >= roomsRequested,

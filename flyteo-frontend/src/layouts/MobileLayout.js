@@ -10,7 +10,9 @@ export default function MobileLayout() {
   const hideTabs =
     location.pathname.startsWith("/login") ||
     location.pathname.startsWith("/register") ||
-    location.pathname.startsWith("/admin");
+    location.pathname.startsWith("/admin")  ||
+    location.pathname.startsWith("/villa-admin") ||
+    location.pathname.startsWith("/hotel-admin")
 
   if (!isMobile) return <Outlet />;
 

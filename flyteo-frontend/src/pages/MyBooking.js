@@ -53,7 +53,7 @@ export default function MyBookings() {
 
       <div className="space-y-6">
         {bookings.map((b) => {
-          const item = b.type === "hotel" ? b.hotel : b.camping;
+          const item = b.hotel || b.villa || b.camping;
 
           return (
             <div
@@ -72,7 +72,7 @@ export default function MyBookings() {
                   </p>
 
                   <span className="inline-block mt-1 text-xs px-2 py-1 rounded bg-sand">
-                    {b.type === "hotel" ? "Hotel Booking" : "Camping Booking"}
+                    {b.type === "hotel" ? "Hotel Booking" : b.type === "villa" ? "Villa Booking" : "Camping Booking"}
                   </span>
                 </div>
 

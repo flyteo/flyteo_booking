@@ -20,31 +20,27 @@ export default function Login() {
     const role = res.data.user.role;
 
     // ROLE BASED NAVIGATION
-    if (role === "admin") {
-      nav("/admin/dashboard");
-
-    } else if (role === "hotel-admin") {
-      return alert("Not Available Now");
-
-    } else {
-      return alert("Not available Now")
-    }
+   
+    window.location.href = "/"
 
   } catch (err) {
     setError(err.response?.data?.msg || "Login failed");
   }
 };
 
- useEffect(() => {
-  const u = JSON.parse(localStorage.getItem("user"));
-  if (!u) return;
+//  useEffect(() => {
+//   const u = JSON.parse(localStorage.getItem("user"));
+//   if (!u) return;
 
-  if (u.role === "admin") {
-    nav("/admin/dashboard");
-  } else if (u.role === "hotel-admin") {
-    nav("/");
-  }
-}, []);
+//   if (u.role === "admin") {
+//     nav("/admin/dashboard");
+//   } else if (u.role === "hotel-admin") {
+//     nav("/hotel-admin/dashboard");
+//   }
+//   else if (u.role === "villa-admin") {
+//     nav("/villa-admin/dashboard");
+//   }
+// }, []);
 
   return (
     <div className="max-w-md mx-auto bg-white p-8 rounded-xl shadow">

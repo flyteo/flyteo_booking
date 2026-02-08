@@ -210,10 +210,10 @@ useEffect(() => {
   >
     <option>-- Select Hotel Type --</option>
     <option>Hotel</option>
-    <option>Resort</option>
+    {/* <option>Resort</option>
     <option>Villa</option>
     <option>Hostel</option>
-    <option>Apartment</option>
+    <option>Apartment</option> */}
   </select>
 </div>
 
