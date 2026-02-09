@@ -310,14 +310,14 @@ router.post("/create-order", auth, async (req, res) => {
     const orderId = await genrateOrderId();
 
     // 🔒 Save payment intent (NO booking yet)
-    await prisma.payment_order.create({
-      data: {
-        orderId,
-        userId: req.user.id,
-        payload,
-        amount: totalAmount
-      }
-    });
+    // await prisma.payment_order.create({
+    //   data: {
+    //     orderId,
+    //     userId: req.user.id,
+    //     payload,
+    //     amount: totalAmount
+    //   }
+    // });
 
     const response = await cashfree.PGCreateOrder({
       order_id: orderId,
