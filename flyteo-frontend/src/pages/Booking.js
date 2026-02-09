@@ -418,19 +418,19 @@ useEffect(()=>{
 },[item]);
   // Submit booking
 
-  const getSessionId= async()=>{
-    try {
-      let res= await api.post("/payment/create-order");
-      if(res.data && res.data.payment_session_id){
-        console.log(res.data)
-        setOrderId(res.data.order_id);
-        return res.data.payment_session_id;
-      }
+  // const getSessionId= async()=>{
+  //   try {
+  //     let res= await api.post("/payment/create-order");
+  //     if(res.data && res.data.payment_session_id){
+  //       console.log(res.data)
+  //       setOrderId(res.data.order_id);
+  //       return res.data.payment_session_id;
+  //     }
       
-    } catch (error) {
+  //   } catch (error) {
       
-    }
-  }
+  //   }
+  // }
 
 
 //   const handleBooking = async () => {

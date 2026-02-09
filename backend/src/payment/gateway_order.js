@@ -5,11 +5,18 @@ import prisma from "../prisma.js";
 import crypto from "crypto";
 const router = express.Router();
 
-const cashfree = new Cashfree(
-  CFEnvironment.SANDBOX,
-  process.env.CASHFREE_APP_ID,
-  process.env.CASHFREE_SECRET_KEY
-);
+// const cashfree = new Cashfree(
+//   CFEnvironment.SANDBOX,
+//   process.env.CASHFREE_APP_ID,
+//   process.env.CASHFREE_SECRET_KEY
+// );
+// import { Cashfree } from "cashfree-pg";
+
+Cashfree.XClientId = process.env.CASHFREE_APP_ID;
+Cashfree.XClientSecret = process.env.CASHFREE_SECRET_KEY;
+Cashfree.XEnvironment = Cashfree.Environment.SANDBOX; // TEST
+// Cashfree.Environment.PRODUCTION → LIVE
+
 
 function genrateOrderId(){
   const uniqueId=crypto.randomBytes(16).toString('hex');
@@ -318,7 +325,7 @@ router.post("/create-order", auth, async (req, res) => {
       }
     });
 
-    const response = await cashfree.PGCreateOrder({
+    const response = await Cashfree.PGCreateOrder({
       order_id: orderId,
       order_amount: Number(totalAmount),
       order_currency: "INR",
