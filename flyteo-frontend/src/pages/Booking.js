@@ -542,9 +542,10 @@ useEffect(()=>{
 //     // nav("/login");
 //   }
 // };
+
 const handleBooking = async () => {
   try {
-    let payload;
+     let payload;
   
     const token = localStorage.getItem("token");
     if (type === "hotel") {
@@ -602,31 +603,30 @@ const handleBooking = async () => {
        paymentChoice
       };
     }
-
     if (!fullname || !mobileno) {
-      alert("Please enter full name and mobile number");
+      alert("Enter name & mobile");
       return;
     }
-    /* =======================
-       STEP 2️⃣ CREATE PAYMENT
-    ======================= */
-    const paymentRes = await api.post(
+
+
+    const res = await api.post(
       "/payment/create-order",
-     payload,
-      { headers: { Authorization: `Bearer ${token}` } }
+      {
+        totalAmount: price.final,
+        payload
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
     );
 
-    /* =======================
-       STEP 3️⃣ OPEN GATEWAY
-    ======================= */
     cashfree.checkout({
-      paymentSessionId: paymentRes.data.payment_session_id,
+      paymentSessionId: res.data.payment_session_id,
       redirectTarget: "_self"
     });
-    // const bookingId = res1.data.id;
 
   } catch (err) {
-    alert(err.response?.data?.msg || "Payment initiation failed");
+    alert(err.response?.data?.msg || "Payment failed");
   }
 };
 
