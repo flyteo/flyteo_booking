@@ -1,5 +1,5 @@
 import { Cashfree ,CFEnvironment} from "cashfree-pg";
-import express from "express";
+import express, { request } from "express";
 import auth from "../middlewares/auth.js";
 import prisma from "../prisma.js";
 import crypto from "crypto";
@@ -264,26 +264,30 @@ const blockedRooms = blocked.reduce(
     }
     const orderID = await genrateOrderId();
 // Save temp order (IMPORTANT)
-  // await prisma.payment_order.create({
-  //   data: {
-  //     orderId: orderID,
-  //     userId: req.user.id,
-  //     payload: req.body, // store full booking payload
-  //     amount: totalAmount,
-  //     status: "PENDING"
-  //   }
-  // });
-  
-    const response = await cashfree.PGCreateOrder({
+  await prisma.payment_order.create({
+    data: {
+      orderId: orderID,
+      userId: req.user.id,
+      payload: req.body, // store full booking payload
+      amount: totalAmount,
+      status: "PENDING"
+    }
+  });
+  const orderCashfree={
       order_id: orderID,
       order_amount: payNowAmount,
       order_currency: "INR",
       customer_details: {
         customer_id: String(req.user.id),
         customer_name: fullname,
-        customer_phone: mobileno
+        customer_phone: mobileno,
+      order_meta:{
+        return_url:`${process.env.FRONTEND_URL}/my-bookings`
       }
-    });
+
+  }
+}
+    const response = await cashfree.PGCreateOrder(orderCashfree);
 
 
     res.json({
@@ -295,47 +299,47 @@ const blockedRooms = blocked.reduce(
   }
 });
 
-router.post("/cashfree/webhook", async (req, res) => {
-  try {
-    const event = req.body;
+// router.post("/cashfree/webhook", async (req, res) => {
+//   try {
+//     const event = req.body;
 
-    if (event.type !== "PAYMENT_SUCCESS") {
-      return res.sendStatus(200);
-    }
+//     if (event.type !== "PAYMENT_SUCCESS") {
+//       return res.sendStatus(200);
+//     }
 
-    const orderId = event.data.order.order_id;
-    const paidAmount = Number(event.data.payment.payment_amount);
+//     const orderId = event.data.order.order_id;
+//     const paidAmount = Number(event.data.payment.payment_amount);
 
-    const pending = await prisma.pending_payment.findUnique({
-      where: { orderId }
-    });
+//     const pending = await prisma.pending_payment.findUnique({
+//       where: { orderId }
+//     });
 
-    if (!pending) return res.sendStatus(200);
+//     if (!pending) return res.sendStatus(200);
 
-    const payload = JSON.parse(pending.payload);
+//     const payload = JSON.parse(pending.payload);
 
-    await prisma.booking.create({
-      data: {
-        ...payload,
-        paidAmount,
-        remainingAmount: pending.remainingAmount,
-        paymentStatus:
-          pending.remainingAmount === 0 ? "paid" : "partial",
-        paymentType:
-          pending.remainingAmount === 0 ? "full" : "partial"
-      }
-    });
+//     await prisma.booking.create({
+//       data: {
+//         ...payload,
+//         paidAmount,
+//         remainingAmount: pending.remainingAmount,
+//         paymentStatus:
+//           pending.remainingAmount === 0 ? "paid" : "partial",
+//         paymentType:
+//           pending.remainingAmount === 0 ? "full" : "partial"
+//       }
+//     });
 
-    await prisma.pending_payment.delete({
-      where: { orderId }
-    });
+//     await prisma.pending_payment.delete({
+//       where: { orderId }
+//     });
 
-    res.sendStatus(200);
-  } catch (err) {
-    console.error("Webhook error:", err);
-    res.sendStatus(500);
-  }
-});
+//     res.sendStatus(200);
+//   } catch (err) {
+//     console.error("Webhook error:", err);
+//     res.sendStatus(500);
+//   }
+// });
 
 
 export default router;

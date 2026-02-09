@@ -621,7 +621,7 @@ const handleBooking = async () => {
     ======================= */
     cashfree.checkout({
       paymentSessionId: paymentRes.data.payment_session_id,
-      redirectTarget: "_modal"
+      redirectTarget: "_self"
     });
     // const bookingId = res1.data.id;
 
