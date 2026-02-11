@@ -115,9 +115,25 @@ useEffect(() => {
 }, []);
 
 
-  const handleSearch = () => {
-    nav(`/hotels?destination=${destination}&checkIn=${checkIn}&checkOut=${checkOut}&guests=1`);
-  };
+ const handleSearch = () => {
+  if (!destination) {
+    alert("Please enter a destination");
+    return;
+  }
+
+  // prevent past dates
+  const today = new Date().toISOString().split("T")[0];
+  if (checkIn && checkIn < today) {
+    alert("Check-in date cannot be in the past");
+    return;
+  }
+
+  nav(
+    `/search?location=${encodeURIComponent(destination)}&guests=${guests}` +
+    (checkIn ? `&checkIn=${checkIn}` : "") +
+    (checkOut ? `&checkOut=${checkOut}` : "")
+  );
+};
 
   return (
     <div className="min-h-screen bg-gray-100 pb-20">
@@ -224,14 +240,16 @@ useEffect(() => {
   <input
     type="date"
     className="w-1/2 border-4 border-orange-200 border-x-orange-500 rounded-lg p-3 text-sm"
-    value={today}
+    min={today}
+    value={checkIn}
     onChange={(e) => setCheckIn(e.target.value)}
   />
 
   <input
     type="date"
     className="w-1/2 border-4 border-orange-200 border-x-orange-500 rounded-lg p-3 text-sm"
-    value={checkIn || today}
+    min={checkIn || today}
+    value={checkOut}
     onChange={(e) => setCheckOut(e.target.value)}
   />
 </div>

@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.clear();
+    window.location.href="/home"
     setUser(null);
     setToken(null);
   };

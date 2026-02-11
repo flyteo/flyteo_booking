@@ -1,85 +1,79 @@
+import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
 import api from "../axios";
 
-export default function Payment() {
+export default function PaymentSuccess() {
   const [params] = useSearchParams();
-  const nav = useNavigate();
+  const navigate = useNavigate();
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const bookingId = params.get("bookingId");
-  const total = Number(params.get("total"));
-  const payNow = Number(params.get("payNow"));
-  const remaining = Number(params.get("remaining"));
+  const orderId = params.get("order_id");
 
-  const [amount, setAmount] = useState(payNow || total);
-  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const res = await api.get(`/payment/status/${orderId}`);
+        setOrder(res.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handlePayment = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
+    if (orderId) fetchStatus();
+  }, [orderId]);
 
-      await api.post(
-        "/bookings/collect-payment",
-        {
-          bookingId,
-          amount
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
+  if (loading) {
+    return (
+      <div className="text-center p-10">
+        <h2 className="text-xl">Processing Payment...</h2>
+      </div>
+    );
+  }
 
-      alert("Payment successful (dummy)");
-      nav("/my-bookings");
-    } catch (err) {
-      alert("Payment failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (!order || order.status !== "PAID") {
+    return (
+      <div className="text-center p-10">
+        <h2 className="text-xl text-red-500">
+          Payment not confirmed yet.
+        </h2>
+        <button
+          onClick={() => navigate("/")}
+          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Go Home
+        </button>
+      </div>
+    );
+  }
+
+  const booking = order.booking;
 
   return (
-    <div className="max-w-md mx-auto bg-white p-6 mt-10 rounded shadow">
-      <h1 className="text-2xl font-bold mb-4">Payment</h1>
+    <div className="max-w-xl mx-auto bg-white shadow p-6 mt-8 rounded">
+      <h1 className="text-2xl font-bold text-green-600 mb-4">
+        🎉 Payment Successful!
+      </h1>
 
-      <div className="space-y-2 text-sm">
-        <div className="flex justify-between">
-          <span>Total Amount</span>
-          <span>₹{total}</span>
-        </div>
+      <p><strong>Booking ID:</strong> {booking.id}</p>
+      <p><strong>Name:</strong> {booking.fullname}</p>
+      <p><strong>Mobile:</strong> {booking.mobileno}</p>
+      <p><strong>Total Amount:</strong> ₹{booking.totalAmount}</p>
+      <p><strong>Paid:</strong> ₹{booking.paidAmount}</p>
 
-        <div className="flex justify-between">
-          <span>Pay Now</span>
-          <span>₹{payNow || total}</span>
-        </div>
-
-        {remaining > 0 && (
-          <div className="flex justify-between text-gray-600">
-            <span>Pay at Hotel</span>
-            <span>₹{remaining}</span>
-          </div>
-        )}
-      </div>
-
-      <div className="mt-4">
-        <label className="font-medium">Amount to Pay</label>
-        <input
-          type="number"
-          className="w-full border p-2 rounded mt-1"
-          value={amount}
-          min={1}
-          max={total}
-          onChange={(e) => setAmount(Number(e.target.value))}
-        />
-      </div>
+      {booking.remainingAmount > 0 && (
+        <p className="text-orange-500">
+          Remaining at Property: ₹{booking.remainingAmount}
+        </p>
+      )}
 
       <button
-        disabled={loading}
-        onClick={handlePayment}
-        className="w-full bg-palmGreen text-white py-2 rounded mt-4"
+        onClick={() => navigate("/my-bookings")}
+        className="mt-6 bg-green-600 text-white px-4 py-2 rounded w-full"
       >
-        {loading ? "Processing..." : "Confirm Payment"}
+        View My Bookings
       </button>
     </div>
   );

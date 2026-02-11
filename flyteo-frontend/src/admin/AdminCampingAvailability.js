@@ -201,6 +201,7 @@ const formatLocalDate = (date) => {
                 const dateStr = formatLocalDate(date);
 
                 const status = getStatus(dateStr);
+                
 
                 const color =
                   status === "blocked"

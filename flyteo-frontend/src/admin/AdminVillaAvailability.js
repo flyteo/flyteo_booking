@@ -8,7 +8,7 @@ export default function AdminVillaAvailability() {
   const [villas, setVillas] = useState([]);
   const [villaId, setVillaId] = useState("");
   const [availability, setAvailability] = useState([]);
-  const [month, setMonth] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const token = localStorage.getItem("token");
 
@@ -18,7 +18,7 @@ export default function AdminVillaAvailability() {
 
   useEffect(() => {
     if (villaId) loadAvailability();
-  }, [villaId, month]);
+  }, [villaId, currentMonth]);
 
   const loadVillas = async () => {
     const res = await api.get("/villas", {
@@ -30,8 +30,8 @@ export default function AdminVillaAvailability() {
   const loadAvailability = async () => {
     const res = await api.get(
       `/admin/villa-availability?villaId=${villaId}&month=${
-        month.getMonth() + 1
-      }&year=${month.getFullYear()}`,
+        currentMonth.getMonth() + 1
+      }&year=${currentMonth.getFullYear()}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     const normalized = res.data.map(d => ({
@@ -62,19 +62,25 @@ export default function AdminVillaAvailability() {
     loadAvailability();
   };
 
+  const formatLocalDate = (date) => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};
   const getStatus = (dateStr) =>
     availability.find((d) => d.date === dateStr)?.status ||
     "available";
 
   const daysInMonth = new Date(
-    month.getFullYear(),
-    month.getMonth() + 1,
+    currentMonth.getFullYear(),
+    currentMonth.getMonth() + 1,
     0
   ).getDate();
 
   const startDay = new Date(
-    month.getFullYear(),
-    month.getMonth(),
+    currentMonth.getFullYear(),
+    currentMonth.getMonth(),
     1
   ).getDay();
 
@@ -99,6 +105,34 @@ export default function AdminVillaAvailability() {
             </option>
           ))}
         </select>
+        <div className="flex justify-between mb-4">
+        <button
+          onClick={() =>
+            setCurrentMonth(
+              new Date(currentMonth.setMonth(currentMonth.getMonth() - 1))
+            )
+          }
+        >
+          ◀ Prev
+        </button>
+
+        <h2 className="text-xl font-semibold">
+          {currentMonth.toLocaleString("default", { 
+            month: "long",
+            year: "numeric"
+          })}
+        </h2>
+
+        <button
+          onClick={() =>
+            setCurrentMonth(
+              new Date(currentMonth.setMonth(currentMonth.getMonth() + 1))
+            )
+          }
+        >
+          Next ▶
+        </button>
+      </div>
 
         {/* CALENDAR */}
         <div className="grid grid-cols-7 gap-2">
@@ -114,25 +148,30 @@ export default function AdminVillaAvailability() {
 
           {Array.from({ length: daysInMonth }).map((_, i) => {
             const date = new Date(
-              month.getFullYear(),
-              month.getMonth(),
+              currentMonth.getFullYear(),
+              currentMonth.getMonth(),
               i + 1
             );
-            const dateStr = date.toISOString().split("T")[0];
+            const dateStr = formatLocalDate(date);
             const status = getStatus(dateStr);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+             const isPast =
+    date < today &&
+    currentMonth.getMonth() === today.getMonth() &&
+    currentMonth.getFullYear() === today.getFullYear();
 
-            const color =
-              status === "blocked"
-                ? "bg-gray-500"
-                : status === "booked"
-                ? "bg-red-500"
-                : "bg-green-500";
+             let color = "bg-green-500";
+
+  if (status === "booked") color = "bg-red-500";
+  else if (status === "blocked") color = "bg-gray-500";
+  else if (isPast) color = "bg-gray-300 text-gray-500";
 
             return (
               <div
-                key={dateStr}
-                onClick={() =>
-                  status !== "booked" &&
+                 key={dateStr}
+      onClick={() =>
+        !isPast && status !== "booked"  &&
                   toggleDate(dateStr, status)
                 }
                 className={`cursor-pointer p-3 text-white text-center rounded ${color}`}

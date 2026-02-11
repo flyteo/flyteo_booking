@@ -9,11 +9,33 @@ export default function BottomTabBar({ activePath }) {
     const [menuOpen, setMenuOpen] = useState(false);
   
     // Refresh navbar on route change
-    useEffect(() => {
-      const u = localStorage.getItem("user");
-      setUser(u ? JSON.parse(u) : null);
-      setMenuOpen(false); // close menu on route change
-    }, [location]);
+    // useEffect(() => {
+    //   const u = localStorage.getItem("user");
+    //   setUser(u ? JSON.parse(u) : null);
+    //   setMenuOpen(false); // close menu on route change
+    // }, [location]);
+    // const [user, setUser] = useState(null);
+
+useEffect(() => {
+  const storedUser = localStorage.getItem("user");
+  setUser(storedUser ? JSON.parse(storedUser) : null);
+}, [location]);
+const handleProfileClick = () => {
+  if (user) {
+    nav("/profile");
+  } else {
+    nav("/login");
+  }
+};
+
+const handleBookingClick = () => {
+  if (user) {
+    nav("/my-bookings");
+  } else {
+    nav("/login");
+  }
+};
+
   
     const logout = () => {
       localStorage.removeItem("token");
@@ -49,19 +71,24 @@ export default function BottomTabBar({ activePath }) {
         </div>
 
         {/* BOOKINGS */}
-        <div
-          onClick={() => alert("Currently booking is not available. Coming soon…")}
-          className={tab("/home")}
-        >
-          <BookingIcon />
-          <p>Bookings</p>
-        </div>
+        {/* BOOKINGS */}
+<div
+  onClick={handleBookingClick}
+  className={tab("/my-bookings")}
+>
+  <BookingIcon />
+  <p>Bookings</p>
+</div>
 
-        {/* PROFILE */}
-        <div onClick={() => nav("/")} className={tab("/")}>
-          <ProfileIcon />
-          <p>Profile</p>
-        </div>
+{/* PROFILE */}
+<div
+  onClick={handleProfileClick}
+  className={tab("/profile")}
+>
+  <ProfileIcon />
+  <p>Profile</p>
+</div>
+
 
       </div>
     </div>

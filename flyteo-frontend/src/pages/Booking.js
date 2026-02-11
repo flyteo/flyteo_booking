@@ -1,16 +1,17 @@
-import { useEffect, useState ,useMemo} from "react";
+import { useEffect, useState ,useMemo,useRef} from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api from "../axios";
 import {load} from "@cashfreepayments/cashfree-js";
 
 export default function Booking() {
-  let cashfree;
-  let initializeSDK=async function(){
-    cashfree = await load({
-      mode: "sandbox"
-    })
-  }
-  initializeSDK();
+  const cashfreeRef = useRef(null);
+
+useEffect(() => {
+  load({ mode: "sandbox" }).then(cf => {
+    cashfreeRef.current = cf;
+  });
+}, []);
+
   const nav = useNavigate();
   const query = new URLSearchParams(useLocation().search);
  const [couponCode, setCouponCode] = useState("");
@@ -611,16 +612,17 @@ const handleBooking = async () => {
 
     const res = await api.post(
       "/payment/create-order",
-      {
-        totalAmount: price.final,
-        payload
-      },
+        payload,
       {
         headers: { Authorization: `Bearer ${token}` }
       }
     );
 
-    cashfree.checkout({
+    if (!res.data.payment_session_id) {
+      alert("Failed to initialize payment");
+      return;
+    }
+    cashfreeRef.checkout({
       paymentSessionId: res.data.payment_session_id,
       redirectTarget: "_self"
     });

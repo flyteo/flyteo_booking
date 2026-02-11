@@ -77,7 +77,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/my-bookings" element={<MyBooking />} />
-          <Route path="/payment" element={<Payment />} />
+          <Route path="/payment-success" element={<Payment />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/contact" element={<Contact/>}/>
           <Route path="/aboutus" element={<AboutUs/>}/>

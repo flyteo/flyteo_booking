@@ -10,6 +10,17 @@ export default function Navbar() {
   const location = useLocation();
   const { user, logout, loading } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+useEffect(() => {
+  if (menuOpen) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "auto";
+  }
+
+  return () => {
+    document.body.style.overflow = "auto";
+  };
+}, [menuOpen]);
 
    // 🚨 wait until auth is restored
   if (loading) return null;
@@ -28,7 +39,7 @@ export default function Navbar() {
   return (
   <header className="bg-sand shadow sticky top-0 z-50">
   {/* ================= MOBILE NAVBAR ================= */}
-  <div className="md:hidden px-4 py-3 flex items-center justify-between relative">
+  <div className="md:hidden px-4 h-14 flex items-center justify-between relative">
 
     {/* LEFT: MENU TOGGLE */}
     <button
@@ -106,21 +117,39 @@ export default function Navbar() {
     />
   )}
 
-  <div
-    className={`fixed top-0 right-0 w-72 h-full bg-white shadow-2xl z-50 transform transition-transform duration-300
-    ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
-  >
-    <div className="p-6 flex flex-col gap-4">
+ <div
+  className={`
+    fixed top-0 right-0
+    w-72
+    h-screen
+    bg-white
+    shadow-2xl
+    z-50
+    transform transition-transform duration-300
+    ${menuOpen ? "translate-x-0" : "translate-x-full"}
+  `}
+>
+  <div className="h-full flex flex-col">
+
+    {/* HEADER */}
+    <div className="flex justify-between items-center p-4 border-b">
+      <h3 className="font-semibold text-lg">Menu</h3>
       <button
-        className="self-end text-2xl"
+        className="text-2xl"
         onClick={() => setMenuOpen(false)}
       >
         ✕
       </button>
+    </div>
 
+    {/* SCROLLABLE LINKS AREA */}
+    <div className="flex-1 overflow-y-auto p-6">
       <NavLinks user={user} logout={logout} mobile />
     </div>
+
   </div>
+</div>
+
 </header>
 
 
@@ -158,23 +187,6 @@ function NavLinks({ user, logout, mobile }) {
           {user.role === "user" && (
             <Link className={base} to="/my-bookings">
               My Bookings
-            </Link>
-          )}
-
-          {user.role === "hotel-admin" && (
-            <Link
-              className={`${base} font-semibold text-palmGreen`}
-              to="/hotel-admin/dashboard"
-            >
-              Hotel Admin
-            </Link>
-          )}
-           {user.role === "villa-admin" && (
-            <Link
-              className={`${base} font-semibold text-palmGreen`}
-              to="/villa-admin/dashboard"
-            >
-              Villa Admin
             </Link>
           )}
 
