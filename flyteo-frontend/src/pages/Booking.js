@@ -622,14 +622,16 @@ const handleBooking = async () => {
       alert("Failed to initialize payment");
       return;
     }
-    cashfreeRef.checkout({
+    cashfreeRef.current.checkout({
       paymentSessionId: res.data.payment_session_id,
       redirectTarget: "_self"
     });
 
   } catch (err) {
-    alert(err.response?.data?.msg || "Payment failed");
-  }
+  console.error("FULL ERROR:", err);
+  alert(err.response?.data?.msg || err.message || "Payment failed");
+}
+
 };
 
 const todaydate = new Date().toISOString().split("T")[0];
