@@ -528,7 +528,6 @@ model payment_order {
   payload   Json?
   status    payment_order_status?
   createdAt DateTime?             @default(now()) @db.Timestamp(0)
-  expiresAt DateTime?             @db.DateTime(0)
 }
 
 enum day_wise_percentage_day {
