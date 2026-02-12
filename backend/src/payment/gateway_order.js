@@ -396,10 +396,10 @@ router.post("/webhook", async (req, res) => {
         paymentStatus,
       },
       include: {
-    hotelId: true,
-    villaId: true,
-    campingId: true,
-    userId: true
+    hotel: { select: { name: true } },
+    villa: { select: { name: true } },
+    camping: { select: { name: true } },
+    user: { select: { email: true } }
   }
     });
 
@@ -410,11 +410,12 @@ router.post("/webhook", async (req, res) => {
         bookingId: booking.id
       }
     });
-    const propertyName =
-  booking.hotelId?.name ||
-  booking.villaId?.name ||
-  booking.campingId?.name ||
+   const propertyName =
+  booking.hotel?.name ||
+  booking.villa?.name ||
+  booking.camping?.name ||
   "Flyteo Property";
+
 
     await sendBookingConfirmationEmail({
   name: booking.fullname,
