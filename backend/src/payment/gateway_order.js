@@ -359,7 +359,7 @@ router.post("/webhook", async (req, res) => {
 
     const event = req.body;
 
-    if (event.type !== "PAYMENT_STATUS_WEBHOOK") {
+    if (event.type !== "PAYMENT_SUCCESS_WEBHOOK") {
       return res.sendStatus(200);
     }
 
