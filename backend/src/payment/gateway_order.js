@@ -3,6 +3,7 @@ import express, { request } from "express";
 import auth from "../middlewares/auth.js";
 import prisma from "../prisma.js";
 import crypto from "crypto";
+import { type } from "os";
 const router = express.Router();
 
 const cashfree = new Cashfree(
@@ -358,7 +359,7 @@ router.post("/webhook", async (req, res) => {
 
     const event = req.body;
 
-    if (event.type !== "PAYMENT_SUCCESS") {
+    if (event.type !== "PAYMENT_STATUS_WEBHOOK") {
       return res.sendStatus(200);
     }
 
@@ -393,8 +394,13 @@ router.post("/webhook", async (req, res) => {
         remainingAmount,
         paymentType,
         paymentStatus,
-        checkInStatus: "BOOKED"
-      }
+      },
+      include: {
+    hotel: true,
+    villa: true,
+    camping: true,
+    user: true
+  }
     });
 
     await prisma.payment_order.update({
@@ -404,6 +410,27 @@ router.post("/webhook", async (req, res) => {
         bookingId: booking.id
       }
     });
+    const propertyName =
+  booking.hotel?.name ||
+  booking.villa?.name ||
+  booking.camping?.name ||
+  "Flyteo Property";
+
+    await sendBookingConfirmationEmail({
+  name: booking.fullname,
+  email: booking.user.email,
+  bookingId: booking.id,
+  type: booking.type,
+  propertyName,
+  checkIn: booking.checkIn,
+  checkOut: booking.checkOut,
+  guests: booking.guests,
+  totalAmount: booking.totalAmount,
+  paidAmount: booking.paidAmount,
+  remainingAmount: booking.remainingAmount,
+  paymentType: booking.paymentType
+});
+
 
     res.sendStatus(200);
 

@@ -904,12 +904,21 @@ const Row = ({ label, value, bold }) => (
   />
 
   <input
-    type="tel"
-    placeholder="Mobile Number"
-    className="w-full p-3 border rounded"
-    value={mobileno}
-    onChange={(e) => setMobileno(e.target.value)}
-  />
+  type="tel"
+  placeholder="Mobile Number"
+  className="w-full p-3 border rounded"
+  value={mobileno}
+  maxLength={10}
+  inputMode="numeric"
+  pattern="[0-9]{10}"
+  onChange={(e) => {
+    const onlyDigits = e.target.value.replace(/\D/g, "");
+    if (onlyDigits.length <= 10) {
+      setMobileno(onlyDigits);
+    }
+  }}
+/>
+
 </div>
 
 {/* PERSON DETAILS (CAMPING ONLY) */}

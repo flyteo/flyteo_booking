@@ -29,3 +29,72 @@ export const sendWelcomeEmail = async ({ name, email }) => {
     `
   });
 };
+
+export const sendBookingConfirmationEmail = async ({
+  name,
+  email,
+  bookingId,
+  type,
+  propertyName,
+  checkIn,
+  checkOut,
+  guests,
+  totalAmount,
+  paidAmount,
+  remainingAmount,
+  paymentType
+}) => {
+
+  await transporter.sendMail({
+    from: `"Flyteo" <${process.env.USER_MAIL}>`,
+    to: email,
+    subject: "✅ Booking Confirmed - Flyteo",
+    html: `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#333">
+        
+        <h2 style="color:#2e7d32;">🎉 Booking Confirmed!</h2>
+
+        <p>Hello <b>${name}</b>,</p>
+
+        <p>Your booking has been successfully confirmed. Here are your booking details:</p>
+
+        <div style="background:#f9f9f9;padding:15px;border-radius:8px">
+          <p><b>Booking ID:</b> ${bookingId}</p>
+          <p><b>Property:</b> ${propertyName}</p>
+          <p><b>Type:</b> ${type}</p>
+          <p><b>Check-In:</b> ${checkIn}</p>
+          ${checkOut ? `<p><b>Check-Out:</b> ${checkOut}</p>` : ""}
+          <p><b>Guests:</b> ${guests}</p>
+        </div>
+
+        <h3 style="margin-top:20px;">💳 Payment Details</h3>
+
+        <div style="background:#eef7ee;padding:15px;border-radius:8px">
+          <p><b>Total Amount:</b> ₹${totalAmount}</p>
+          <p><b>Paid Amount:</b> ₹${paidAmount}</p>
+          ${
+            remainingAmount > 0
+              ? `<p style="color:#e65100;"><b>Remaining at Property:</b> ₹${remainingAmount}</p>`
+              : `<p style="color:#2e7d32;"><b>Payment Status:</b> Fully Paid ✅</p>`
+          }
+          <p><b>Payment Type:</b> ${
+            paymentType === "partial" ? "Advance Payment" : "Full Payment"
+          }</p>
+        </div>
+
+        <p style="margin-top:20px;">
+          We look forward to hosting you!  
+          <br/>
+          If you have any questions, feel free to contact us.
+        </p>
+
+        <p style="margin-top:30px;">
+          Happy Booking! 🏨🏕️🏡  
+          <br/>
+          <b>Team Flyteo</b>
+        </p>
+
+      </div>
+    `
+  });
+};

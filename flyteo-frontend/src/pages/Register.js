@@ -9,6 +9,7 @@ export default function Register() {
     name: "",
     email: "",
     password: "",
+    mobileNo: "",
     confirm: "",
   });
 
@@ -27,6 +28,7 @@ export default function Register() {
         name: data.name,
         email: data.email,
         password: data.password,
+        mobileNo: data.mobileNo
       });
 
       alert("Registered successfully!");
@@ -68,6 +70,23 @@ export default function Register() {
             onChange={(e) => setData({ ...data, email: e.target.value })}
           />
         </div>
+        <div>
+          <label className="font-medium">Mobile Number</label>
+        <input
+  type="tel"
+  className="w-full mt-1 p-3 border rounded"
+  value={data.mobileNo}
+  maxLength={10}
+  inputMode="numeric"
+  pattern="[0-9]{10}"
+  onChange={(e) => {
+    const onlyDigits = e.target.value.replace(/\D/g, "");
+    if (onlyDigits.length <= 10) {
+      setData({ ...data, mobileNo: onlyDigits });
+    }
+  }}
+/>
+ </div>
 
         <div>
           <label className="font-medium">Password</label>
