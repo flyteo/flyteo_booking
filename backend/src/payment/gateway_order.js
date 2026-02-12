@@ -4,6 +4,7 @@ import auth from "../middlewares/auth.js";
 import prisma from "../prisma.js";
 import crypto from "crypto";
 import { type } from "os";
+import { sendBookingConfirmationEmail } from "../utils/mailer.js";
 const router = express.Router();
 
 const cashfree = new Cashfree(
