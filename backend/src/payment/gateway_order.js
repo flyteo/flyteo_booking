@@ -386,22 +386,45 @@ router.post("/webhook", async (req, res) => {
        CREATE REAL BOOKING
     ========================== */
 
-    const booking = await prisma.booking.create({
-      data: {
-        ...payload,
-        userId: paymentOrder.userId,
-        paidAmount,
-        remainingAmount,
-        paymentType,
-        paymentStatus,
-      },
-      include: {
+   const booking = await prisma.booking.create({
+  data: {
+    type: payload.type,
+    roomType: payload.roomType,
+    acType: payload.acType,
+    checkIn: new Date(payload.checkIn),
+    checkOut: payload.checkOut ? new Date(payload.checkOut) : null,
+    guests: payload.guests,
+    fullname: payload.fullname,
+    mobileno: payload.mobileno,
+    roomCount: payload.roomCount,
+
+    totalAmount: payload.totalAmount,
+    paidAmount,
+    remainingAmount,
+    paymentType,
+    paymentStatus,
+    paymentChoice: payload.paymentChoice,
+
+    user: { connect: { id: paymentOrder.userId } },
+
+    ...(payload.type === "hotel"
+      ? { hotel: { connect: { id: Number(payload.hotel) } } }
+      : {}),
+    ...(payload.type === "villa"
+      ? { villa: { connect: { id: Number(payload.villa) } } }
+      : {}),
+    ...(payload.type === "camping"
+      ? { camping: { connect: { id: Number(payload.camping) } } }
+      : {}),
+  },
+  include: {
     hotel: { select: { name: true } },
     villa: { select: { name: true } },
     camping: { select: { name: true } },
     user: { select: { email: true } }
   }
-    });
+});
+
 
     await prisma.payment_order.update({
       where: { orderId },
