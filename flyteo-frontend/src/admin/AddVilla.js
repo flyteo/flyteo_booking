@@ -10,6 +10,7 @@ export default function AddVilla() {
     name: "",
     description: "",
     location: "",
+    email:"",
     address: "",
     mapLocation: "",
     discount:"",
@@ -130,6 +131,10 @@ export default function AddVilla() {
         <input className="w-full p-3 mt-1 border rounded" placeholder="Address"
           value={villa.address}
           onChange={e => setVilla({ ...villa, address: e.target.value })}
+        />
+        <input className="w-full p-3 mt-1 border rounded" placeholder="Email" type="email"
+          value={villa.email}
+          onChange={e => setVilla({ ...villa, email: e.target.value })}
         />
 
         {/* PRICING */}

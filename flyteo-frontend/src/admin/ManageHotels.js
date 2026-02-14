@@ -40,7 +40,16 @@ export default function ManageHotels() {
             <div className="flex gap-4">
 
               <Link to={`/admin/hotels/edit/${h.id}`} className="bg-blue-600 text-white px-4 py-2 rounded">Edit</Link>
-              <button onClick={() => delHotel(h.id)} className="bg-red-600 text-white px-4 py-2 rounded">Delete</button>
+<button
+  onClick={() => {
+    if (window.confirm("Are you sure you want to delete this hotel?")) {
+      delHotel(h.id);
+    }
+  }}
+  className="bg-red-600 text-white px-4 py-2 rounded"
+>
+  Delete
+</button>
             </div>
             {/* <div>
                 <Link

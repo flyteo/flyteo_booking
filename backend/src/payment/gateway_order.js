@@ -4,7 +4,7 @@ import auth from "../middlewares/auth.js";
 import prisma from "../prisma.js";
 import crypto from "crypto";
 import { type } from "os";
-import { sendBookingConfirmationEmail } from "../utils/mailer.js";
+import { sendBookingConfirmationEmail,sendHotelAdminBookingEmail,sendVillaAdminBookingEmail } from "../utils/mailer.js";
 const router = express.Router();
 
 const cashfree = new Cashfree(
@@ -453,6 +453,44 @@ router.post("/webhook", async (req, res) => {
   totalAmount: booking.totalAmount,
   paidAmount: booking.paidAmount,
   remainingAmount: booking.remainingAmount,
+  paymentType: booking.paymentType
+});
+
+await sendHotelAdminBookingEmail({
+  hotelAdminEmail: hotel.email,
+  bookingId: booking.id,
+  propertyName,
+  type: booking.type,
+  checkIn: booking.checkIn,
+  checkOut: booking.checkOut,
+  roomType: booking.roomType,
+  roomCount: booking.roomCount,
+  guests: booking.guests,
+  guestName: booking.fullname,
+  guestMobile: booking.mobileno,
+  totalAmount: booking.totalAmount,
+  paidAmount: booking.paidAmount,
+  remainingAmount: booking.remainingAmount,
+  paymentStatus: booking.paymentStatus,
+  paymentType: booking.paymentType
+});
+
+await sendVillaAdminBookingEmail({
+  villaAdminEmail: villa.email,
+  bookingId: booking.id,
+  propertyName,
+  type: booking.type,
+  checkIn: booking.checkIn,
+  checkOut: booking.checkOut,
+  roomType: booking.roomType,
+  roomCount: booking.roomCount,
+  guests: booking.guests,
+  guestName: booking.fullname,
+  guestMobile: booking.mobileno,
+  totalAmount: booking.totalAmount,
+  paidAmount: booking.paidAmount,
+  remainingAmount: booking.remainingAmount,
+  paymentStatus: booking.paymentStatus,
   paymentType: booking.paymentType
 });
 

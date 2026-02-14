@@ -90,7 +90,7 @@ export const generateBookingInvoice = (booking, res) => {
     .text(`Total Amount: ₹${booking.totalAmount}`)
     .text(`Paid Amount: ₹${booking.paidAmount}`)
     .text(`Remaining Amount: ₹${booking.remainingAmount}`)
-    .text(`Payment Type: ${booking.paymentType.toUpperCase()}`)
+    // .text(`Payment Type: ${booking.paymentType.toUpperCase()}`)
     .text(`Advance %: ${booking.advancePercent || 0}%`)
     .text(`Payment Status: ${booking.paymentStatus.toUpperCase()}`);
 

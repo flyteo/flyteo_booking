@@ -119,7 +119,7 @@ export default function MyBookings() {
                   <button
   onClick={() =>
     window.open(
-      `/ebill-booking/${b.id}`,
+      `${process.env.REACT_APP_API_URL_BACKEND}/ebill-booking/${b.id}`,
       "_blank"
     )
   }

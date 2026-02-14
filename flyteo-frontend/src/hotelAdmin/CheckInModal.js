@@ -9,7 +9,7 @@ export default function CheckInModal({ booking, onClose, onUpdated }) {
   const [error, setError] = useState("");
 
   const remaining = booking.remainingAmount || 0;
-  const status = booking.checkInStatus?.toLowerCase();
+  const status = booking.checkInStatus;
 
   /* ==========================
      CHECK-IN
@@ -102,7 +102,7 @@ export default function CheckInModal({ booking, onClose, onUpdated }) {
               max={remaining}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full border p-2 rounded mt-1"
+              className="w-full border border-gray-700 p-2 rounded mt-1"
             />
           </div>
         )}

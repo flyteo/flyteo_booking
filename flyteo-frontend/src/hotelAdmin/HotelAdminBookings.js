@@ -53,7 +53,7 @@ export default function HotelAdminBookings() {
           {bookings.map((b) => {
             const todayBooking = isToday(b.checkIn);
             const canManage =
-              todayBooking && b.checkInStatus === "BOOKED" && b.checkInStatus === "checked_in";
+              todayBooking && (b.checkInStatus === "BOOKED" || b.checkInStatus === "checked_in");
 
             return (
               <div

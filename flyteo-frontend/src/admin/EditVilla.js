@@ -153,6 +153,11 @@ setDayWisePercentage(dayMap);
           value={villa.address}
           onChange={e => setVilla({ ...villa, address: e.target.value })}
         />
+        <label>Address</label>
+        <input className="w-full p-2 border rounded mb-3" placeholder="Email" 
+          value={villa.email}
+          onChange={e => setVilla({ ...villa, email: e.target.value })}
+        />
 <label>Description</label>
         <textarea className="input h-28" placeholder="Description"
           value={villa.description}
