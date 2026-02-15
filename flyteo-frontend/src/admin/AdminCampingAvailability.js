@@ -11,16 +11,13 @@ export default function AdminCampingAvailability() {
   const [campings, setCampings] = useState([]);
   const [confirm, setConfirm] = useState(null);
 
-  const token = localStorage.getItem("token");
 
   /* ========================
      LOAD CAMPINGS
   ======================== */
   useEffect(() => {
     api
-      .get("/campings", {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+      .get("/campings")
       .then(res => setCampings(res.data));
   }, []);
 
@@ -34,8 +31,7 @@ export default function AdminCampingAvailability() {
       .get(
         `/admin/camping-availability?campingId=${campingId}&month=${
           currentMonth.getMonth() + 1
-        }&year=${currentMonth.getFullYear()}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        }&year=${currentMonth.getFullYear()}`
       )
       .then(res => setAvailability(res.data));
   }, [campingId, currentMonth]);
@@ -57,14 +53,12 @@ export default function AdminCampingAvailability() {
     if (status === "open") {
       await api.post(
         "/admin/camping-availability/block",
-        { campingId, date },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { campingId, date }
       );
     } else {
       await api.post(
         "/admin/camping-availability/unblock",
-        { campingId, date },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { campingId, date }
       );
     }
 
@@ -77,8 +71,7 @@ export default function AdminCampingAvailability() {
       .get(
         `/admin/camping-availability?campingId=${campingId}&month=${
           currentMonth.getMonth() + 1
-        }&year=${currentMonth.getFullYear()}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        }&year=${currentMonth.getFullYear()}`
       )
       const normalized = res.data.map(d => ({
     ...d,

@@ -1,8 +1,13 @@
 import { useNavigate } from "react-router-dom";
+import {useAuth} from "../context/AuthContext"
 
 export default function AdminTopbar() {
   const nav = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { user, loading } = useAuth();
+
+if (loading) return null;
+
+if (!user || user.role !== "admin") return null;
 
 //   const logout = () => {
 //     localStorage.removeItem("token");
@@ -10,7 +15,6 @@ export default function AdminTopbar() {
 //     nav("/");
 //   };
 
-  if (!user || user.role !== "admin") return null;
 
   return (
     <div className="w-full bg-white shadow p-4 flex justify-between items-center">

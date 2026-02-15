@@ -4,7 +4,6 @@ import AdminSidebar from "./AdminSidebar";
 import AdminTopbar from "./AdminTopbar";
 
 export default function AdminBookings() {
-  const token = localStorage.getItem("token");
 
   const [bookings, setBookings] = useState([]);
   const [filters, setFilters] = useState({
@@ -19,7 +18,6 @@ export default function AdminBookings() {
     const res = await api.get(
       "/admin/bookings",
       {
-        headers: { Authorization: `Bearer ${token}` },
         params: filters
       }
     );

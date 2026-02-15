@@ -28,12 +28,9 @@ export default function EditVilla() {
   });
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
 
     api
-      .get(`/villas/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+      .get(`/villas/${id}`)
       .then(res => {
         const v = res.data;
 
@@ -100,7 +97,6 @@ setDayWisePercentage(dayMap);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
 
     await api.put(
       `/villas/${id}`,
@@ -117,8 +113,7 @@ setDayWisePercentage(dayMap);
           ? Number(villa.advancePercent)
           : null,
           dayWisePercentage: cleanDayWisePercentage,
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
+      }
     );
 
     alert("Villa updated successfully");

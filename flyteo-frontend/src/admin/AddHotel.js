@@ -110,7 +110,6 @@ useEffect(() => {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem("token");
 
     await api.post(
   "/hotels",
@@ -161,9 +160,6 @@ useEffect(() => {
     hotelhighlight: hotel.hotelhighlight || [],
     hoteloffer: hotel.hoteloffer || [],
     hotelcoupon: hotel.hotelcoupon || []
-  },
-  {
-    headers: { Authorization: `Bearer ${token}` }
   }
 );
 
@@ -297,6 +293,12 @@ useEffect(() => {
     <option>Deluxe</option>
     <option>Double Bed</option>
     <option>Single Bed</option>
+     <option>Triple Share Room</option>
+      <option>Deluxe room + breakfast</option>
+       <option>Deluxe room + breakfast + dinner</option>
+        <option>Room + Breakfast</option>
+         <option>Room + Food</option>
+          <option>Super Deluxe</option>
   </select>
 
   <label>AC Type</label>

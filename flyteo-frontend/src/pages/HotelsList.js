@@ -106,17 +106,7 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
           </span>
           <span className="text-gray-400 text-xs">(2300)</span>
         </div>
-
-        {/* AMENITIES */}
-        <div className="flex gap-2 mt-2 text-xs text-gray-600 flex-wrap">
-          {h.hotelamenity?.slice(0, 3).map((a) => (
-            <span key={a.amenityId} className="bg-sand px-2 py-1 rounded">
-              {a.amenity.name}
-            </span>
-          ))}
-        </div>
-
-        {/* PRICE */}
+{/* PRICE */}
         <div className="flex justify-between items-end mt-3">
           <div>
            {finalPrice < originalPrice && (
@@ -130,6 +120,15 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
     </p>
             <p className="text-[11px] text-gray-500">per night</p>
           </div>
+        {/* AMENITIES */}
+        <div className="flex gap-2 mt-2 text-xs text-gray-600 flex-wrap">
+          {h.hotelamenity?.slice(0, 3).map((a) => (
+            <span key={a.amenityId} className="bg-sand px-2 py-1 rounded">
+              {a.amenity.name}
+            </span>
+          ))}
+        </div>
+
 
           <span className="text-sm text-palmGreen font-semibold">
             View →

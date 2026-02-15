@@ -548,7 +548,7 @@ const handleBooking = async () => {
   try {
      let payload;
   
-    const token = localStorage.getItem("token");
+   
     if (type === "hotel") {
       payload = {
         type: "hotel",
@@ -612,10 +612,7 @@ const handleBooking = async () => {
 
     const res = await api.post(
       "/payment/create-order",
-        payload,
-      {
-        headers: { Authorization: `Bearer ${token}` }
-      }
+        payload
     );
 
     if (!res.data.payment_session_id) {

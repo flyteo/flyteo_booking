@@ -8,16 +8,13 @@ export default function AdminRoomAvailability() {
   const [date, setDate] = useState("");
   const [rooms, setRooms] = useState([]);
 
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
     loadHotels();
   }, []);
 
   const loadHotels = async () => {
-    const res = await api.get("/hotels", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const res = await api.get("/hotels");
     setHotels(res.data);
   };
 
@@ -25,8 +22,7 @@ export default function AdminRoomAvailability() {
     if (!hotelId || !date) return;
 
     const res = await api.get(
-      `/admin/room-availability?hotelId=${hotelId}&date=${date}`,
-      { headers: { Authorization: `Bearer ${token}` } }
+      `/admin/room-availability?hotelId=${hotelId}&date=${date}`
     );
 
     setRooms(res.data);
@@ -47,8 +43,7 @@ export default function AdminRoomAvailability() {
         roomId: room.roomId,
         date,
         blockedRooms
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
+      }
     );
 
     loadAvailability();

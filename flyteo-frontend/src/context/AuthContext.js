@@ -1,40 +1,41 @@
 import { createContext, useContext, useEffect, useState } from "react";
-
+import api from "../axios"
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // On app load → check if cookie session exists
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const storedToken = localStorage.getItem("token");
+    const checkAuth = async () => {
+      try {
+        const res = await api.get("/auth/me");
+        setUser(res.data);
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    if (storedUser && storedToken) {
-      setUser(JSON.parse(storedUser));
-      setToken(storedToken);
-    }
-
-    setLoading(false);
+    checkAuth();
   }, []);
 
-  const login = (userData, token) => {
-    localStorage.setItem("user", JSON.stringify(userData));
-    localStorage.setItem("token", token);
-    setUser(userData);
-    setToken(token);
+  const login = async (email, password) => {
+    await api.post("/auth/login", { email, password });
+    const res = await api.get("/auth/me");
+    setUser(res.data);
   };
 
-  const logout = () => {
-    localStorage.clear();
-    window.location.href="/home"
+  const logout = async () => {
+    await api.post("/auth/logout");
     setUser(null);
-    setToken(null);
+    window.location.href = "/home";
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

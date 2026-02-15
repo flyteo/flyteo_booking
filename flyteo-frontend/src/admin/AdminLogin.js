@@ -19,8 +19,6 @@ export default function AdminLogin() {
         return;
       }
 
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("admin", JSON.stringify(res.data.user));
 
       nav("/admin/dashboard");
 

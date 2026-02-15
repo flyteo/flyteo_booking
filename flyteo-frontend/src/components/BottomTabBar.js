@@ -1,11 +1,12 @@
 import { useNavigate ,useLocation} from "react-router-dom";
 import {useState, useEffect } from "react";
+import {useAuth} from "../context/AuthContext";
 
 export default function BottomTabBar({ activePath }) {
   const nav = useNavigate();
   const location = useLocation();
-
-   const [user, setUser] = useState(null);
+const { user, loading } = useAuth();
+   const [users, setUsers] = useState(null);
     const [menuOpen, setMenuOpen] = useState(false);
   
     // Refresh navbar on route change
@@ -17,11 +18,14 @@ export default function BottomTabBar({ activePath }) {
     // const [user, setUser] = useState(null);
 
 useEffect(() => {
-  const storedUser = localStorage.getItem("user");
-  setUser(storedUser ? JSON.parse(storedUser) : null);
+
+if (loading) return null;
+  const storedUser =user;
+
+  setUsers(storedUser ? JSON.parse(storedUser) : null);
 }, [location]);
 const handleProfileClick = () => {
-  if (user) {
+  if (users) {
     nav("/profile");
   } else {
     nav("/login");
@@ -29,7 +33,7 @@ const handleProfileClick = () => {
 };
 
 const handleBookingClick = () => {
-  if (user) {
+  if (users) {
     nav("/my-bookings");
   } else {
     nav("/login");
@@ -37,12 +41,6 @@ const handleBookingClick = () => {
 };
 
   
-    const logout = () => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      setUser(null);
-      nav("/login");
-    };
 
   const tab = (path) =>
      `flex flex-col items-center justify-center gap-1 cursor-pointer ${

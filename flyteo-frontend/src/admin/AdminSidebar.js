@@ -1,20 +1,27 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext"
+import api from "../axios"
 
 export default function AdminSidebar() {
   const nav = useNavigate();
 const [open, setOpen] = useState(false);
-   const user = JSON.parse(localStorage.getItem("user"));
+  const { user, loading } = useAuth();
 
-  // 🔥 If not admin → hide sidebar
-  if (!user || user.role !== "admin") return null;
+if (loading) return null;
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    window.location.href = "/"; // redirect to website home page
-  };
+if (!user || user.role !== "admin") return null;
 
+ const logout = async () => {
+  try {
+    await api.post("/auth/logout"); // clears cookies
+  } catch (err) {
+    console.error("Logout failed", err);
+  }
+
+  window.location.href = "/home";
+};
+  
   return (
     <>
      {/* ================= MOBILE TOGGLE BUTTON ================= */}

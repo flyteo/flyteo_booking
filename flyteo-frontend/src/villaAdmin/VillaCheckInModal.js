@@ -7,12 +7,7 @@ export default function VillaCheckInModal({ booking, onClose, onSuccess }) {
   const checkIn = async () => {
     await api.put(
       `/villa-admin/check-in/${booking.id}`,
-      { collectedAmount: Number(amount) },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        }
-      }
+      { collectedAmount: Number(amount) }
     );
 
     onSuccess();

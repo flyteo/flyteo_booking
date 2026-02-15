@@ -139,74 +139,108 @@ useEffect(() => {
     <div className="min-h-screen bg-gray-100 pb-20">
       {/* ================= COUPON STRIP ================= */}
 {/* ================= IMAGE OFFERS / COUPONS ================= */}
-<div className="px-4">
-  <h3 className="text-lg text-center font-semibold text-gray-800 mb-2">
-    Ongoing Offers
-  </h3>
+<div className="px-4 mt-6">
+  <h2 className="text-lg font-bold mb-3 fade-up">
+    🎉 Special Deals
+  </h2>
 
-  <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+  <div className="flex gap-4 overflow-x-auto pb-3">
 
-    {/* OFFER CARD 1 */}
     <div
       onClick={() => nav("/offers")}
-      className="bg-stone-600 min-w-[280px] h-[140px] rounded-2xl overflow-hidden relative shadow-lg cursor-pointer active:scale-95 transition"
+      className="min-w-[260px] p-5 rounded-2xl bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-xl active:scale-95 transition fade-up"
     >
-      {/* <img
-        src={o1}
-        alt="Offer"
-        className="w-full h-full object-cover"
-      /> */}
-
-      {/* DARK OVERLAY */}
-      <div className="absolute inset-0 bg-black/40" />
-
-      {/* TEXT */}
-      <div className="absolute inset-0 p-4 flex flex-col justify-between text-white">
-        <div className="text-xs text-rusticBrown font-semibold uppercase tracking-wide">
-          Flyteo Special
-        </div>
-
-        <div>
-          <p className="text-3xl text-palmGreen font-bold">Flat 20% OFF</p>
-          <p className="text-sm mt-1">
-            Use Code: <span className="text-brandOrange font-bold">FLYTEO20</span>
-          </p>
-        </div>
-      </div>
+      <p className="text-xs uppercase opacity-80">Limited Offer</p>
+      <p className="text-2xl font-bold mt-2">Flat 20% OFF</p>
+      <p className="text-sm mt-1">Use Code: FLYTEO20</p>
     </div>
 
-    {/* OFFER CARD 2 */}
     <div
       onClick={() => nav("/offers")}
-      className="bg-stone-600 min-w-[280px] h-[140px] rounded-2xl overflow-hidden relative shadow-lg cursor-pointer active:scale-95 transition"
+      className="min-w-[260px] p-5 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-400 text-white shadow-xl active:scale-95 transition fade-up"
     >
-      {/* <img
-        src={o1}
-        alt="Offer"
-        className="w-full h-full object-cover"
-      /> */}
-
-      <div className="absolute inset-0 bg-black/40" />
-
-      <div className="absolute inset-0 p-4 flex flex-col justify-between text-white">
-        <div className="text-xs text-rusticBrown font-semibold uppercase tracking-wide">
-          Weekend Deal
-        </div>
-
-        <div>
-          <p className="text-3xl text-palmGreen font-bold">Up to 30% OFF</p>
-          <p className="text-sm mt-1">
-            Code: <span className="text-brandOrange font-bold">WEEKEND30</span>
-          </p>
-        </div>
-      </div>
+      <p className="text-xs uppercase opacity-80">Weekend Special</p>
+      <p className="text-2xl font-bold mt-2">Up to 30% OFF</p>
+      <p className="text-sm mt-1">WEEKEND30</p>
     </div>
 
   </div>
 </div>
 
+     
+      {/* ================= HERO + SEARCH ================= */}
+   {/* ================= PREMIUM COMPACT HERO ================= */}
+<div className="relative px-4 pt-6 pb-8">
 
-      <div className="pb-8 rounded-b-3xl">
+  {/* Soft Luxury Background */}
+  <div className="absolute inset-0 bg-gradient-to-br from-[#fdfbfb] to-[#ebedee] rounded-b-[30px]" />
+
+  <div className="relative z-10">
+
+    {/* Title */}
+    <h1 className="text-xl font-heading font-bold text-gray-800">
+      Find Your Perfect Stay
+    </h1>
+    <p className="text-xs text-gray-500 mt-1">
+      Hotels • Villas • Camping
+    </p>
+
+    {/* SMALL PREMIUM SEARCH CARD */}
+    <div className="mt-4 bg-white rounded-2xl shadow-xl p-4 space-y-3">
+
+      {/* Destination */}
+      <input
+        className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-orange-400 outline-none"
+        placeholder="Where are you going?"
+        value={destination}
+        onChange={(e) => setDestination(e.target.value)}
+      />
+
+      {/* Dates */}
+      <div className="flex gap-2">
+        <input
+          type="date"
+          min={today}
+          value={checkIn}
+          onChange={(e) => setCheckIn(e.target.value)}
+          className="w-1/2 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-orange-400 outline-none"
+        />
+        <input
+          type="date"
+          min={checkIn || today}
+          value={checkOut}
+          onChange={(e) => setCheckOut(e.target.value)}
+          className="w-1/2 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-orange-400 outline-none"
+        />
+      </div>
+
+      {/* Guests */}
+      <select
+        value={guests}
+        onChange={(e) => setGuests(e.target.value)}
+        className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-orange-400 outline-none"
+      >
+        {[1,2,3,4,5,6].map(g => (
+          <option key={g}>{g} Guest{g > 1 ? "s" : ""}</option>
+        ))}
+      </select>
+
+      {/* Button */}
+      <button
+        onClick={handleSearch}
+        className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2.5 rounded-xl text-sm font-semibold active:scale-95 transition"
+      >
+        Search Stays
+      </button>
+
+    </div>
+  </div>
+</div>
+
+
+
+    {/* ================= EXPLORE BY CATEGORY ================= */}
+ <div className="pb-8 rounded-b-3xl">
  <p className="mt-3 text-sm opacity-90">
   🌲 Camping available in 
   <span className="font-semibold"> Alibaug, Lonavala, Igatpuri</span>
@@ -219,119 +253,44 @@ useEffect(() => {
   Explore flyteo camping , events & activities
 </button>
 </div>
-      {/* ================= HERO + SEARCH ================= */}
-      <div className="bg-[#546570] px-4 pt-6 pb-8 rounded-3xl text-white">
-       
-        <h1 className="text-xl font-heading">Find your perfect stay</h1>
-        <p className="text-sm opacity-90">Hotels · Camping · Villas</p>
+     {/* ================= EXPLORE BY TYPE ================= */}
+<div className="mt-8 px-4 fade-up">
+  {/* <h2 className="text-lg font-bold mb-4">
+    Explore Categories
+  </h2> */}
+  <h2 className="text-2xl font-heading font-bold text-center mb-8">
+  <span className="text-orange-500">Explore</span> Categories
+</h2>
 
-        <div className="bg-white text-black rounded-xl shadow-lg mt-4 p-4 space-y-3">
+  <div className="grid grid-cols-3 gap-4">
 
-          <input
-            className="w-full border-4 border-orange-200 border-x-orange-500 rounded-lg p-3"
-            placeholder="Enter destination"
-            required
-            value={destination}
-            onChange={(e) => setDestination(e.target.value)}
-          />
-
-          {/* DATES */}
-<div className="flex gap-2">
-  <input
-    type="date"
-    className="w-1/2 border-4 border-orange-200 border-x-orange-500 rounded-lg p-3 text-sm"
-    min={today}
-    value={checkIn}
-    onChange={(e) => setCheckIn(e.target.value)}
-  />
-
-  <input
-    type="date"
-    className="w-1/2 border-4 border-orange-200 border-x-orange-500 rounded-lg p-3 text-sm"
-    min={checkIn || today}
-    value={checkOut}
-    onChange={(e) => setCheckOut(e.target.value)}
-  />
-</div>
-
-{/* GUESTS */}
-<select
-  className="w-full border-4 border-orange-200 border-x-orange-500 rounded-lg p-3 text-sm"
-  value={guests}
-  onChange={(e) => setGuests(e.target.value)}
->
-  {[1, 2, 3, 4, 5, 6].map((g) => (
-    <option key={g} value={g}>
-      {g} Guest{g > 1 ? "s" : ""}
-    </option>
-  ))}
-</select>
-
-{/* SEARCH BUTTON */}
-
-          <button
-            onClick={handleSearch}
-            className="w-full bg-brandOrange text-white py-3 rounded-lg font-semibold text-base active:scale-95 transition"
-          >
-            Search
-          </button>
+    {[
+      { name: "Hotels", img: h1, path: "/hotels" },
+      { name: "Camping", img: c1, path: "/campings" },
+      { name: "Villas", img: v1, path: "/villas" },
+    ].map((item, i) => (
+      <div
+        key={i}
+        onClick={() => nav(item.path)}
+        className="relative h-24 rounded-2xl overflow-hidden shadow-lg active:scale-95 transition"
+      >
+        <img src={item.img} className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+          <p className="text-white font-semibold">{item.name}</p>
         </div>
       </div>
-
-     {/* ================= EXPLORE BY TYPE ================= */}
-<div className="mt-6 px-2">
-  <h2 className="font-heading text-lg mb-3">
-    Explore By Category
-  </h2>
-
-  <div className="grid grid-cols-3 gap-4 text-center">
-
-    {/* HOTELS */}
-    <div
-      onClick={() =>
-        nav(`/hotels?destination=${encodeURIComponent(destination)}`)
-      }
-      className="relative bg-white rounded-xl p-4 shadow"
-      style={{ backgroundImage: `url(${h1})` }}
-    >
-       <div className="absolute inset-0 bg-black bg-opacity-50 rounded-xl"></div>
-    
-      <p className="mt-1 text-lg text-white">Hotels</p>
-    </div>
-
-    {/* CAMPING */}
-    <div
-      onClick={() =>
-        nav(`/campings?destination=${encodeURIComponent(destination)}`)
-      }
-      className="relative bg-white rounded-xl p-4 shadow"
-      style={{ backgroundImage: `url(${c1})` }}
-    >
-       <div className="absolute inset-0 bg-black bg-opacity-50 rounded-xl"></div>
-      <p className="mt-1 text-lg text-white">Camping</p>
-    </div>
-
-    {/* VILLAS */}
-    <div
-      onClick={() =>
-        nav(`/villas?destination=${encodeURIComponent(destination)}`)
-      }
-      className="relative bg-white rounded-xl p-4 shadow "
-      style={{backgroundImage: `url(${v1})`}}
-    >
-      <div className="absolute inset-0 bg-black bg-opacity-50 rounded-xl"></div>
-      <p className="mt-1 text-lg text-white">Villas</p>
-    </div>
+    ))}
 
   </div>
 </div>
 
 
+
       {/* ================= POPULAR DESTINATIONS ================= */}
 <div className="mt-6 px-2">
-  <h2 className="font-heading text-lg mb-3">
-    Popular Destinations
-  </h2>
+ <h2 className="text-2xl font-heading font-bold text-center mb-8">
+  Popular <span className="text-orange-500">Destinations</span>
+</h2>
 
   {/* HORIZONTAL SCROLL ONLY */}
   <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
@@ -434,7 +393,9 @@ useEffect(() => {
         </div>
       )}
   <div className="mt-6 px-2">
-        <h2 className="font-heading text-lg mb-3">Recommended for You</h2>
+       <h2 className="text-2xl font-heading font-bold text-center mb-8">
+  <span className="text-orange-500">Recommended </span>For You
+</h2>
 
         <Swiper
            modules={[Navigation, Autoplay]}
@@ -468,7 +429,8 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
        
              return (
                <SwiperSlide key={h.id}>
-                 <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition duration-300 border border-gray-100">
+                 <div className="bg-white rounded-3xl shadow-lg overflow-hidden active:scale-95 transition duration-300">
+
                    <Link
                        to={`/hotels/${h.id}`}
                      >
@@ -542,7 +504,9 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
       </div>
       { /*  Villas Spots */}
    <div className="mt-6 px-2">
-    <h2 className="font-heading text-lg mb-3">Luxury Villas for Private Stays</h2>
+    <h2 className="text-2xl font-heading font-bold text-center mb-8">
+  <span className="text-orange-500">Luxury Villas </span>For Private Stay
+</h2>
 <Swiper
   modules={[Navigation, Autoplay]}
   autoplay={{ delay: 4000, disableOnInteraction: false }}
@@ -647,8 +611,9 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
     </div>
  {/* Camping SPots */}
 <div className="mt-6 px-2">
-  <h2 className="font-heading text-lg mb-3">Adventure activities,camping & event</h2>
-
+  <h2 className="text-2xl font-heading font-bold text-center mb-8">
+  <span className="text-orange-500">Adventure </span>activities,camping & events
+</h2>
   <Swiper
     modules={[Navigation, Autoplay]}
     navigation

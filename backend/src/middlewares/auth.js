@@ -1,20 +1,25 @@
 import jwt from "jsonwebtoken";
 
 export default function (req, res, next) {
-  const header = req.headers["authorization"];
-  if (!header) return res.status(401).json({ msg: "No token" });
+  const token = req.cookies.accessToken;
 
-  const token = header.split(" ")[1];
-  if (!token) return res.status(401).json({ msg: "Token missing" });
+  if (!token) {
+    return res.status(401).json({ msg: "Not authenticated" });
+  }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // MUST contain role
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
+
+    req.user = decoded;
     next();
   } catch (err) {
     return res.status(401).json({ msg: "Invalid token" });
   }
 }
+
 
 export const adminOnly = (req, res, next) => {
   if (!req.user) return res.status(401).json({ msg: "Not logged in" });

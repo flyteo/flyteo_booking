@@ -7,6 +7,25 @@ import { sendWelcomeEmail } from "../utils/mailer.js";
 const router = express.Router();
 const prisma = new PrismaClient();
 
+router.get("/me", (req, res) => {
+  const token = req.cookies.accessToken;
+
+  if (!token) {
+    return res.status(401).json({ msg: "Not authenticated" });
+  }
+
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
+
+    res.json(decoded);
+    
+  } catch {
+    return res.status(401).json({ msg: "Invalid token" });
+  }
+});
 
 router.post("/register", async (req, res) => {
   try {
@@ -64,21 +83,41 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
 
-    // JWT token
-    const token = jwt.sign(
+    // Access Token (short-lived)
+    const accessToken = jwt.sign(
       {
-        id: user.id,          // ✅ Prisma uses id
-        email: user.email,
+        id: user.id,
         role: user.role,
-        hotelId: user.hotelId, // useful for hotel-admin
-        villaId: user.villaId // useful for villa-admin
+        hotelId: user.hotelId,
+        villaId: user.villaId
       },
       process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    // Refresh Token (long-lived)
+    const refreshToken = jwt.sign(
+      { id: user.id },
+      process.env.JWT_REFRESH_SECRET,
       { expiresIn: "7d" }
     );
 
+    // Set cookies
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: true,        // true in production
+      sameSite: "Strict",  // or "None" if cross-domain
+      maxAge: 15 * 60 * 1000
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,        // true in production
+      sameSite: "Strict",  // or "None" if cross-domain
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
     res.json({
-      token,
       user: {
         id: user.id,
         name: user.name,
@@ -93,6 +132,44 @@ router.post("/login", async (req, res) => {
     console.error(err);
     res.status(500).json({ msg: "Login failed" });
   }
+});
+
+router.post("/refresh", (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    return res.status(401).json({ msg: "No refresh token" });
+  }
+
+  try {
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET
+    );
+
+    const newAccessToken = jwt.sign(
+      { id: decoded.id },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+      maxAge: 15 * 60 * 1000
+    });
+
+    res.json({ msg: "Token refreshed" });
+
+  } catch {
+    return res.status(403).json({ msg: "Invalid refresh token" });
+  }
+});
+router.post("/logout", (req, res) => {
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+  res.json({ msg: "Logged out successfully" });
 });
 
 

@@ -3,7 +3,7 @@ import api from "../axios";
 import HotelAdminSidebar from "./HotelAdminSidebar";
 
 export default function HotelAdminRooms() {
-  const token = localStorage.getItem("token");
+  
 
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -17,8 +17,7 @@ export default function HotelAdminRooms() {
     setLoading(true);
 
     const res = await api.get(
-      `/occupancy/calendar?from=${from}&to=${to}`,
-      { headers: { Authorization: `Bearer ${token}` } }
+      `/occupancy/calendar?from=${from}&to=${to}`
     );
 
     setCalendar(res.data);
@@ -40,8 +39,7 @@ export default function HotelAdminRooms() {
 
     await api.post(
       "/hotel-admin/availability/block",
-      { roomId, date, blockedRooms },
-      { headers: { Authorization: `Bearer ${token}` } }
+      { roomId, date, blockedRooms }
     );
 
     loadCalendar();

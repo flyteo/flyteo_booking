@@ -12,10 +12,8 @@ export default function ManageHotels() {
   }, []);
 
   const delHotel = async (id) => {
-    const token = localStorage.getItem("token");
-    await api.delete(`/hotels/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+
+    await api.delete(`/hotels/${id}`);
     setHotels(hotels.filter((h) => h.id !== id));
   };
 

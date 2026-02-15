@@ -12,10 +12,7 @@ export default function ManageVilla() {
   }, []);
 
   const delVilla = async (id) => {
-    const token = localStorage.getItem("token");
-    await api.delete(`/villas/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    await api.delete(`/villas/${id}`);
     setVillas(villas.filter((v) => v.id !== id));
   };
 

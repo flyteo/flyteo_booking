@@ -1,9 +1,11 @@
 import { useState ,useEffect } from "react";
 import api from "../axios";
 import { Link, useNavigate } from "react-router-dom";
+import {useAuth} from "../context/AuthContext";
 
 export default function Login() {
   const nav = useNavigate();
+  const {login} =useAuth();
   const [data, setData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
 
@@ -11,17 +13,17 @@ export default function Login() {
   e.preventDefault();
 
   try {
-    const res = await api.post("/auth/login", data);
+   await login(data.email, data.password);
+window.location.href = "/";
 
     // Save token + user
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
+    // localStorage.setItem("token", res.data.token);
+    // localStorage.setItem("user", JSON.stringify(res.data.user));
 
-    const role = res.data.user.role;
+    // const role = res.data.user.role;
 
     // ROLE BASED NAVIGATION
-   
-    window.location.href = "/"
+  
 
   } catch (err) {
     setError(err.response?.data?.msg || "Login failed");

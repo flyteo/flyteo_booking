@@ -2,7 +2,6 @@ import { useState } from "react";
 import api from "../axios";
 
 export default function CheckInModal({ booking, onClose, onUpdated }) {
-  const token = localStorage.getItem("token");
 
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,8 +29,7 @@ export default function CheckInModal({ booking, onClose, onUpdated }) {
 
       await api.put(
         `/hotel-admin/bookings/${booking.id}/check-in`,
-        { collectedAmount: Number(amount) || 0 },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { collectedAmount: Number(amount) || 0 }
       );
 
       onUpdated();
@@ -57,8 +55,7 @@ export default function CheckInModal({ booking, onClose, onUpdated }) {
 
       await api.put(
         `/hotel-admin/bookings/${booking.id}/check-out`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        {}
       );
 
       onUpdated();

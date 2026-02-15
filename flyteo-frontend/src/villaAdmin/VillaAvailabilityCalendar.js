@@ -16,10 +16,9 @@ const [confirmStatus, setConfirmStatus] = useState(null);
   }, [currentMonth]);
 
   const loadAvailability = async () => {
-    const token = localStorage.getItem("token");
+    
     const res = await api.get(
-      `/villa-admin/availability?month=${currentMonth.getMonth() + 1}&year=${currentMonth.getFullYear()}`,
-      { headers: { Authorization: `Bearer ${token}` } }
+      `/villa-admin/availability?month=${currentMonth.getMonth() + 1}&year=${currentMonth.getFullYear()}`
     );
 
     // ✅ normalize dates to YYYY-MM-DD
@@ -63,20 +62,17 @@ const [confirmStatus, setConfirmStatus] = useState(null);
   // };
 
   const confirmAction = async () => {
-  const token = localStorage.getItem("token");
 
   if (confirmStatus === "available") {
     await api.post(
       "/villa-admin/block-dates",
-      { dates: [confirmDate] }, // ✅ ONLY ONE DATE
-      { headers: { Authorization: `Bearer ${token}` } }
+      { dates: [confirmDate] }
     );
   }
 
   if (confirmStatus === "blocked") {
     await api.delete(
-      `/villa-admin/unblock-date/${confirmDate}`,
-      { headers: { Authorization: `Bearer ${token}` } }
+      `/villa-admin/unblock-date/${confirmDate}`
     );
   }
 

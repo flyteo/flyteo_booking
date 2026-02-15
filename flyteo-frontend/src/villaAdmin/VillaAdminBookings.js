@@ -12,10 +12,7 @@ export default function VillaAdminBookings() {
   }, []);
 
   const loadBookings = async () => {
-    const token = localStorage.getItem("token");
-    const res = await api.get("/villa-admin/bookings", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const res = await api.get("/villa-admin/bookings");
     setBookings(res.data);
   };
   const isToday = (dateStr) => {
@@ -80,12 +77,7 @@ const isPast = (dateStr) => {
       onClick={async () => {
         await api.put(
           `/villa-admin/check-out/${b.id}`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`
-            }
-          }
+          {}
         );
         loadBookings();
       }}

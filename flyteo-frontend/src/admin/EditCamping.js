@@ -87,7 +87,6 @@ export default function EditCamping() {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem("token");
 
       await api.put(
         `/campings/${id}`,
@@ -107,8 +106,7 @@ export default function EditCamping() {
         }
       ])
     )
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
+        }
       );
 
       alert("Camping Package Updated Successfully!");

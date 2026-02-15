@@ -185,7 +185,7 @@ export default function PrivacyPolicy() {
 
       <p>
         We may revise this Privacy Policy from time to time. Updated versions
-        will be posted on this page with a new “Last Updated” date.
+        will be posted on this page with a new “28 DEC 2025” date.
       </p>
 
       {/* SECTION 10 */}

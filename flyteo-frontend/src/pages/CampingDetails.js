@@ -1,8 +1,8 @@
 import api from "../axios";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { Swiper, SwiperSlide} from "swiper/react";
+import { Navigation, Pagination, Autoplay ,Thumbs} from "swiper/modules";
 import AddReviews from "./AddReviews";
 import Reviews from "./Reviews";
 
@@ -13,12 +13,14 @@ import "swiper/css/pagination";
 export default function CampingDetails() {
   const { id } = useParams();
   const nav = useNavigate();
+const [thumbsSwiper, setThumbsSwiper] = useState(null);
 
   const [camp, setCamp] = useState(null);
   const [date, setDate] = useState("");
 const [available, setAvailable] = useState(true);
 const [checking, setChecking] = useState(false);
 const [dateError, setDateError] = useState("");
+//  const [selectedImage, setSelectedImage] = useState(null);
 
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
@@ -113,6 +115,52 @@ const [dateError, setDateError] = useState("");
               {today}
             </span>
           </div>
+{camp.campingimage?.length > 0 && (
+  <section className="mt-12">
+    <h2 className="text-2xl font-bold mb-4">Camping Gallery</h2>
+
+    {/* MAIN SLIDER */}
+    <Swiper
+      modules={[Navigation, Thumbs]}
+      navigation
+      thumbs={{ swiper: thumbsSwiper }}
+      className="rounded-xl overflow-hidden h-[45vh]"
+    >
+      {camp.campingimage.map((img) => (
+        <SwiperSlide key={img.id}>
+          <img
+            src={img.url}
+            alt="Camping"
+            className="w-full h-full object-cover"
+          />
+        </SwiperSlide>
+      ))}
+    </Swiper>
+
+    {/* THUMBNAIL SLIDER */}
+    <Swiper
+      onSwiper={setThumbsSwiper}
+      slidesPerView={5}
+      spaceBetween={10}
+      className="mt-4"
+      breakpoints={{
+        320: { slidesPerView: 3 },
+        640: { slidesPerView: 4 },
+        1024: { slidesPerView: 5 },
+      }}
+    >
+      {camp.campingimage.map((img) => (
+        <SwiperSlide key={img.id}>
+          <img
+            src={img.url}
+            alt="Thumbnail"
+            className="h-24 w-full object-cover rounded-lg cursor-pointer border hover:border-palmGreen transition"
+          />
+        </SwiperSlide>
+      ))}
+    </Swiper>
+  </section>
+)}
 
           {/* INCLUSIONS */}
           {camp.campinginclusion?.length > 0 && (
@@ -291,6 +339,8 @@ const [dateError, setDateError] = useState("");
             <AddReviews campingId={camp.id} onReviewAdded={() => {}} />
             <Reviews campingId={camp.id} />
           </div>
+
+        
     </div>
   );
 }

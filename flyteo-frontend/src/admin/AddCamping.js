@@ -39,7 +39,6 @@ export default function AddCamping() {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem("token");
 
       await api.post(
         "/campings",
@@ -60,8 +59,7 @@ export default function AddCamping() {
         }
       ])
     )
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
+        }
       );
 
       alert("Camping Package Added Successfully!");

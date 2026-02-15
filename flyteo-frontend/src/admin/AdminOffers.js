@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import AdminSidebar from "./AdminSidebar";
 
 export default function AdminOffers() {
-  const token = localStorage.getItem("token");
+
 
   const [offers, setOffers] = useState([]);
   const [form, setForm] = useState({
@@ -34,8 +34,7 @@ export default function AdminOffers() {
   : null,
         validTo: form.validTo ? new Date(form.validTo).toISOString() : null,
         image: form.image || null
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
+      }
     );
 
     setForm({ title: "", discountPercent: "", validFrom: "", validTo: "" });
@@ -44,8 +43,7 @@ export default function AdminOffers() {
 
   const deleteOffer = async (id) => {
     await api.delete(
-      `/offers/${id}`,
-      { headers: { Authorization: `Bearer ${token}` } }
+      `/offers/${id}`
     );
     loadOffers();
   };

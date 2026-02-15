@@ -10,13 +10,9 @@ export default function MyBookings() {
   useEffect(() => {
     const loadBookings = async () => {
       try {
-        const token = localStorage.getItem("token");
 
         const res = await api.get(
-          "/bookings/my",
-          {
-            headers: { Authorization: `Bearer ${token}` }
-          }
+          "/bookings/my"
         );
 
         setBookings(res.data);

@@ -12,11 +12,6 @@ export default function AddReviews({
   const [loading, setLoading] = useState(false);
 
   const submitReview = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Please login to add a review");
-      return;
-    }
 
     let type = null;
     let targetId = null;
@@ -47,9 +42,6 @@ export default function AddReviews({
           targetId,
           rating,
           comment
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` }
         }
       );
 

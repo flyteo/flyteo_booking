@@ -1,18 +1,29 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import api from "../axios"
 
 export default function HotelAdminSidebar() {
   const nav = useNavigate();
   const { pathname } = useLocation();
-  const user = JSON.parse(localStorage.getItem("user"));
   const [open, setOpen] = useState(false);
 
-  if (!user || user.role !== "hotel-admin") return null;
+ const { user, loading } = useAuth();
 
-  const logout = () => {
-    localStorage.clear();
-    window.location.href = "/"; // Force full reload to clear state
-  };
+if (loading) return null;
+
+if (!user || user.role !== "hotel-admin") return null;
+
+  const logout = async () => {
+  try {
+    await api.post("/auth/logout"); // clears cookies
+  } catch (err) {
+    console.error("Logout failed", err);
+  }
+
+  window.location.href = "/home";
+};
+
 
   const MenuItem = ({ to, label }) => (
     <Link

@@ -12,10 +12,7 @@ export default function ManageCamping() {
   }, []);
 
   const delCamping = async (id) => {
-    const token = localStorage.getItem("token");
-    await api.delete(`/campings/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    await api.delete(`/campings/${id}`);
     setCampings(campings.filter((h) => h.id !== id));
   };
 

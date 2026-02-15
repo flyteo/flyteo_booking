@@ -57,11 +57,9 @@ useEffect(() => {
   // 🔥 Load hotel data
   useEffect(() => {
     const loadHotel = async () => {
-      const token = localStorage.getItem("token");
 
       const res = await api.get(
-        `/hotels/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        `/hotels/${id}`
       );
 
       setHotel({
@@ -143,7 +141,7 @@ setDayWisePercentage(dayMap);
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem("token");
+    
 
       await api.put(
         `/hotels/${id}`,
@@ -179,8 +177,7 @@ room: hotel.room.map(
     hotelpolicy: hotel.hotelpolicy,
     hotelsafety: hotel.hotelsafety,
     hotelrule: hotel.hotelrule
-  },
-        { headers: { Authorization: `Bearer ${token}` } }
+  }
       );
 
       alert("Hotel Updated Successfully!");

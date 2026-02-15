@@ -134,95 +134,104 @@ const handleSearch = () => {
 
 
   return (
-    <div>
+    <div className="max-w-7xl mx-auto px-6">
 
          {/* ---------------------------------------------------------------- */}
       {/* 1. HERO SECTION */}
       {/* ---------------------------------------------------------------- */}
-      <div className="relative w-full h-[70vh] bg-cover bg-center rounded-xl shadow-lg"
-        style={{
-          backgroundImage:
-            "url('https://t3.ftcdn.net/jpg/02/34/63/62/360_F_234636298_jTNoFrT7fHrwSjA7rkjy7UAwARjDfuJF.jpg')",
-        }}
-      >
-        <div className="absolute inset-0 bg-black bg-opacity-50 rounded-xl"></div>
-
-        <div className="relative z-10 text-white flex flex-col justify-center items-center h-full px-6 text-center">
-          
-          <p className="mt-3 text-sm opacity-90">
-  🌲 Camping available in 
-  <span className="font-semibold"> Alibaug, Lonavala, Igatpuri</span>
-</p>
-
-<button
-  onClick={() => nav("/campings")}
-  className="mt-4 bg-white text-brandOrange hover:text-orange-200 px-6 py-2 rounded-full font-semibold"
+    {/* HERO SECTION */}
+<div
+  className="relative h-[65vh] w-full overflow-hidden"
+  style={{
+    backgroundImage:
+      "url('https://images.unsplash.com/photo-1501117716987-c8e1ecb2105b?auto=format&fit=crop&w=1600&q=80')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  }}
 >
-  Explore Camping
-</button>
+  {/* Overlay */}
+  <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
 
-          
-          <h1 className="font-heading text-4xl md:text-6xl mb-4">
-            Find Your Perfect Stay
-          </h1>
-          <p className="text-lg md:text-2xl mb-6">
-            Hotels & Campsites with Comfort, Adventure & Best Prices
-          </p>
+  <div className="relative z-10 h-full flex flex-col justify-center items-center text-white text-center px-6">
 
-          {/* SEARCH BAR */}
-          <div className="bg-white rounded-xl shadow-xl p-4 grid grid-cols-1 md:grid-cols-5 gap-3 w-full max-w-4xl text-black">
+    <h1 className="font-heading text-5xl md:text-7xl font-bold leading-tight">
+      Discover Luxury Stays
+    </h1>
 
-            <input
-              type="text"
-              placeholder="Destination (e.g., Mumbai)"
-              className="p-3 border-4 border-orange-200 border-x-orange-500 rounded"
-              value={destination}
-              onChange={(e) => setDestination(e.target.value)}
-            />
+    <p className="mt-4 text-lg md:text-2xl text-gray-200">
+      Hotels • Villas • Camping Experiences
+    </p>
 
-            <input
-               type="date"
-                min={today}
-                value={checkIn}
-              className="p-3 border-4 border-orange-200 border-x-orange-500 rounded"
-              onChange={(e) => setCheckIn(e.target.value)}
-            />
+    {/* SEARCH GLASS CARD */}
+    <div className="mt-10 bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-2xl shadow-2xl w-full max-w-5xl">
 
-            <input
-              type="date"
-              min={checkIn || today}
-              className="p-3 border-4 border-orange-200 border-x-orange-500 rounded"
-              value={checkOut}
-              onChange={(e) => setCheckOut(e.target.value)}
-            />
+      <div className="grid md:grid-cols-5 gap-4 text-black">
 
-            <select
-              className="p-3 border-4 border-orange-200 border-x-orange-500 rounded"
-              value={guests}
-              onChange={(e) => setGuests(e.target.value)}
-            >
-              {[1, 2, 3, 4, 5, 6].map((g) => (
-                <option key={g}>{g} Guest{g > 1 ? "s" : ""}</option>
-              ))}
-            </select>
+        <input
+          type="text"
+          placeholder="Where are you going?"
+          className="p-3 rounded-lg border focus:ring-2 focus:ring-orange-400"
+          value={destination}
+          onChange={(e) => setDestination(e.target.value)}
+        />
 
-            <button
-              onClick={handleSearch}
-              className="bg-orange-500 text-white rounded text-lg font-semibold"
-            >
-              Search
-            </button>
-          </div>
-        </div>
+        <input
+          type="date"
+          min={today}
+          value={checkIn}
+          onChange={(e) => setCheckIn(e.target.value)}
+          className="p-3 rounded-lg border"
+        />
+
+        <input
+          type="date"
+          min={checkIn || today}
+          value={checkOut}
+          onChange={(e) => setCheckOut(e.target.value)}
+          className="p-3 rounded-lg border"
+        />
+
+        <select
+          value={guests}
+          onChange={(e) => setGuests(e.target.value)}
+          className="p-3 rounded-lg border"
+        >
+          {[1,2,3,4,5,6].map(g => (
+            <option key={g}>{g} Guest{g > 1 ? "s" : ""}</option>
+          ))}
+        </select>
+
+        <button
+          onClick={handleSearch}
+          className="bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold"
+        >
+          Search
+        </button>
+
       </div>
+    </div>
+
+  </div>
+</div>
+<div className="bg-white shadow py-6">
+  <div className="max-w-6xl mx-auto grid grid-cols-4 text-center text-sm text-gray-600">
+    <div>✔ 500+ Verified Properties</div>
+    <div>✔ Secure Payments</div>
+    <div>✔ 24/7 Support</div>
+    <div>✔ Best Price Guarantee</div>
+  </div>
+</div>
+
+
       {/* ---------------------------------------------------------------- */}
 {/* ---------------------------------------------------------------- */}
 {/* SPECIAL OFFERS & DEALS (Dynamic from Backend) */}
 {/* ---------------------------------------------------------------- */}
 <div className="mt-20">
-  <h2 className="font-heading text-3xl mb-6 text-palmGreen text-center">
-    Special Offers & Deals
-  </h2>
+  <h2 className="text-4xl font-heading font-bold text-center mb-12">
+  <span className="text-orange-500">Special</span> Offers & Deals
+</h2>
+
 
   {offers.length === 0 ? (
     <p className="text-center text-gray-600">No active offers right now.</p>
@@ -291,9 +300,10 @@ const handleSearch = () => {
       {/* 2. FEATURED DESTINATIONS SECTION */}
       {/* ---------------------------------------------------------------- */}
      <div className="mt-16">
-  <h2 className="font-heading text-3xl mb-6 text-palmGreen text-center">
-    Popular Destinations
-  </h2>
+ <h2 className="text-4xl font-heading font-bold text-center mb-12">
+  <span className="text-orange-500">Explore</span> Popular Destinations
+</h2>
+
 
   <div className="flex gap-6 overflow-x-auto scrollbar-hide pb-4">
   {popularLocations.map((loc) => {
@@ -345,9 +355,9 @@ const handleSearch = () => {
       {/* 3. FEATURED HOTELS & CAMPSITES */}
       {/* ---------------------------------------------------------------- */}
      <div className="mt-16">
-  <h2 className="font-heading text-3xl mb-6 text-palmGreen text-center">
-    Best Stays in Mumbai
-  </h2>
+  <h2 className="text-4xl font-heading font-bold text-center mb-12">
+  <span className="text-orange-500">Best</span> Stays in Mumbai
+</h2>
 
   <Swiper
     modules={[Navigation, Autoplay]}
@@ -381,7 +391,7 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
 
       return (
         <SwiperSlide key={h.id}>
-          <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition duration-300 border border-gray-100">
+<div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-2 transition duration-500">
             
             {/* IMAGE */}
             <div className="relative group">
@@ -400,9 +410,11 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
 
               {/* PRICE */}
               {finalPrice < originalPrice && (
-                <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-4 py-1 rounded-full text-sm font-semibold text-palmGreen shadow">
-                  ₹{finalPrice}/night
-                </div>
+                <p className="text-2xl font-bold text-orange-500">
+  ₹{finalPrice}
+  <span className="text-sm text-gray-500 font-normal"> / night</span>
+</p>
+
               )}
             </div>
 
@@ -453,9 +465,10 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
 
        {/* Camping SPots */}
 <div className="mt-12">
-  <h2 className="font-heading text-3xl mb-6 text-palmGreen text-center">
-    Camping Spots
-  </h2>
+  <h2 className="text-4xl font-heading font-bold text-center mb-12">
+  <span className="text-orange-500">Adventure</span> Activities,Camping & Events
+</h2>
+
 
   <Swiper
     modules={[Navigation, Autoplay]}
@@ -509,9 +522,10 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
 </div>
    { /*  Villas Spots */}
    <div className="mt-12">
-    <h2 className="font-heading text-3xl mb-6 text-palmGreen text-center">
-  Luxury Villas for Private Stays
+    <h2 className="text-4xl font-heading font-bold text-center mb-12">
+  <span className="text-orange-500">Luxury</span> Villas for Private Stay
 </h2>
+
 <Swiper
   modules={[Navigation, Autoplay]}
   autoplay={{ delay: 4000, disableOnInteraction: false }}
@@ -619,9 +633,10 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
 {/* CUSTOMER REVIEWS */}
 {/* ---------------------------------------------------------------- */}
 <div className="mt-20 py-16 bg-white shadow-inner rounded-xl">
-  <h2 className="font-heading text-3xl text-center text-rusticBrown mb-10">
-    What Our Customers Say
-  </h2>
+  <h2 className="text-4xl font-heading font-bold text-center mb-12">
+  What our<span className="text-orange-500"> Customer</span> Says
+</h2>
+
 
   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-6">
 
@@ -654,9 +669,10 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
       {/* 4. WHY CHOOSE US (TRUST SECTION) */}
       {/* ---------------------------------------------------------------- */}
       <div className="mt-20 py-16 bg-white rounded-xl shadow-inner shadow-lg">
-        <h2 className="font-heading text-3xl mb-6 text-center text-rusticBrown">
-          Why Choose Flyteo?
-        </h2>
+       <h2 className="text-4xl font-heading font-bold text-center mb-12">
+  Why Choose<span className="text-orange-500"> Flyteo?</span> 
+</h2>
+
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center px-4">
 
@@ -701,9 +717,10 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
 {/* BLOG / TRAVEL INSPIRATION */}
 {/* ---------------------------------------------------------------- */}
 <div className="mt-20">
-  <h2 className="font-heading text-3xl text-center text-palmGreen mb-8">
-    Travel Inspiration & Guides
-  </h2>
+ <h2 className="text-4xl font-heading font-bold text-center mb-12">
+  <span className="text-orange-500">Travel</span> Inspiration & Guides
+</h2>
+
 
   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -750,7 +767,9 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
 {/* ---------------------------------------------------------------- */}
 {/* FOOTER */}
 {/* ---------------------------------------------------------------- */}
-<footer className="mt-14 bg-[#c18357] text-white py-8">
+<footer className="bg-gradient-to-r from-orange-500 to-yellow-400 text-gray-300 py-14">
+{/* <div className="h-1 bg-gradient-to-r from-orange-500 to-yellow-400 mb-10" /> */}
+
   <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-6">
 
     {/* ABOUT */}

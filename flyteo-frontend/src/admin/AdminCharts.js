@@ -11,12 +11,8 @@ export default function AdminCharts() {
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return; // admin should be logged in
 
-    api.get("/admin/stats", {
-      headers: { Authorization: `Bearer ${token}` }
-    }).then(res => setStats(res.data)).catch(err => {
+    api.get("/admin/stats").then(res => setStats(res.data)).catch(err => {
       console.error(err);
       // redirect logic if unauthorized could be added
     });

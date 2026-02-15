@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import AdminSidebar from "./AdminSidebar";
 
 export default function AdminCoupons() {
-  const token = localStorage.getItem("token");
 
   const [coupons, setCoupons] = useState([]);
   const [form, setForm] = useState({
@@ -34,8 +33,7 @@ export default function AdminCoupons() {
         minBookingAmount: Number(form.minBookingAmount),
         validFrom: form.validFrom ? new Date(form.validFrom).toISOString() : null,
         validTo: form.validTo ? new Date(form.validTo).toISOString() : null
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
+      }
     );
 
     setForm({
@@ -52,8 +50,7 @@ export default function AdminCoupons() {
 
   const deleteCoupon = async (id) => {
     await api.delete(
-      `/coupons/${id}`,
-      { headers: { Authorization: `Bearer ${token}` } }
+      `/coupons/${id}`
     );
     loadCoupons();
   };

@@ -3,21 +3,17 @@ import api from "../axios";
 import { Link, useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 import AdminTopbar from "./AdminTopbar";
-
-
+import {useAuth} from "../context/AuthContext";
 
 export default function AdminDashboard() {
   const nav = useNavigate();
-//   const logout = () => {
-//   localStorage.removeItem("token");
-//   localStorage.removeItem("admin");
-//   nav("/admin");
-// };
+const { user, loading } = useAuth();
   const [stats, setStats] = useState(null);
 
   
   useEffect(() => {
-  const user = JSON.parse(localStorage.getItem("user"));
+if (loading) return null;
+
 if (!user || user.role !== "admin") {
   nav("/login");
   return;
@@ -27,12 +23,8 @@ if (!user || user.role !== "admin") {
  
 
  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return; // admin should be logged in
 
-    api.get("/admin/stats", {
-      headers: { Authorization: `Bearer ${token}` }
-    }).then(res => setStats(res.data)).catch(err => {
+    api.get("/admin/stats").then(res => setStats(res.data)).catch(err => {
       console.error(err);
       // redirect logic if unauthorized could be added
     });

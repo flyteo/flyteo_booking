@@ -6,7 +6,7 @@ export default function HotelAdminDashboard() {
   const [hotel, setHotel] = useState(null);
   const [occupancy, setOccupancy] = useState([]);
   const [bookings, setBookings] = useState([]);
-  const token = localStorage.getItem("token");
+  
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -17,24 +17,19 @@ export default function HotelAdminDashboard() {
   }, []);
 
   const loadHotel = async () => {
-    const res = await api.get("/hotel-admin/my-hotel", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const res = await api.get("/hotel-admin/my-hotel");
     setHotel(res.data);
   };
 
   const loadOccupancy = async () => {
     const res = await api.get(
-      `/occupancy/calendar?from=${today}&to=${today}`,
-      { headers: { Authorization: `Bearer ${token}` } }
+      `/occupancy/calendar?from=${today}&to=${today}`
     );
     setOccupancy(res.data[0]?.rooms || []);
   };
 
   const loadBookings = async () => {
-    const res = await api.get("/hotel-admin/bookings", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const res = await api.get("/hotel-admin/bookings");
     setBookings(res.data);
   };
 

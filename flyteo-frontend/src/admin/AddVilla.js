@@ -84,7 +84,6 @@ export default function AddVilla() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem("token");
 
     await api.post(
       "/villas",
@@ -92,8 +91,7 @@ export default function AddVilla() {
       Object.entries(dayWisePercentage)
         .filter(([_, v]) => v !== "" && Number(v) > 0)
         .map(([day, v]) => [day, Number(v)])
-    )},
-      { headers: { Authorization: `Bearer ${token}` } }
+    )}
     );
 
     alert("Villa added successfully");

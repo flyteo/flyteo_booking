@@ -10,7 +10,6 @@ export default function AdminVillaAvailability() {
   const [availability, setAvailability] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
     loadVillas();
@@ -21,9 +20,7 @@ export default function AdminVillaAvailability() {
   }, [villaId, currentMonth]);
 
   const loadVillas = async () => {
-    const res = await api.get("/villas", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const res = await api.get("/villas");
     setVillas(res.data);
   };
 
@@ -31,8 +28,7 @@ export default function AdminVillaAvailability() {
     const res = await api.get(
       `/admin/villa-availability?villaId=${villaId}&month=${
         currentMonth.getMonth() + 1
-      }&year=${currentMonth.getFullYear()}`,
-      { headers: { Authorization: `Bearer ${token}` } }
+      }&year=${currentMonth.getFullYear()}`
     );
     const normalized = res.data.map(d => ({
     ...d,
@@ -47,15 +43,13 @@ export default function AdminVillaAvailability() {
 
       await api.post(
         "/admin/villa-block-date",
-        { villaId, date: dateStr },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { villaId, date: dateStr }
       );
     } else {
       if (!window.confirm(`Unblock ${dateStr}?`)) return;
 
       await api.delete("/admin/villa-unblock-date", {
-        data: { villaId, date: dateStr },
-        headers: { Authorization: `Bearer ${token}` }
+        data: { villaId, date: dateStr }
       });
     }
 

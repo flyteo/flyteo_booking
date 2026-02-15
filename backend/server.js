@@ -6,6 +6,7 @@ import hotelAdminRoutes from "./src/routes/hotelAdmin.js"
 import cron from "node-cron";
 import "./src/cron/expireOffers.js";
 import path from "path";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -29,8 +30,9 @@ import paymentRoutes from "./src/payment/gateway_order.js"
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: process.env.FRONTEND_URL_FLYTEO, credentials: true }));
 
+app.use(cors({ origin: process.env.FRONTEND_URL_FLYTEO, credentials: true }));
+app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/hotels", hotelRoutes);

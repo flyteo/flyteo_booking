@@ -1,19 +1,29 @@
 import { Link, useNavigate ,useLocation} from "react-router-dom";
 import {useState} from "react"
+import api from "../axios";
+import { useAuth } from "../context/AuthContext";
 
 export default function VillaAdminSidebar() {
   const nav = useNavigate();
    const { pathname } = useLocation();
-  const user = JSON.parse(localStorage.getItem("user"));
-  const [open, setOpen] = useState(false);
+   const [open, setOpen] = useState(false);
+  const { user, loading } = useAuth();
 
-  if (!user || user.role !== "villa-admin") return null;
+if (loading) return null;
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    window.location.href = "/home"; // Force full reload to clear state
-  };
+if (!user || user.role !== "villa-admin") return null;
+  
+
+
+  const logout = async () => {
+  try {
+    await api.post("/auth/logout"); // clears cookies
+  } catch (err) {
+    console.error("Logout failed", err);
+  }
+  window.location.href = "/home";
+};
+
 
   const MenuItem = ({ to, label }) => (
       <Link

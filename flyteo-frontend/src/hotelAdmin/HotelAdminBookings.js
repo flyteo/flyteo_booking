@@ -12,10 +12,7 @@ export default function HotelAdminBookings() {
   }, []);
 
   const loadBookings = async () => {
-    const token = localStorage.getItem("token");
-    const res = await api.get("/hotel-admin/bookings", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const res = await api.get("/hotel-admin/bookings");
     setBookings(res.data);
   };
 

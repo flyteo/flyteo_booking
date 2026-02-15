@@ -12,18 +12,12 @@ export default function VillaAdminDashboard() {
   }, []);
 
   const loadVilla = async () => {
-    const token = localStorage.getItem("token");
-    const res = await api.get("/villa-admin/my-villa", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const res = await api.get("/villa-admin/my-villa");
     setVilla(res.data);
   };
 
   const loadBookings = async () => {
-    const token = localStorage.getItem("token");
-    const res = await api.get("/villa-admin/bookings", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const res = await api.get("/villa-admin/bookings");
     setBookings(res.data);
   };
 
