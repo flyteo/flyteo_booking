@@ -628,7 +628,13 @@ const handleBooking = async () => {
 
   } catch (err) {
   console.error("FULL ERROR:", err);
+  if (err.response?.status === 401) {
+  nav("/login");
+  return;
+}
+
   alert(err.response?.data?.msg || err.message || "Payment failed");
+
 }
 
 };
