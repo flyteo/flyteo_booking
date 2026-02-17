@@ -8,7 +8,7 @@ import { sendBookingConfirmationEmail,sendHotelAdminBookingEmail,sendVillaAdminB
 const router = express.Router();
 
 const cashfree = new Cashfree(
-  CFEnvironment.SANDBOX,
+  CFEnvironment.PRODUCTION,
   process.env.CASHFREE_APP_ID,
   process.env.CASHFREE_SECRET_KEY
 );
@@ -32,6 +32,7 @@ router.post("/create-order", auth, async (req, res) => {
     hotel,
     villa,
     camping,
+    meals,
     roomType,
     acType,
     checkIn,
@@ -395,6 +396,7 @@ router.post("/webhook", async (req, res) => {
     checkIn: new Date(payload.checkIn),
     checkOut: payload.checkOut ? new Date(payload.checkOut) : null,
     guests: payload.guests,
+    meals:payload.meals,
     fullname: payload.fullname,
     mobileno: payload.mobileno,
     roomCount: payload.roomCount,

@@ -20,7 +20,9 @@ export default function CampingList() {
     return <div className="p-10 text-center">Loading experiences…</div>;
   }
 
+
   return (
+    
     <div className="bg-gray-50 min-h-scree">
 
       {/* HEADER */}
@@ -48,13 +50,38 @@ export default function CampingList() {
       {/* LIST */}
       <div className="px-4 md:px-6 py-8 space-y-8">
         <div className="px-4 py-6 space-y-4">
-  {campings.map((camp) =>
-    isMobile ? (
+  {campings.map((camp) => {
+
+  // 🔥 Get today name
+  const today = new Date().toLocaleDateString("en-US", {
+    weekday: "long"
+  });
+
+  // 🔥 Find today's price
+  const todayPriceObj = camp.campingpricing?.find(
+    p => p.day === today
+  );
+
+  const todayPrice = todayPriceObj?.adultPrice || 0;
+
+  // 🔥 Get max adult price
+  const maxPrice = Math.max(
+    ...(camp.campingpricing?.map(p => p.adultPrice) || [0])
+  );
+
+  // 🔥 Calculate discount %
+  const discountPercent =
+    maxPrice > todayPrice
+      ? Math.round(((maxPrice - todayPrice) / maxPrice) * 100)
+      : 0;
+
+  return isMobile ? (
       <Link
         key={camp.id}
         to={`/campings/${camp.id}`}
         className="block bg-white rounded-xl shadow overflow-hidden"
       >
+
         {/* IMAGE */}
         <div className="relative h-40">
           <img
@@ -62,6 +89,11 @@ export default function CampingList() {
             className="w-full h-full object-cover"
             alt={camp.name}
           />
+{discountPercent > 0 && (
+  <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow">
+    {discountPercent}% OFF
+  </div>
+)}
 
           <span className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
             Nature Stay
@@ -103,13 +135,14 @@ export default function CampingList() {
                 Starting from
               </p>
               <p className="text-palmGreen font-bold text-lg">
-                ₹{
-                  camp.campingpricing?.[0]?.adultPrice || "999"
-                }
-                <span className="text-xs text-gray-500">
-                  {" "} / adult
-                </span>
-              </p>
+                  ₹{todayPriceObj.adultPrice || "999"}
+                  <span className="text-xs text-gray-500">
+                    {" "} / adult
+                  </span>
+                </p>
+                <p className="text-xs text-gray-500">
+                  ₹{todayPriceObj.childPrice || "499"} / child
+                </p>
             </div>
 
             <span className="text-sm font-semibold text-palmGreen">
@@ -122,7 +155,7 @@ export default function CampingList() {
       /* ================= DESKTOP CARD (UNCHANGED) ================= */
       <CampingCard key={camp.id} camp={camp} />
     )
-  )}
+})}
 
   {campings.length === 0 && (
     <p className="text-center text-gray-500">
@@ -140,16 +173,32 @@ export default function CampingList() {
     </div>
   );
 }
+
 function CampingCard({ camp }) {
-  // Get today price (safe)
-  const today = new Date().toLocaleDateString("en-US", {
-    weekday: "long"
-  });
+  
+// Get today price
+const today = new Date().toLocaleDateString("en-US", {
+  weekday: "long"
+});
 
-  const todayPrice = camp.campingpricing?.find(
-    p => p.day === today
-  );
+const todayPriceObj = camp.campingpricing?.find(
+  p => p.day === today
+);
 
+const todayPrice = todayPriceObj?.adultPrice || 0;
+
+// Get max price (to calculate discount)
+const maxPrice = Math.max(
+  ...(camp.campingpricing?.map(p => p.adultPrice) || [0])
+);
+
+// Calculate discount %
+const discountPercent =
+  maxPrice > todayPrice
+    ? Math.round(((maxPrice - todayPrice) / maxPrice) * 100)
+    : 0;
+
+  
   return (
     <div className="bg-white rounded-2xl shadow hover:shadow-2xl transition overflow-hidden flex flex-col md:flex-row">
 
@@ -160,6 +209,11 @@ function CampingCard({ camp }) {
           alt={camp.name}
           className="w-full h-32 md:h-full object-cover"
         />
+{discountPercent > 0 && (
+  <span className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
+    {discountPercent}% OFF
+  </span>
+)}
 
         {/* EXPERIENCE BADGE */}
         <div className="absolute top-4 left-4 bg-black/80 text-white px-4 py-1 rounded-full text-xs tracking-wide">
@@ -205,13 +259,13 @@ function CampingCard({ camp }) {
             {todayPrice ? (
               <>
                 <p className="text-xl font-bold text-palmGreen">
-                  ₹{todayPrice.adultPrice}
+                  ₹{todayPriceObj.adultPrice}
                   <span className="text-sm font-normal text-gray-500">
                     {" "} / adult
                   </span>
                 </p>
                 <p className="text-sm text-gray-500">
-                  ₹{todayPrice.childPrice} / child
+                  ₹{todayPriceObj.childPrice} / child
                 </p>
               </>
             ) : (

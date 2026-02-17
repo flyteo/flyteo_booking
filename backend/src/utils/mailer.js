@@ -8,7 +8,7 @@ export const transporter = nodemailer.createTransport({
   }
 });
 
-export const sendWelcomeEmail = async ({ name, email }) => {
+export const sendWelcomeEmail = async ({ name, email ,password}) => {
   await transporter.sendMail({
     from: `"Flyteo.in" <${process.env.USER_MAIL}>`,
     to: email,
@@ -16,8 +16,11 @@ export const sendWelcomeEmail = async ({ name, email }) => {
     html: `
       <div style="font-family:Arial;line-height:1.6">
         <h2>Hello ${name},</h2>
+        
         <p>Welcome to <b>Flyteo.in</b> 🎉</p>
         <p>Your account has been successfully created.</p>
+        <p>Your Registered Email Address:- ${email}</p>
+        <p>Your Password:-${password}</p>
         <p>You can now book:</p>
         <ul>
           <li>🏨 Hotels</li>

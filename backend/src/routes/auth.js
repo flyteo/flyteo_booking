@@ -7,7 +7,7 @@ import { sendWelcomeEmail } from "../utils/mailer.js";
 const router = express.Router();
 const prisma = new PrismaClient();
 
-router.get("/me", (req, res) => {
+router.get("/me", async (req, res) => {
   const token = req.cookies.accessToken;
 
   if (!token) {
@@ -20,7 +20,21 @@ router.get("/me", (req, res) => {
       process.env.JWT_SECRET
     );
 
-    res.json(decoded);
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        mobileNo: true,
+        role: true,
+        hotelId: true,
+        villaId: true
+      }
+    });
+
+    res.json(user);
+    // res.json(decoded);
     
   } catch {
     return res.status(401).json({ msg: "Invalid token" });
@@ -54,7 +68,7 @@ router.post("/register", async (req, res) => {
       }
     });
     
- sendWelcomeEmail({ name, email }).catch(console.error);
+ sendWelcomeEmail({ name, email ,password}).catch(console.error);
     res.json({ msg: "Registered successfully" });
 
   } catch (err) {

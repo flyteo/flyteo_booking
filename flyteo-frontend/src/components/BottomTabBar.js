@@ -6,9 +6,9 @@ export default function BottomTabBar({ activePath }) {
   const nav = useNavigate();
   const location = useLocation();
 const { user, loading } = useAuth();
-   const [users, setUsers] = useState(null);
+  //  const [users, setUsers] = useState(null);
     const [menuOpen, setMenuOpen] = useState(false);
-  
+  if (loading) return null;
     // Refresh navbar on route change
     // useEffect(() => {
     //   const u = localStorage.getItem("user");
@@ -17,15 +17,10 @@ const { user, loading } = useAuth();
     // }, [location]);
     // const [user, setUser] = useState(null);
 
-useEffect(() => {
+    
 
-if (loading) return null;
-  const storedUser =user;
-
-  setUsers(storedUser ? JSON.parse(storedUser) : null);
-}, [location]);
 const handleProfileClick = () => {
-  if (users) {
+  if (user) {
     nav("/profile");
   } else {
     nav("/login");
@@ -33,7 +28,7 @@ const handleProfileClick = () => {
 };
 
 const handleBookingClick = () => {
-  if (users) {
+  if (user) {
     nav("/my-bookings");
   } else {
     nav("/login");

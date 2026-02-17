@@ -299,6 +299,7 @@ useEffect(() => {
         <option>Room + Breakfast</option>
          <option>Room + Food</option>
           <option>Super Deluxe</option>
+          <option>Dormitory Rooms</option>
   </select>
 
   <label>AC Type</label>

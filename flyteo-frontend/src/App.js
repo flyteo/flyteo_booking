@@ -53,6 +53,7 @@ import AdminRoomAvailability from "./admin/AdminRoomAvailability";
 import AdminCampingAvailability from "./admin/AdminCampingAvailability";
 import ProtectedRoute from "./context/ProtectedRoute";
 import RoleRedirect from "./RoleRedirect";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -85,8 +86,14 @@ function App() {
           <Route path="/terms-condition" element={<TermsConditions />} />
  <Route path="/cancellation-policy" element={<CancellationPolicy />} />
  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-         
-
+         <Route
+  path="/profile"
+  element={
+    <ProtectedRoute>
+      <Profile />
+    </ProtectedRoute>
+  }
+/>
 
           <Route
   path="/hotel-admin/dashboard"

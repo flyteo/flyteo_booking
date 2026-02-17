@@ -164,7 +164,7 @@ function NavLinks({ user, logout, mobile }) {
 
   return (
     <>
-      <Link className={base} to="/">Home</Link>
+      <Link className={base} to="/home">Home</Link>
       <Link className={base} to="/hotels">Hotels</Link>
       <Link className={base} to="/campings">Camping</Link>
       <Link className={base} to="/villas">Villas</Link>

@@ -289,7 +289,7 @@ doc.text(
 
 // Property Tax (Fixed)
 doc.text(
-  "Property Taxes",
+  "Incl. All Taxes",
   summaryX + 10,
   summaryY + sumrowHeight + 6
 );

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import api from "../axios";
 import { Link, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -21,7 +21,44 @@ function DesktopHome() {
       const [checkIn, setCheckIn] = useState("");
       const [checkOut, setCheckOut] = useState("");
       const [guests, setGuests] = useState(1);
-    
+     const [locations, setLocations] = useState([]);
+
+useEffect(() => {
+  api.get("/hotels").then(res => {
+    const cityMap = new Map();
+
+    res.data.forEach(h => {
+      if (!h.location) return;
+      const normalized = h.location.trim().toLowerCase();
+
+      if (!cityMap.has(normalized)) {
+        const formatted =
+          normalized.charAt(0).toUpperCase() +
+          normalized.slice(1);
+        cityMap.set(normalized, formatted);
+      }
+    });
+
+    setLocations(Array.from(cityMap.values()));
+  });
+}, []);
+
+const [openLocation, setOpenLocation] = useState(false);
+const [searchTerm, setSearchTerm] = useState("");
+const dropdownRef = useRef(null);
+
+useEffect(() => {
+  const handleClickOutside = (e) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      setOpenLocation(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, []);
+
+
       const nav = useNavigate();
     const today = new Date().toISOString().split("T")[0];
 
@@ -167,13 +204,84 @@ const handleSearch = () => {
 
       <div className="grid md:grid-cols-5 gap-4 text-black">
 
-        <input
+        {/* <input
           type="text"
           placeholder="Where are you going?"
           className="p-3 rounded-lg border focus:ring-2 focus:ring-orange-400"
           value={destination}
           onChange={(e) => setDestination(e.target.value)}
-        />
+        /> */}
+         {/* DESTINATION SELECT (DESKTOP) */}
+<div className="relative" ref={dropdownRef}>
+
+  {/* INPUT FIELD (Now Editable) */}
+  <input
+    type="text"
+    placeholder="Where are you going?"
+    value={searchTerm || destination}
+    onChange={(e) => {
+      setSearchTerm(e.target.value);
+      setOpenLocation(true);
+    }}
+    onFocus={() => setOpenLocation(true)}
+    className="p-3 rounded-lg border w-full focus:ring-2 focus:ring-orange-400 outline-none"
+  />
+
+  {/* DROPDOWN */}
+  {openLocation && (
+    <div className="
+      absolute
+      top-23
+      left-0
+      w-full
+      mt-[-200px]
+      bg-white
+      shadow-2xl
+      rounded-xl
+      z-50
+      p-3
+      animate-fadeIn
+    ">
+
+      <div className="max-h-60 overflow-y-auto space-y-1">
+
+        {locations
+          .filter(loc =>
+            loc.toLowerCase().includes(
+              (searchTerm || "").toLowerCase()
+            )
+          )
+          .map(loc => (
+            <div
+              key={loc}
+              onClick={() => {
+                setDestination(loc);
+                setSearchTerm("");
+                setOpenLocation(false);
+              }}
+              className="p-2 rounded-lg hover:bg-orange-50 cursor-pointer transition"
+            >
+              📍 {loc}
+            </div>
+          ))}
+
+        {/* If no result */}
+        {locations.filter(loc =>
+          loc.toLowerCase().includes(
+            (searchTerm || "").toLowerCase()
+          )
+        ).length === 0 && (
+          <div className="text-sm text-gray-400 p-2">
+            No locations found
+          </div>
+        )}
+
+      </div>
+    </div>
+  )}
+</div>
+
+
 
         <input
           type="date"
@@ -215,7 +323,7 @@ const handleSearch = () => {
 </div>
 <div className="bg-white shadow py-6">
   <div className="max-w-6xl mx-auto grid grid-cols-4 text-center text-sm text-gray-600">
-    <div>✔ 500+ Verified Properties</div>
+    <div>✔ Verified Properties</div>
     <div>✔ Secure Payments</div>
     <div>✔ 24/7 Support</div>
     <div>✔ Best Price Guarantee</div>
@@ -486,7 +594,30 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
     }}
     className="px-4"
   >
-    {campings.map((c) => (
+    {campings.map((c) => {
+      // 🔥 Get today name
+  const today = new Date().toLocaleDateString("en-US", {
+    weekday: "long"
+  });
+
+  // 🔥 Find today's price
+  const todayPriceObj = c.campingpricing?.find(
+    p => p.day === today
+  );
+
+  const todayPrice = todayPriceObj?.adultPrice || 0;
+
+  // 🔥 Get max adult price
+  const maxPrice = Math.max(
+    ...(c.campingpricing?.map(p => p.adultPrice) || [0])
+  );
+
+  // 🔥 Calculate discount %
+  const discountPercent =
+    maxPrice > todayPrice
+      ? Math.round(((maxPrice - todayPrice) / maxPrice) * 100)
+      : 0;
+      return(
       <SwiperSlide key={c.id}>
         <div className="bg-white p-4 rounded-xl shadow hover:shadow-xl transition">
           
@@ -495,29 +626,34 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
             className="w-full h-48 rounded object-cover"
             alt={c.name}
           />
-
+ {discountPercent > 0 && (
+                <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow">
+                  {discountPercent}% OFF
+                </div>
+              )}
           <h3 className="font-heading text-xl mt-3">
             {c.name}
           </h3>
 
           <p className="font-bold text-palmGreen mt-1">
             ₹{
-                  c.campingpricing?.[0]?.adultPrice || "999"
+                  todayPriceObj.adultPrice || "999"
                 }
                 <span className="text-xs text-gray-500">
                   {" "} / adult
                 </span>
+
           </p>
 
           <Link
             to={`/campings/${c.id}`}
-            className="mt-4 block bg-rusticBrown text-white px-4 py-2 rounded text-center hover:bg-[#6b3f1d] transition"
+            className="mt-4 block bg-orange-700 text-white px-4 py-2 rounded text-center hover:bg-[#6b3f1d] transition"
           >
             View Details
           </Link>
         </div>
       </SwiperSlide>
-    ))}
+   ) })}
   </Swiper>
 </div>
    { /*  Villas Spots */}
@@ -563,7 +699,11 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
             alt={v.name}
             className="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-500"
           />
-
+ {discount > 0 && (
+                <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow">
+                  {discount}% OFF
+                </div>
+              )}
           {/* ENTIRE VILLA BADGE */}
           <div className="absolute top-3 left-3 bg-black/80 text-white px-3 py-1 rounded-full text-xs font-semibold tracking-wide">
             Entire Villa

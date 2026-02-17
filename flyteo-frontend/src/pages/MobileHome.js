@@ -7,6 +7,9 @@ import h1 from "../assets/hotel_back.jpg";
 import v1 from "../assets/villa_back.jpg";
 import c1 from "../assets/camp_back.jpg";
 import o1 from "../assets/offer1.jpg";
+import { FaWhatsapp, FaInstagram, FaFacebook } from "react-icons/fa";
+import { MdEmail } from "react-icons/md";
+
 
 import "swiper/css";
 
@@ -19,6 +22,31 @@ export default function MobileHome() {
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(1);
   const [popularCities, setPopularCities] = useState([]);
+
+  const [locations, setLocations] = useState([]);
+
+useEffect(() => {
+  api.get("/hotels").then(res => {
+    const cityMap = new Map();
+
+    res.data.forEach(h => {
+      if (!h.location) return;
+      const normalized = h.location.trim().toLowerCase();
+
+      if (!cityMap.has(normalized)) {
+        const formatted =
+          normalized.charAt(0).toUpperCase() +
+          normalized.slice(1);
+        cityMap.set(normalized, formatted);
+      }
+    });
+
+    setLocations(Array.from(cityMap.values()));
+  });
+}, []);
+
+const [openLocation, setOpenLocation] = useState(false);
+const [searchTerm, setSearchTerm] = useState("");
 
   const [campings, setCampings] = useState([]);
   const [villas, setVillas] = useState([]);
@@ -139,38 +167,44 @@ useEffect(() => {
     <div className="min-h-screen bg-gray-100 pb-20">
       {/* ================= COUPON STRIP ================= */}
 {/* ================= IMAGE OFFERS / COUPONS ================= */}
-<div className="px-4 mt-6">
+<div className="px-4">
   <h2 className="text-lg font-bold mb-3 fade-up">
     🎉 Special Deals
   </h2>
 
-  <div className="flex gap-4 overflow-x-auto pb-3">
-
-    <div
-      onClick={() => nav("/offers")}
-      className="min-w-[260px] p-5 rounded-2xl bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-xl active:scale-95 transition fade-up"
-    >
-      <p className="text-xs uppercase opacity-80">Limited Offer</p>
-      <p className="text-2xl font-bold mt-2">Flat 20% OFF</p>
-      <p className="text-sm mt-1">Use Code: FLYTEO20</p>
-    </div>
-
-    <div
-      onClick={() => nav("/offers")}
-      className="min-w-[260px] p-5 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-400 text-white shadow-xl active:scale-95 transition fade-up"
-    >
-      <p className="text-xs uppercase opacity-80">Weekend Special</p>
-      <p className="text-2xl font-bold mt-2">Up to 30% OFF</p>
-      <p className="text-sm mt-1">WEEKEND30</p>
-    </div>
-
-  </div>
+  <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2"> 
+    {/* OFFER CARD 1 */} 
+    <div onClick={() => nav("/offers")} className="bg-stone-600 min-w-[260px] h-[110px] rounded-2xl overflow-hidden relative shadow-lg cursor-pointer active:scale-95 transition" > 
+      {/* <img src={o1} alt="Offer" className="w-full h-full object-cover" /> */} {/* DARK OVERLAY */} 
+      <div className="absolute inset-0 bg-black/40" /> {/* TEXT */} 
+      <div className="absolute inset-0 p-4 flex flex-col justify-between text-white"> 
+        <div className="text-xs text-rusticBrown font-semibold uppercase tracking-wide"> 
+          Flyteo Special </div> 
+          <div> 
+            <p className="text-3xl text-palmGreen font-bold">Flat 20% OFF</p> 
+            <p className="text-sm mt-1"> Use Code: <span className="text-brandOrange font-bold">FLYTEO20</span> 
+            </p> 
+            </div>
+             </div> 
+             </div> 
+             {/* OFFER CARD 2 */} 
+             <div onClick={() => nav("/offers")} className="bg-stone-600 min-w-[260px] h-[110px] rounded-2xl overflow-hidden relative shadow-lg cursor-pointer active:scale-95 transition" > {/* <img src={o1} alt="Offer" className="w-full h-full object-cover" /> */} 
+              <div className="absolute inset-0 bg-black/40" /> 
+              
+              <div className="absolute inset-0 p-4 flex flex-col justify-between text-white"> 
+                <div className="text-xs text-rusticBrown font-semibold uppercase tracking-wide"> Weekend Deal </div>
+                 <div> <p className="text-3xl text-palmGreen font-bold">Up to 30% OFF</p> 
+                 <p className="text-sm mt-1"> Code: <span className="text-brandOrange font-bold">WEEKEND30</span> </p>
+                  </div> 
+                  </div>
+                   </div>
+                    </div>
 </div>
 
      
       {/* ================= HERO + SEARCH ================= */}
    {/* ================= PREMIUM COMPACT HERO ================= */}
-<div className="relative px-4 pt-6 pb-8">
+<div className="relative px-4 pt-4 pb-4">
 
   {/* Soft Luxury Background */}
   <div className="absolute inset-0 bg-gradient-to-br from-[#fdfbfb] to-[#ebedee] rounded-b-[30px]" />
@@ -186,15 +220,65 @@ useEffect(() => {
     </p>
 
     {/* SMALL PREMIUM SEARCH CARD */}
-    <div className="mt-4 bg-white rounded-2xl shadow-xl p-4 space-y-3">
+    <div className="mt-2 bg-white rounded-2xl shadow-xl p-4 space-y-3">
 
       {/* Destination */}
-      <input
+      <div
+    onClick={() => setOpenLocation(true)}
+     className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-orange-400 outline-none"
+  >
+    {destination || "Select destination"}
+  </div>
+      {/* <input
         className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-orange-400 outline-none"
         placeholder="Where are you going?"
         value={destination}
         onChange={(e) => setDestination(e.target.value)}
-      />
+      /> */}
+       {openLocation && (
+    <div className="fixed inset-0 bg-black/40 z-40">
+      
+      <div className="absolute top-0 left-0 right-0 bg-white rounded-t-3xl p-5 z-50">
+
+        {/* Close */}
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-semibold">Select Destination</h3>
+          <button onClick={() => setOpenLocation(false)}>✕</button>
+        </div>
+
+        {/* Search Field */}
+        <input
+          type="text"
+          placeholder="Search city..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full border rounded-xl p-3 mb-4"
+        />
+
+        {/* Locations List */}
+        <div className="max-h-60 overflow-y-auto space-y-2">
+          {locations
+            .filter(loc =>
+              loc.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map(loc => (
+              <div
+                key={loc}
+                onClick={() => {
+                  setDestination(loc);
+                  setOpenLocation(false);
+                  setSearchTerm("");
+                }}
+                className="p-3 rounded-xl hover:bg-orange-50 cursor-pointer"
+              >
+                 {loc}
+              </div>
+            ))}
+        </div>
+
+      </div>
+    </div>
+  )}
 
       {/* Dates */}
       <div className="flex gap-2">
@@ -241,24 +325,20 @@ useEffect(() => {
 
     {/* ================= EXPLORE BY CATEGORY ================= */}
  <div className="pb-8 rounded-b-3xl">
- <p className="mt-3 text-sm opacity-90">
-  🌲 Camping available in 
-  <span className="font-semibold"> Alibaug, Lonavala, Igatpuri</span>
-</p>
 
 <button
   onClick={() => nav("/campings")}
-  className="mt-4 bg-white text-brandOrange px-6 py-2 rounded-full font-semibold"
+  className="mt-2 bg-white text-brandOrange px-6 py-2 rounded-full font-semibold"
 >
   Explore flyteo camping , events & activities
 </button>
 </div>
      {/* ================= EXPLORE BY TYPE ================= */}
-<div className="mt-8 px-4 fade-up">
+<div className="px-4 fade-up">
   {/* <h2 className="text-lg font-bold mb-4">
     Explore Categories
   </h2> */}
-  <h2 className="text-2xl font-heading font-bold text-center mb-8">
+  <h2 className="text-2xl font-heading font-bold text-center mb-4">
   <span className="text-orange-500">Explore</span> Categories
 </h2>
 
@@ -272,7 +352,7 @@ useEffect(() => {
       <div
         key={i}
         onClick={() => nav(item.path)}
-        className="relative h-24 rounded-2xl overflow-hidden shadow-lg active:scale-95 transition"
+        className="relative h-20 rounded-2xl overflow-hidden shadow-lg active:scale-95 transition"
       >
         <img src={item.img} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -287,7 +367,7 @@ useEffect(() => {
 
 
       {/* ================= POPULAR DESTINATIONS ================= */}
-<div className="mt-6 px-2">
+<div className="mt-2 px-2">
  <h2 className="text-2xl font-heading font-bold text-center mb-8">
   Popular <span className="text-orange-500">Destinations</span>
 </h2>
@@ -392,7 +472,7 @@ useEffect(() => {
           </div>
         </div>
       )}
-  <div className="mt-6 px-2">
+  <div className="mt-2 px-2">
        <h2 className="text-2xl font-heading font-bold text-center mb-8">
   <span className="text-orange-500">Recommended </span>For You
 </h2>
@@ -503,7 +583,7 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
          </Swiper>
       </div>
       { /*  Villas Spots */}
-   <div className="mt-6 px-2">
+   <div className="mt-2 px-2">
     <h2 className="text-2xl font-heading font-bold text-center mb-8">
   <span className="text-orange-500">Luxury Villas </span>For Private Stay
 </h2>
@@ -544,7 +624,11 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
             alt={v.name}
             className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-500"
           />
-
+ {discount > 0 && (
+                       <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow">
+                         {discount}% OFF
+                       </div>
+                     )}
           {/* ENTIRE VILLA BADGE */}
           <div className="absolute top-3 left-3 bg-black/80 text-white px-3 py-1 rounded-full text-xs font-semibold tracking-wide">
             Entire Villa
@@ -610,10 +694,11 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
 
     </div>
  {/* Camping SPots */}
-<div className="mt-6 px-2">
+<div className="mt-2 px-2">
   <h2 className="text-2xl font-heading font-bold text-center mb-8">
   <span className="text-orange-500">Adventure </span>activities,camping & events
 </h2>
+  
   <Swiper
     modules={[Navigation, Autoplay]}
     navigation
@@ -630,7 +715,29 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
     }}
     className="px-4"
   >
-    {campings.map((c) => (
+    {campings.map((c) => {
+      const today = new Date().toLocaleDateString("en-US", {
+          weekday: "long"
+        });
+      
+        // 🔥 Find today's price
+        const todayPriceObj = c.campingpricing?.find(
+          p => p.day === today
+        );
+      
+        const todayPrice = todayPriceObj?.adultPrice || 0;
+      
+        // 🔥 Get max adult price
+        const maxPrice = Math.max(
+          ...(c.campingpricing?.map(p => p.adultPrice) || [0])
+        );
+      
+        // 🔥 Calculate discount %
+        const discountPercent =
+          maxPrice > todayPrice
+            ? Math.round(((maxPrice - todayPrice) / maxPrice) * 100)
+            : 0;
+      return (
       <SwiperSlide key={c.id}>
         <div className="bg-white p-4 rounded-xl shadow hover:shadow-xl transition">
           
@@ -639,14 +746,18 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
             className="w-full h-32 rounded object-cover"
             alt={c.name}
           />
-
+{discountPercent > 0 && (
+                       <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow">
+                         {discountPercent}% OFF
+                       </div>
+                     )}
           <h3 className="font-heading text-xl mt-3">
             {c.name}
           </h3>
 
           <p className="font-bold text-palmGreen mt-1">
             ₹{
-                  c.campingpricing?.[0]?.adultPrice || "999"
+                  todayPriceObj.adultPrice || "999"
                 } / night
           </p>
 
@@ -658,10 +769,71 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
           </Link>
         </div>
       </SwiperSlide>
-    ))}
+)})}
   </Swiper>
 </div>
-   
+   {/* ================= MOBILE FOOTER ================= */}
+<div className="mt-4 bg-gradient-to-b from-[#f8f8f8] to-[#ffffff] px-6 py-8 rounded-t-3xl shadow-inner">
+ {/* SOCIAL ICONS */}
+  <div className="flex justify-center gap-6 mt-6 text-2xl">
+
+    {/* WHATSAPP */}
+    <a
+      href="https://wa.me/918975995125"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-green-500 hover:scale-110 transition"
+    >
+      <FaWhatsapp />
+    </a>
+
+    {/* INSTAGRAM */}
+    <a
+      href="https://www.instagram.com/flyteo.in"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-pink-500 hover:scale-110 transition"
+    >
+      <FaInstagram />
+    </a>
+
+    {/* FACEBOOK */}
+    <a
+      href="https://www.facebook.com/flyteo.in"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-600 hover:scale-110 transition"
+    >
+      <FaFacebook />
+    </a>
+
+    {/* EMAIL */}
+    <a
+      href="mailto:flyteoofficial@gmail.com"
+      className="text-gray-700 hover:scale-110 transition"
+    >
+      <MdEmail />
+    </a>
+
+  </div>
+  {/* BRAND NAME */}
+  {/* <h3 className="text-center font-heading text-lg text-palmGreen">
+    Flyteo.in
+  </h3> */}
+
+  <p className="text-center text-lg text-gray-500 mt-1">
+    Hotels • Villas • Camping • Experiences
+  </p>
+
+ 
+
+  {/* COPYRIGHT */}
+  <div className="mt-2 text-center text-xs text-gray-400">
+    © 2025 Flyteo.in — All Rights Reserved
+  </div>
+
+</div>
+
       {/* ================= RECOMMENDED HOTELS ================= */}
     
 

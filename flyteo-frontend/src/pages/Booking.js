@@ -7,7 +7,7 @@ export default function Booking() {
   const cashfreeRef = useRef(null);
 
 useEffect(() => {
-  load({ mode: "sandbox" }).then(cf => {
+  load({ mode: "production" }).then(cf => {
     cashfreeRef.current = cf;
   });
 }, []);
@@ -18,6 +18,7 @@ useEffect(() => {
 const [appliedCoupon, setAppliedCoupon] = useState(null);
 const [couponMessage, setCouponMessage] = useState("");
 const [paymentChoice,setPaymentChoice] = useState("full");
+const [meals,setMeals] = useState([]);
 
 const [fullname, setFullname] = useState("");
 const [mobileno, setMobileno] = useState("");
@@ -575,6 +576,7 @@ const handleBooking = async () => {
         camping: campingId,
         roomType: null,
         acType: null,
+        meals,
         checkIn:date,
         checkOut: null,
         guests: adults + children,
@@ -832,6 +834,32 @@ const Row = ({ label, value, bold }) => (
         onChange={(e) => setChildren(Number(e.target.value))}
       />
     </div>
+    <div className="mt-4">
+  <label className="font-medium">Select Meals</label>
+
+  <div className="space-y-2 mt-2">
+
+    {["veg", "non-veg", "jain"].map(option => (
+      <label key={option} className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          value={option}
+          checked={meals.includes(option)}
+          onChange={(e) => {
+            if (e.target.checked) {
+              setMeals([...meals, option]);
+            } else {
+              setMeals(meals.filter(m => m !== option));
+            }
+          }}
+        />
+        {option.toUpperCase()}
+      </label>
+    ))}
+
+  </div>
+</div>
+
   </>
 )}
 {type === "villa" && (

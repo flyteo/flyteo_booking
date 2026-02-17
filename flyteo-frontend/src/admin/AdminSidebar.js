@@ -48,7 +48,7 @@ if (!user || user.role !== "admin") return null;
         `}
       >
     <div className="w-64 bg-white shadow-xl h-screen fixed left-0 top-0 p-6">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-2">
           <h2 className="font-heading text-2xl text-palmGreen">
             Admin Panel
           </h2>

@@ -99,6 +99,7 @@ export default function AdminBookings() {
                 <tr>
                   <th className="p-3">Date</th>
                   <th>User</th>
+                  <th>Mobile No </th>
                   <th>Type</th>
                   <th>Hotel / Camping</th>
                   <th>Location</th>
@@ -114,6 +115,7 @@ export default function AdminBookings() {
                       {new Date(b.checkIn).toLocaleDateString()}
                     </td>
                     <td>{b.user?.name}</td>
+                    <td>{b?.mobileno}</td>
                     <td className="capitalize">{b.type}</td>
                     <td>{b.hotel?.name || b.camping?.name}</td>
                     <td>{b.hotel?.location || b.camping?.location}</td>
