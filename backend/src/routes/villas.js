@@ -283,7 +283,7 @@ router.put("/:id", auth, adminOnly, async (req, res) => {
         address,
         email,
         mapLocation,
-        taxes,
+        taxes:Number(taxes),
         discount: Number(discount),
         advancePaymentAllowed: Boolean(advancePaymentAllowed),
     advancePercent:

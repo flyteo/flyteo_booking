@@ -103,6 +103,7 @@ setDayWisePercentage(dayMap);
       `/villas/${id}`,
       {
         ...villa,
+        taxes: Number(villa.taxes),
         basePrice: Number(villa.basePrice),
         extraGuestPrice: Number(villa.extraGuestPrice),
         maxGuests: Number(villa.maxGuests),
