@@ -250,6 +250,7 @@ router.put("/:id", auth, adminOnly, async (req, res) => {
       location,
       address,
       email,
+      taxes,
       mapLocation,
       discount,
       advancePaymentAllowed,

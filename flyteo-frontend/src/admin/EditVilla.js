@@ -41,6 +41,7 @@ export default function EditVilla() {
           address: v.address || "",
           description: v.description || "",
           mapLocation: v.mapLocation || "",
+          email:v.email || "",
 
           maxGuests: v.maxGuests || 1,
           includedGuests: v.includedGuests || 1,
@@ -148,7 +149,7 @@ setDayWisePercentage(dayMap);
           value={villa.address}
           onChange={e => setVilla({ ...villa, address: e.target.value })}
         />
-        <label>Address</label>
+        <label>Email</label>
         <input className="w-full p-2 border rounded mb-3" placeholder="Email" 
           value={villa.email}
           onChange={e => setVilla({ ...villa, email: e.target.value })}
