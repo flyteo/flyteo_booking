@@ -18,6 +18,7 @@ router.get("/", async (req, res) => {
         }
       },
       include: {
+         hotelamenity: { include: { amenity: true } },
         hotelimage: true,
         room: {
           take: 1,

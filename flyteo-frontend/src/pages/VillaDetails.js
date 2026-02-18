@@ -194,7 +194,7 @@ const [thumbsSwiper, setThumbsSwiper] = useState(null);
       </div>
       <div className="grid grid-cols-1 md:grid-cols-1 gap-2">
       <AddReviews villaId={villa.id} onReviewAdded={()=>{}} />
-      <Reviews villaId={villa.id} />
+      {/* <Reviews villaId={villa.id} /> */}
         </div>
         {/* IMAGE PREVIEW MODAL */}
 {selectedImage && (
