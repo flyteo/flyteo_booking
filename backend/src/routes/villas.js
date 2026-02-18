@@ -389,19 +389,14 @@ router.delete("/:id", auth, adminOnly, async (req, res) => {
   try {
     const villaId = Number(req.params.id);
 
-    const existingBookings = await prisma.booking.findFirst({
-      where: { villaId }
-    });
+   await prisma.booking.deleteMany({
+  where: { villaId }
+});
 
-    if (existingBookings) {
-      return res.status(400).json({
-        msg: "Cannot delete villa. Bookings exist."
-      });
-    }
+await prisma.villa.delete({
+  where: { id: villaId }
+});
 
-    await prisma.villa.delete({
-      where: { id: villaId }
-    });
 
     res.json({ msg: "Villa deleted" });
 
