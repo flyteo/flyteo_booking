@@ -8,6 +8,7 @@ export default function Login() {
   const {login} =useAuth();
   const [data, setData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const [showPassword,setShowPassword] =useState(false)
 
  const handleSubmit = async (e) => {
   e.preventDefault();
@@ -44,53 +45,120 @@ window.location.href = "/";
 //   }
 // }, []);
 
-  return (
-    <div className="max-w-md mx-auto bg-white p-8 rounded-xl shadow">
-      <h1 className="font-heading text-3xl text-palmGreen mb-6 text-center">
-        Welcome Back
-      </h1>
+ return (
+  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#fdfbfb] to-[#ebedee] px-4">
 
-      {error && (
-        <p className="bg-red-100 text-red-700 p-2 rounded mb-4">{error}</p>
-      )}
+    <div className="w-full max-w-5xl grid md:grid-cols-2 bg-white rounded-3xl shadow-2xl overflow-hidden">
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="font-medium">Email</label>
-          <input
-            type="email"
-            required
-            className="w-full mt-1 p-3 border rounded"
-            value={data.email}
-            onChange={(e) => setData({ ...data, email: e.target.value })}
-          />
-        </div>
+      {/* LEFT SIDE (DESKTOP IMAGE / BRAND SECTION) */}
+      <div className="hidden md:flex flex-col justify-center items-center bg-palmGreen text-white p-10">
+        <h2 className="text-4xl font-heading mb-4">Flyteo.in</h2>
+        <p className="text-center text-sm opacity-90">
+          Discover Hotels, Villas & Camping experiences with ease.
+        </p>
 
-        <div>
-          <label className="font-medium">Password</label>
-          <input
-            type="password"
-            required
-            className="w-full mt-1 p-3 border rounded"
-            value={data.password}
-            onChange={(e) => setData({ ...data, password: e.target.value })}
-          />
-        </div>
+        {/* <img
+          src="/login-illustration.png"
+          alt="Travel"
+          className="mt-8 w-72 object-contain opacity-90"
+        /> */}
+      </div>
 
-        <button
-          type="submit"
-          className="w-full bg-rusticBrown text-white py-3 rounded mt-4 text-lg"
-        >
-          Login
-        </button>
-      </form>
+      {/* RIGHT SIDE (FORM) */}
+      <div className="p-8 md:p-12">
 
-      <p className="text-center mt-4 text-sm">
-        Don't have an account?{" "}
-        <Link to="/register" className="text-palmGreen font-semibold">
-          Register Now
-        </Link>
-      </p>
+        <h1 className="font-heading text-3xl text-gray-800 mb-2">
+          Welcome Back 👋
+        </h1>
+
+        <p className="text-gray-500 text-sm mb-6">
+          Login to continue your journey
+        </p>
+
+        {error && (
+          <div className="bg-red-100 text-red-600 p-3 rounded-lg mb-4 text-sm">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+
+          {/* EMAIL */}
+          <div>
+            <label className="text-sm font-medium text-gray-600">
+              Email Address
+            </label>
+            <input
+              type="email"
+              required
+              value={data.email}
+              onChange={(e) =>
+                setData({ ...data, email: e.target.value })
+              }
+              className="w-full mt-1 p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-400 outline-none transition"
+              placeholder="Enter your email"
+            />
+          </div>
+
+          {/* PASSWORD */}
+          <div>
+            <label className="text-sm font-medium text-gray-600">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                required
+                value={data.password}
+                onChange={(e) =>
+                  setData({ ...data, password: e.target.value })
+                }
+                className="w-full mt-1 p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-400 outline-none transition"
+                placeholder="Enter your password"
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-4 cursor-pointer text-gray-400 text-sm"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </span>
+            </div>
+          </div>
+
+          {/* FORGOT PASSWORD */}
+          {/* <div className="text-right text-sm">
+            <Link
+              to="/forgot-password"
+              className="text-orange-500 hover:underline"
+            >
+              Forgot Password?
+            </Link>
+          </div> */}
+
+          {/* LOGIN BUTTON */}
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 active:scale-95 transition"
+          >
+            Login
+          </button>
+
+        </form>
+
+        {/* REGISTER LINK */}
+        <p className="text-center mt-6 text-sm text-gray-600">
+          Don't have an account?{" "}
+          <Link
+            to="/register"
+            className="text-palmGreen font-semibold hover:underline"
+          >
+            Register Now
+          </Link>
+        </p>
+
+      </div>
     </div>
-  );
+  </div>
+);
+
 }
