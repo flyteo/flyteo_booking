@@ -137,13 +137,15 @@ router.put("/:id", auth, adminOnly, async (req, res) => {
   try {
     const id = Number(req.params.id);
 
+    const{name,description,location,taxes,advancePaymentAllowed,advancePercent} = req.body;
+
     await prisma.camping.update({
       where: { id },
       data: {
-        name: req.body.name,
-        description: req.body.description,
-        location: req.body.location,
-        taxes: req.body.taxes,
+        name: name,
+        description: description,
+        location: location,
+        taxes: Number(taxes),
         advancePaymentAllowed: Boolean(advancePaymentAllowed),
     advancePercent:
       advancePaymentAllowed && advancePercent
@@ -157,17 +159,17 @@ router.put("/:id", auth, adminOnly, async (req, res) => {
 
         campinginclusion: {
           deleteMany: {},
-          create: req.body.campinginclusions?.map((t) => ({ text: t }))
+          create: req.body.campinginclusion?.map((t) => ({ text: t }))
         },
 
         campingexclusion: {
           deleteMany: {},
-          create: req.body.campingexclusions?.map((t) => ({ text: t }))
+          create: req.body.campingexclusion?.map((t) => ({ text: t }))
         },
 
         campingactivity: {
           deleteMany: {},
-          create: req.body.campingactivities?.map((t) => ({ text: t }))
+          create: req.body.campingactivity?.map((t) => ({ text: t }))
         },
 
         campingitinerary: {
@@ -181,11 +183,20 @@ router.put("/:id", auth, adminOnly, async (req, res) => {
         },
 
         campingpricing: {
-          deleteMany: {},
-          create: Object.entries(req.body.campingpricing || {}).map(
-            ([day, price]) => ({ day, price })
-          )
-        }
+  deleteMany: {},
+  create: Object.entries(req.body.campingpricing || {}).map(
+    ([day, prices]) => ({
+      day,
+      adultPrice: prices.adultPrice
+        ? Number(prices.adultPrice)
+        : 0,
+      childPrice: prices.childPrice
+        ? Number(prices.childPrice)
+        : 0
+    })
+  )
+}
+
       }
     });
 

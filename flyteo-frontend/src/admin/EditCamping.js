@@ -92,6 +92,11 @@ export default function EditCamping() {
         `/campings/${id}`,
         {
           ...camp,
+          campingimage: camp.campingimage,
+  campinginclusion: camp.campinginclusion,
+  campingexclusion: camp.campingexclusion,
+  campingactivity: camp.campingactivity,
+  campingitinerary: camp.campingitinerary,
           advancePaymentAllowed: camp.advancePaymentAllowed,
     advancePercent: camp.advancePaymentAllowed
       ? Number(camp.advancePercent)
