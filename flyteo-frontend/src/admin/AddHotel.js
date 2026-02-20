@@ -300,6 +300,11 @@ useEffect(() => {
          <option>Room + Food</option>
           <option>Super Deluxe</option>
           <option>Dormitory Rooms</option>
+           <option>1 BHK - 7 Persons</option>
+          <option>1 BHK - 5 Persons</option>
+          <option>1 BHK - 4 Persons</option>
+          <option>1 BHK - 3 Persons</option>
+          <option>1 BHK - 6 Persons</option>
   </select>
 
   <label>AC Type</label>

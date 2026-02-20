@@ -650,6 +650,18 @@ room: hotel.room.map(
         <option value="Deluxe">Deluxe</option>
         <option value="Double Bed">Double Bed</option>
         <option value="Single Bed">Single Bed</option>
+          <option>Triple Share Room</option>
+      <option>Deluxe room + breakfast</option>
+       <option>Deluxe room + breakfast + dinner</option>
+        <option>Room + Breakfast</option>
+         <option>Room + Food</option>
+          <option>Super Deluxe</option>
+          <option>Dormitory Rooms</option>
+          <option>1 BHK - 7 Persons</option>
+          <option>1 BHK - 5 Persons</option>
+          <option>1 BHK - 4 Persons</option>
+          <option>1 BHK - 3 Persons</option>
+          <option>1 BHK - 6 Persons</option>
       </select>
 
       {/* AC TYPE */}
@@ -792,6 +804,18 @@ room: hotel.room.map(
               <option>Deluxe</option>
               <option>Double Bed</option>
               <option>Single Bed</option>
+                <option>Triple Share Room</option>
+      <option>Deluxe room + breakfast</option>
+       <option>Deluxe room + breakfast + dinner</option>
+        <option>Room + Breakfast</option>
+         <option>Room + Food</option>
+          <option>Super Deluxe</option>
+          <option>Dormitory Rooms</option>
+           <option>1 BHK - 7 Persons</option>
+          <option>1 BHK - 5 Persons</option>
+          <option>1 BHK - 4 Persons</option>
+          <option>1 BHK - 3 Persons</option>
+          <option>1 BHK - 6 Persons</option>
             </select>
 
             <label>AC Type</label>
