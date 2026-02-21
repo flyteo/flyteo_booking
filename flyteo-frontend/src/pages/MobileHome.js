@@ -10,14 +10,17 @@ import o1 from "../assets/offer1.jpg";
 import { FaWhatsapp, FaInstagram, FaFacebook } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import "swiper/css";
 
 export default function MobileHome() {
   const nav = useNavigate();
   const location = useLocation();
+  const [openDate, setOpenDate] = useState(false);
 
-  const [destination, setDestination] = useState("Alibag");
+
+  const [destination, setDestination] = useState("Alibaug");
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(1);
@@ -281,22 +284,65 @@ useEffect(() => {
   )}
 
       {/* Dates */}
-      <div className="flex gap-2">
-        <input
-          type="date"
-          min={today}
-          value={checkIn}
-          onChange={(e) => setCheckIn(e.target.value)}
-          className="w-1/2 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-orange-400 outline-none"
-        />
-        <input
-          type="date"
-          min={checkIn || today}
-          value={checkOut}
-          onChange={(e) => setCheckOut(e.target.value)}
-          className="w-1/2 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-orange-400 outline-none"
-        />
+      {/* Stay Dates Field */}
+<div
+  onClick={() => setOpenDate(true)}
+  className="w-full border border-gray-200 rounded-lg p-3 text-sm cursor-pointer bg-white hover:border-orange-400 transition"
+>
+  {checkIn && checkOut
+    ? `${checkIn.toLocaleDateString()} → ${checkOut.toLocaleDateString()}`
+    : "Select stay dates"}
+</div>
+
+{/* DATE MODAL */}
+{openDate && (
+  <div className="fixed inset-0 z-50">
+
+    {/* Overlay */}
+    <div
+      className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+      onClick={() => setOpenDate(false)}
+    />
+
+    {/* Bottom Sheet */}
+    <div className="
+      absolute top-0 left-0 right-0
+      bg-white
+      rounded-t-3xl
+      p-5
+      animate-slideUp
+      shadow-2xl
+    ">
+
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="font-semibold text-lg">Select Dates</h3>
+        <button onClick={() => setOpenDate(false)}>✕</button>
       </div>
+
+      <DatePicker
+        selected={checkIn}
+        onChange={(dates) => {
+          const [start, end] = dates;
+          setCheckIn(start);
+          setCheckOut(end);
+        }}
+        startDate={checkIn}
+        endDate={checkOut}
+        selectsRange
+        inline
+        minDate={new Date()}
+      />
+
+      <button
+        onClick={() => setOpenDate(false)}
+        className="mt-4 w-full bg-orange-500 text-white py-3 rounded-xl font-semibold"
+      >
+        Apply Dates
+      </button>
+
+    </div>
+  </div>
+)}
 
       {/* Guests */}
       <select

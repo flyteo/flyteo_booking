@@ -53,108 +53,156 @@ export default function HotelAdminBookings() {
     ).values()
   ];
 
-  return (
-    <div className="flex">
+ return (
+  <div className="min-h-screen bg-gradient-to-br from-[#f8fafc] to-[#eef2f7] flex">
+
+    {/* SIDEBAR */}
+    <div className="md:block">
       <HotelAdminSidebar />
+    </div>
 
-      <div className="ml-72 w-full max-w-5xl p-8">
-        <h1 className="text-3xl font-heading text-palmGreen mb-6">
-          Hotel Bookings
-        </h1>
+    {/* MAIN CONTENT */}
+    <div className="flex-1 md:ml-72 px-4 md:px-10 pt-16 md:pt-8 pb-10">
 
-        {/* 🏨 Hotel Filter Dropdown */}
-        {uniqueHotels.length > 1 && (
-          <div className="mb-6">
-            <select
-              value={selectedHotel}
-              onChange={(e) => setSelectedHotel(e.target.value)}
-              className="border px-4 py-2 rounded"
-            >
-              <option value="all">All Hotels</option>
-              {uniqueHotels.map((hotel) => (
-                <option key={hotel.id} value={hotel.id}>
-                  {hotel.name}
-                </option>
-              ))}
-            </select>
+      {/* HEADER */}
+      <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-heading text-palmGreen">
+            Hotel Bookings
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Manage today’s reservations — Powered by Flyteo
+          </p>
+        </div>
+      </div>
+
+      {/* FILTER */}
+      {uniqueHotels.length > 1 && (
+        <div className="mt-6">
+          <select
+            value={selectedHotel}
+            onChange={(e) => setSelectedHotel(e.target.value)}
+            className="w-full md:w-64 border border-gray-200 rounded-xl px-4 py-2 shadow-sm focus:ring-2 focus:ring-palmGreen outline-none"
+          >
+            <option value="all">All Hotels</option>
+            {uniqueHotels.map((hotel) => (
+              <option key={hotel.id} value={hotel.id}>
+                {hotel.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* BOOKINGS LIST */}
+      <div className="mt-6 space-y-4">
+
+        {filteredBookings.length === 0 && (
+          <div className="bg-white rounded-xl shadow p-6 text-center text-gray-500">
+            No bookings found.
           </div>
         )}
 
-        <div className="bg-white shadow rounded overflow-hidden">
-          {filteredBookings.length === 0 && (
-            <p className="p-6 text-gray-500">No bookings found.</p>
-          )}
+        {filteredBookings.map((b) => {
+          const todayBooking = isToday(b.checkIn);
+          const canManage =
+            todayBooking &&
+            (b.checkInStatus === "BOOKED" ||
+              b.checkInStatus === "checked_in");
 
-          {filteredBookings.map((b) => {
-            const todayBooking = isToday(b.checkIn);
-            const canManage =
-              todayBooking &&
-              (b.checkInStatus === "BOOKED" ||
-                b.checkInStatus === "checked_in");
+          return (
+            <div
+              key={b.id}
+              className="
+                bg-white
+                rounded-2xl
+                shadow-md
+                hover:shadow-xl
+                transition
+                p-5
+                flex flex-col md:flex-row
+                md:items-center
+                md:justify-between
+              "
+            >
+              {/* LEFT INFO */}
+              <div className="space-y-1">
 
-            return (
-              <div
-                key={b.id}
-                className="flex justify-between items-center p-4 border-b"
-              >
-                <div>
-                  {/* 👤 Customer Name */}
-                  <p className="font-semibold">{b.user?.name}</p>
+                <p className="font-semibold text-gray-800 text-lg">
+                  {b.user?.name}
+                </p>
 
-                  {/* 🏨 Hotel Name */}
-                  <p className="text-sm text-palmGreen font-medium">
-                    {b.hotel?.name}
-                  </p>
+                <p className="text-sm text-palmGreen font-medium">
+                  {b.hotel?.name}
+                </p>
 
-                  <p className="text-sm text-gray-600">
-                    {b.roomType} • {b.roomCount} room(s)
-                  </p>
+                <p className="text-sm text-gray-600">
+                  {b.roomType} • {b.roomCount} room(s)
+                </p>
 
-                  <p className="text-sm text-gray-500">
-                    Check-in: {formatDate(b.checkIn)}
-                  </p>
+                <p className="text-sm text-gray-500">
+                  Check-in: {formatDate(b.checkIn)}
+                </p>
 
-                  <p className="text-xs mt-1">
-                    Status:
-                    <span
-                      className={`ml-1 font-bold ${
+                <div className="mt-1">
+                  <span
+                    className={`
+                      inline-block
+                      px-3 py-1
+                      rounded-full
+                      text-xs
+                      font-semibold
+                      ${
                         b.checkInStatus === "BOOKED"
-                          ? "text-yellow-600"
+                          ? "bg-yellow-100 text-yellow-700"
                           : b.checkInStatus === "checked_in"
-                          ? "text-green-600"
-                          : "text-gray-500"
-                      }`}
-                    >
-                      {b.checkInStatus.replace("_", " ")}
-                    </span>
-                  </p>
+                          ? "bg-green-100 text-green-700"
+                          : "bg-gray-200 text-gray-600"
+                      }
+                    `}
+                  >
+                    {b.checkInStatus.replace("_", " ")}
+                  </span>
                 </div>
+              </div>
 
+              {/* RIGHT ACTION */}
+              <div className="mt-4 md:mt-0">
                 <button
                   disabled={!canManage}
                   onClick={() => canManage && setSelected(b)}
-                  className={`px-4 py-2 rounded text-white ${
-                    canManage
-                      ? "bg-palmGreen hover:opacity-90"
-                      : "bg-gray-400 cursor-not-allowed"
-                  }`}
+                  className={`
+                    w-full md:w-auto
+                    px-6 py-2
+                    rounded-xl
+                    text-white
+                    transition
+                    ${
+                      canManage
+                        ? "bg-palmGreen hover:scale-105"
+                        : "bg-gray-400 cursor-not-allowed"
+                    }
+                  `}
                 >
-                  {canManage ? "Manage" : "View"}
+                  {canManage ? "Manage Booking" : "View Only"}
                 </button>
               </div>
-            );
-          })}
-        </div>
-
-        {selected && (
-          <CheckInModal
-            booking={selected}
-            onClose={() => setSelected(null)}
-            onUpdated={loadBookings}
-          />
-        )}
+            </div>
+          );
+        })}
       </div>
+
+      {/* MODAL */}
+      {selected && (
+        <CheckInModal
+          booking={selected}
+          onClose={() => setSelected(null)}
+          onUpdated={loadBookings}
+        />
+      )}
+
     </div>
-  );
+  </div>
+);
 }
 

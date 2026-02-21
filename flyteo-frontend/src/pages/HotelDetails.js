@@ -9,7 +9,9 @@ import "swiper/css/thumbs";
 import AddReviews from "./AddReviews";
 import Reviews from "./Reviews";
 import { calculateRoomPrice } from "../hooks/priceUtils";
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { CalendarDays } from "lucide-react";
 
 export default function HotelDetails() {
   const { id } = useParams();
@@ -409,8 +411,6 @@ useEffect(() => {
   </div>
 </section>
 
-
-
           {/* POLICIES */}
          <div>
   <h2 className="text-2xl font-bold mb-3">Hotel Policies</h2>
@@ -485,32 +485,7 @@ useEffect(() => {
 
     {/* DATE SECTION */}
     <div className="space-y-4 mt-6">
-
-      {/* CHECK-IN */}
-      <div>
-        <label className="text-sm font-semibold">Check-in</label>
-        <input
-          type="date"
-          className="w-full border p-2 rounded mt-1"
-          min={todayCheck}
-          value={checkIn}
-          onChange={(e) => setCheckIn(e.target.value)}
-        />
-      </div>
-
-      {/* CHECK-OUT */}
-      <div>
-        <label className="text-sm font-semibold">Check-out</label>
-        <input
-          type="date"
-          className="w-full border p-2 rounded mt-1"
-          value={checkOut}
-          min={checkIn || todayCheck}
-          onChange={(e) => setCheckOut(e.target.value)}
-        />
-      </div>
-
-      {/* ROOM SELECT */}
+  {/* ROOM SELECT */}
       <div>
         <label className="text-sm font-semibold">Select Room Type</label>
         <select
@@ -536,6 +511,77 @@ useEffect(() => {
           ))}
         </select>
       </div>
+{/* CHECK-IN */}
+<div className="space-y-2">
+  <label className="text-sm font-semibold text-gray-700">
+    Check-in
+  </label>
+
+  <div className="relative group">
+    <CalendarDays className="absolute left-3 top-3.5 h-4 w-4 text-gray-400 group-focus-within:text-orange-500 transition" />
+
+    <DatePicker
+      selected={checkIn}
+      onChange={(date) => {
+        setCheckIn(date);
+        if (checkOut && date > checkOut) setCheckOut(null);
+      }}
+      minDate={new Date()}
+      placeholderText="Select check-in date"
+      popperClassName="premium-datepicker"
+      calendarClassName="premium-calendar"
+      className="
+        w-full bg-white border border-gray-200 rounded-xl
+        pl-10 pr-4 py-3 text-sm
+        shadow-sm
+        focus:outline-none
+        focus:ring-2 focus:ring-orange-400
+        focus:border-orange-400
+        transition-all duration-300
+        hover:shadow-md
+      "
+      dateFormat="dd/MM/yyyy"
+      showPopperArrow={false}
+    />
+  </div>
+</div>
+
+
+{/* CHECK-OUT */}
+<div className="space-y-2">
+  <label className="text-sm font-semibold text-gray-700">
+    Check-out
+  </label>
+
+  <div className="relative group">
+    <CalendarDays className="absolute left-3 top-3.5 h-4 w-4 text-gray-400 group-focus-within:text-orange-500 transition" />
+
+    <DatePicker
+      selected={checkOut}
+      onChange={(date) => setCheckOut(date)}
+      minDate={checkIn || new Date()}
+      placeholderText="Select check-out date"
+      disabled={!checkIn}
+      popperClassName="premium-datepicker"
+      calendarClassName="premium-calendar"
+      className="
+        w-full bg-white border border-gray-200 rounded-xl
+        pl-10 pr-4 py-3 text-sm
+        shadow-sm
+        focus:outline-none
+        focus:ring-2 focus:ring-orange-400
+        focus:border-orange-400
+        transition-all duration-300
+        hover:shadow-md
+        disabled:bg-gray-100 disabled:cursor-not-allowed
+      "
+      dateFormat="dd/MM/yyyy"
+      showPopperArrow={false}
+    />
+  </div>
+</div>
+
+    
    {/* Number Of Rooms */}
       <div>
   <label className="text-sm font-semibold">Number of Rooms</label>

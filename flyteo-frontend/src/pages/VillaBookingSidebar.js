@@ -1,5 +1,8 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { CalendarDays } from "lucide-react";
 
 export default function VillaBookingSidebar({ villa }) {
   const nav = useNavigate();
@@ -99,22 +102,74 @@ const today = new Date().toISOString().split("T")[0];
 
       {/* DATES */}
       <div className="mt-4 space-y-3">
-        <input
-          type="date"
-          className="w-full p-3 border rounded"
-          placeholder="Check-in Date"
-          min={today}
-          value={checkIn}
-          onChange={e => setCheckIn(e.target.value)}
-        />
-        <input
-          type="date"
-          placeholder="Check-out Date"
-          className="w-full p-3 border rounded"
-          min={checkIn || today}
-          value={checkOut}
-          onChange={e => setCheckOut(e.target.value)}
-        />
+       <div className="space-y-2">
+         <label className="text-sm font-semibold text-gray-700">
+           Check-in
+         </label>
+       
+         <div className="relative group">
+           <CalendarDays className="absolute left-3 top-3.5 h-4 w-4 text-gray-400 group-focus-within:text-orange-500 transition" />
+       
+           <DatePicker
+             selected={checkIn}
+             onChange={(date) => {
+               setCheckIn(date);
+               if (checkOut && date > checkOut) setCheckOut(null);
+             }}
+             minDate={new Date()}
+             placeholderText="Select check-in date"
+             popperClassName="premium-datepicker"
+             calendarClassName="premium-calendar"
+             className="
+               w-full bg-white border border-gray-200 rounded-xl
+               pl-10 pr-4 py-3 text-sm
+               shadow-sm
+               focus:outline-none
+               focus:ring-2 focus:ring-orange-400
+               focus:border-orange-400
+               transition-all duration-300
+               hover:shadow-md
+             "
+             dateFormat="dd/MM/yyyy"
+             showPopperArrow={false}
+           />
+         </div>
+       </div>
+       
+       
+       {/* CHECK-OUT */}
+       <div className="space-y-2">
+         <label className="text-sm font-semibold text-gray-700">
+           Check-out
+         </label>
+       
+         <div className="relative group">
+           <CalendarDays className="absolute left-3 top-3.5 h-4 w-4 text-gray-400 group-focus-within:text-orange-500 transition" />
+       
+           <DatePicker
+             selected={checkOut}
+             onChange={(date) => setCheckOut(date)}
+             minDate={checkIn || new Date()}
+             placeholderText="Select check-out date"
+             disabled={!checkIn}
+             popperClassName="premium-datepicker"
+             calendarClassName="premium-calendar"
+             className="
+               w-full bg-white border border-gray-200 rounded-xl
+               pl-10 pr-4 py-3 text-sm
+               shadow-sm
+               focus:outline-none
+               focus:ring-2 focus:ring-orange-400
+               focus:border-orange-400
+               transition-all duration-300
+               hover:shadow-md
+               disabled:bg-gray-100 disabled:cursor-not-allowed
+             "
+             dateFormat="dd/MM/yyyy"
+             showPopperArrow={false}
+           />
+         </div>
+       </div>
       </div>
 
       {/* GUESTS */}

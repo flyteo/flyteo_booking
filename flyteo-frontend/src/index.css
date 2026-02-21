@@ -31,3 +31,71 @@
     transform: translateY(0);
   }
 }
+
+/* Popper animation */
+.premium-datepicker {
+  animation: fadeSlideIn 0.25s ease forwards;
+  z-index: 9999;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+  }
+}
+
+/* Calendar card styling */
+.premium-calendar {
+  border-radius: 16px !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important;
+  border: none !important;
+  padding: 10px;
+}
+
+/* Selected day */
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: #f97316 !important;
+  border-radius: 8px !important;
+}
+
+/* Hover day */
+.react-datepicker__day:hover {
+  background-color: #fed7aa !important;
+  border-radius: 8px !important;
+}
+
+/* Header */
+.react-datepicker__header {
+  background-color: white !important;
+  border-bottom: none !important;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease forwards;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.25s ease forwards;
+}
+

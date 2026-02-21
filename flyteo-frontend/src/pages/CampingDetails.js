@@ -5,6 +5,9 @@ import { Swiper, SwiperSlide} from "swiper/react";
 import { Navigation, Pagination, Autoplay ,Thumbs} from "swiper/modules";
 import AddReviews from "./AddReviews";
 import Reviews from "./Reviews";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { CalendarDays } from "lucide-react";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -222,7 +225,7 @@ const [dateError, setDateError] = useState("");
             <h3 className="text-xl font-bold mb-4 text-palmGreen">
               Book This Camping
             </h3>
-
+{/* 
 <Input
   label="Select Date"
   type="date"
@@ -232,7 +235,39 @@ const [dateError, setDateError] = useState("");
     setDate(val);
     checkCampingAvailability(val);
   }}
-/>
+/> */}
+ <label className="text-sm font-semibold text-gray-700">
+           Check-in
+         </label>
+       
+         <div className="relative group">
+           <CalendarDays className="absolute left-3 top-3.5 h-4 w-4 text-gray-400 group-focus-within:text-orange-500 transition" />
+       
+           <DatePicker
+             selected={date}
+             onChange={(val) => {
+               setDate(val);
+               checkCampingAvailability(val);
+
+             }}
+             minDate={new Date()}
+             placeholderText="Select check-in date"
+             popperClassName="premium-datepicker"
+             calendarClassName="premium-calendar"
+             className="
+               w-full bg-white border border-gray-200 rounded-xl
+               pl-10 pr-4 py-3 text-sm
+               shadow-sm
+               focus:outline-none
+               focus:ring-2 focus:ring-orange-400
+               focus:border-orange-400
+               transition-all duration-300
+               hover:shadow-md
+             "
+             dateFormat="dd/MM/yyyy"
+             showPopperArrow={false}
+           />
+         </div>
             {checking && (
   <p className="text-sm text-gray-500 mt-1">
     Checking availability…

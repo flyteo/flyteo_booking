@@ -26,51 +26,88 @@ if (!user || user.role !== "hotel-admin") return null;
 
 
   const MenuItem = ({ to, label }) => (
-    <Link
-      to={to}
-      className={`block px-4 py-2 rounded ${
-        pathname === to
-          ? "bg-palmGreen text-white"
-          : "hover:bg-gray-100"
-      }`}
-      onClick={() => setOpen(false)}
-    >
-      {label}
-    </Link>
-  );
+  <Link
+    to={to}
+    className={`block px-4 py-3 rounded-lg transition ${
+      pathname === to
+        ? "bg-palmGreen text-white shadow"
+        : "hover:bg-gray-100 text-gray-700"
+    }`}
+    onClick={() => setOpen(false)}
+  >
+    {label}
+  </Link>
+);
 
-  return (
-    <>
-      {/* Mobile Toggle */}
+return (
+  <>
+    {/* 🔹 MOBILE TOP BAR */}
+    <div className="md:hidden fixed top-0 left-0 right-0 h-14 bg-white shadow flex items-center justify-between px-4 z-50">
+      
       <button
-        className="md:hidden fixed top-4 left-4 z-50 bg-palmGreen text-white px-3 py-2 rounded"
-        onClick={() => setOpen(!open)}
+        onClick={() => setOpen(true)}
+        className="text-2xl text-palmGreen"
       >
         ☰
       </button>
 
-      {/* Sidebar */}
+      <h2 className="font-heading text-lg text-palmGreen">
+        Hotel Admin
+      </h2>
+
+      <div className="w-6" /> {/* spacer */}
+    </div>
+
+    {/* 🔹 OVERLAY */}
+    {open && (
       <div
-        className={`fixed top-0 left-0 h-screen w-64 bg-white shadow p-6 z-40 transform transition-transform
-        ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
-      >
-        <h2 className="font-heading text-2xl text-palmGreen mb-6">
+        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden"
+        onClick={() => setOpen(false)}
+      />
+    )}
+
+    {/* 🔹 SIDEBAR */}
+    <div
+      className={`
+        fixed top-0 left-0 h-screen w-72 bg-white shadow-2xl p-6 z-50
+        transform transition-transform duration-300 ease-in-out
+        ${open ? "translate-x-0" : "-translate-x-full"}
+        md:translate-x-0 md:z-30
+      `}
+    >
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="font-heading text-2xl text-palmGreen">
           Hotel Admin
         </h2>
 
-        <nav className="space-y-2 text-lg">
-          <MenuItem to="/hotel-admin/dashboard" label="Dashboard" />
-          <MenuItem to="/hotel-admin/check-in" label="Bookings" />
-          <MenuItem to="/hotel-admin/rooms" label="Room Availability" />
-
-          <button
-            onClick={logout}
-            className="mt-6 w-full bg-red-600 text-white py-2 rounded"
-          >
-            Logout
-          </button>
-        </nav>
+        {/* Close Button (Mobile) */}
+        <button
+          onClick={() => setOpen(false)}
+          className="md:hidden text-xl"
+        >
+          ✕
+        </button>
       </div>
-    </>
-  );
+
+      <p className="text-xs text-gray-500 mb-6">
+        Hotel Management Panel
+      </p>
+
+      {/* Navigation */}
+      <nav className="space-y-2 text-base">
+        <MenuItem to="/hotel-admin/dashboard" label="Dashboard" />
+        <MenuItem to="/hotel-admin/check-in" label="Bookings" />
+        <MenuItem to="/hotel-admin/rooms" label="Room Availability" />
+
+        <button
+          onClick={logout}
+          className="mt-8 w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition"
+        >
+          Logout
+        </button>
+      </nav>
+    </div>
+  </>
+);
 }

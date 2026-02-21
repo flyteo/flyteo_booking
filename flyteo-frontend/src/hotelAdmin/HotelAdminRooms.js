@@ -47,148 +47,196 @@ export default function HotelAdminRooms() {
 
   
 
-  return (
-    <div className="flex">
+ return (
+  <div className="min-h-screen bg-gradient-to-br from-[#f8fafc] to-[#eef2f7] flex">
+
+    {/* SIDEBAR */}
+    <div className="md:block">
       <HotelAdminSidebar />
+    </div>
 
-      <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow">
-        <h1 className="text-3xl font-heading text-palmGreen mb-6">
-          Room Availability Calendar
+    {/* MAIN CONTENT */}
+    <div className="flex-1 md:ml-72 px-4 md:px-10 pt-16 md:pt-8 pb-10">
+
+      {/* HEADER */}
+      <div className="bg-white rounded-2xl shadow-lg p-6">
+        <h1 className="text-2xl md:text-3xl font-heading text-palmGreen">
+          Room Availability
         </h1>
+        <p className="text-sm text-gray-500 mt-1">
+          Manage daily room blocking — Powered by Flyteo
+        </p>
+      </div>
 
-        {/* DATE RANGE */}
-        <div className="flex flex-wrap gap-4 mb-6">
-          <div>
-            <label className="block text-sm font-medium">From</label>
-            <input
-              type="date"
-              className="border p-2 rounded"
-              value={from}
-              onChange={(e) => setFrom(e.target.value)}
-            />
-          </div>
+      {/* DATE FILTER */}
+      <div className="bg-white rounded-2xl shadow-md p-5 mt-6 flex flex-col md:flex-row md:items-end gap-4">
 
-          <div>
-            <label className="block text-sm font-medium">To</label>
-            <input
-              type="date"
-              className="border p-2 rounded"
-              value={to}
-              onChange={(e) => setTo(e.target.value)}
-            />
-          </div>
-
-          <button
-            onClick={loadCalendar}
-            className="bg-palmGreen text-white px-6 py-2 rounded mt-6"
-          >
-            Load Availability
-          </button>
+        <div className="flex-1">
+          <label className="block text-sm font-medium mb-1">From</label>
+          <input
+            type="date"
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
+            className="w-full border border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-palmGreen outline-none"
+          />
         </div>
 
-        {loading && <p>Loading availability…</p>}
+        <div className="flex-1">
+          <label className="block text-sm font-medium mb-1">To</label>
+          <input
+            type="date"
+            value={to}
+            onChange={(e) => setTo(e.target.value)}
+            className="w-full border border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-palmGreen outline-none"
+          />
+        </div>
 
-        {/* CALENDAR */}
+        <button
+          onClick={loadCalendar}
+          className="bg-palmGreen hover:scale-105 transition text-white px-6 py-2 rounded-xl shadow-md"
+        >
+          Load Availability
+        </button>
+
+      </div>
+
+      {loading && (
+        <p className="mt-6 text-gray-500">Loading availability…</p>
+      )}
+
+      {/* CALENDAR DATA */}
+      <div className="mt-8 space-y-10">
+
         {calendar.map((day) => (
-          <div key={day.date} className="mb-8">
-            <h2 className="font-semibold text-xl mb-3">
-             {day.date}
-            </h2>
+          <div key={day.date}>
 
-            <div className="space-y-4">
+            {/* DATE HEADER */}
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg md:text-xl font-semibold text-gray-800">
+                {day.date}
+              </h2>
+              <div className="text-xs bg-gray-100 px-3 py-1 rounded-full">
+                {day.rooms.length} Room Types
+              </div>
+            </div>
+
+            {/* ROOM CARDS */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
               {day.rooms.map((r) => {
                 const maxBlockable = r.total - r.booked;
 
                 return (
                   <div
                     key={r.roomId}
-                    className="bg-white shadow rounded p-4 flex flex-col md:flex-row justify-between items-center"
+                    className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-5 flex flex-col justify-between"
                   >
+
+                    {/* ROOM INFO */}
                     <div>
-                      <p className="font-semibold">{r.roomType}</p>
-                      <p className="text-sm text-gray-600">
-                        Total: {r.total} | Booked: {r.booked} | Available:{" "}
-                        <span className="font-bold text-green-600">
-                          {r.available}
-                        </span>
+                      <p className="font-semibold text-lg">
+                        {r.roomType}
                       </p>
+
+                      <div className="mt-2 text-sm text-gray-600 space-y-1">
+                        <p>Total: {r.total}</p>
+                        <p>Booked: {r.booked}</p>
+                        <p>
+                          Available:
+                          <span className="ml-1 font-bold text-green-600">
+                            {r.available}
+                          </span>
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="flex items-center gap-3 mt-3 md:mt-0">
+                    {/* BLOCK CONTROL */}
+                    <div className="mt-4 flex items-center justify-between">
+
                       <input
                         type="number"
                         min="0"
                         max={maxBlockable}
                         defaultValue={r.blocked}
-                        className="w-20 border p-2 rounded"
+                        className="w-24 border border-gray-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-palmGreen outline-none"
                         onBlur={(e) => {
-  const value = Number(e.target.value);
+                          const value = Number(e.target.value);
 
-  if (value < 0 || value > maxBlockable) {
-    alert(`Max blockable rooms: ${maxBlockable}`);
-    return;
-  }
+                          if (value < 0 || value > maxBlockable) {
+                            alert(`Max blockable rooms: ${maxBlockable}`);
+                            return;
+                          }
 
-  setConfirmData({
-    roomId: r.roomId,
-    date: day.date,
-    blockedRooms: value,
-    maxBlockable
-  });
-}}
-
+                          setConfirmData({
+                            roomId: r.roomId,
+                            date: day.date,
+                            blockedRooms: value,
+                            maxBlockable
+                          });
+                        }}
                       />
+
                       <span className="text-sm text-gray-500">
                         Blocked
                       </span>
+
                     </div>
+
                   </div>
                 );
               })}
+
             </div>
           </div>
         ))}
-        {confirmData && (
-  <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-    <div className="bg-white rounded-xl p-6 w-full max-w-sm shadow-xl">
 
-      <h2 className="text-xl font-semibold mb-3 text-palmGreen">
-        Confirm Room Blocking
-      </h2>
-
-      <p className="text-sm text-gray-700 mb-4">
-        Are you sure you want to block{" "}
-        <b>{confirmData.blockedRooms}</b> room(s) for this date?
-      </p>
-
-      <div className="flex justify-end gap-3 mt-6">
-        <button
-          onClick={() => setConfirmData(null)}
-          className="px-4 py-2 border rounded"
-        >
-          Cancel
-        </button>
-
-        <button
-          onClick={async () => {
-            await updateBlockedRooms(
-              confirmData.roomId,
-              confirmData.date,
-              confirmData.blockedRooms,
-              confirmData.maxBlockable
-            );
-            setConfirmData(null);
-          }}
-          className="bg-red-600 text-white px-4 py-2 rounded"
-        >
-          Confirm
-        </button>
       </div>
+
+      {/* CONFIRM MODAL */}
+      {confirmData && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center px-4">
+
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl animate-fadeIn">
+
+            <h2 className="text-xl font-semibold mb-3 text-palmGreen">
+              Confirm Room Blocking
+            </h2>
+
+            <p className="text-sm text-gray-700 mb-6">
+              Block <b>{confirmData.blockedRooms}</b> room(s) on{" "}
+              <b>{confirmData.date}</b>?
+            </p>
+
+            <div className="flex justify-end gap-3">
+
+              <button
+                onClick={() => setConfirmData(null)}
+                className="px-4 py-2 border rounded-xl"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={async () => {
+                  await updateBlockedRooms(
+                    confirmData.roomId,
+                    confirmData.date,
+                    confirmData.blockedRooms,
+                    confirmData.maxBlockable
+                  );
+                  setConfirmData(null);
+                }}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl transition"
+              >
+                Confirm
+              </button>
+
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   </div>
-)}
-
-      </div>
-    </div>
-  );
+);
 }

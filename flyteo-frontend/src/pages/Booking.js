@@ -2,6 +2,10 @@ import { useEffect, useState ,useMemo,useRef} from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api from "../axios";
 import {load} from "@cashfreepayments/cashfree-js";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/dist/style.css";
+
+
 
 export default function Booking() {
   const cashfreeRef = useRef(null);
@@ -32,13 +36,13 @@ const [price, setPrice] = useState({
 });
 
 const [selectedRoom, setSelectedRoom] = useState(null);
-
+const [openCalendar, setOpenCalendar] = useState(false);
 
   // Params from URL
   const hotelId = query.get("hotelId");
   const campingId = query.get("campingId");
   const selectedRoomId = query.get("roomId");
- const [date, setDate] = useState(query.get("date") || "");
+ const [date, setDate] = useState(query.get("date") ? new Date(query.get("date")) : null);
 const [adults, setAdults] = useState(Number(query.get("adults")) || 1);
 const [children, setChildren] = useState(Number(query.get("children")) || 0);
 const [roomCount,setRoomCount] = useState(Number(query.get("rooms")) || 1)
@@ -52,8 +56,10 @@ const [orderId,setOrderId] = useState(null);
  
 
   // Dates & guests
-  const [checkIn, setCheckIn] = useState(query.get("checkIn") || "");
-  const [checkOut, setCheckOut] = useState(query.get("checkOut") || "");
+  const [checkIn, setCheckIn] = useState(query.get("checkIn") ? new Date(query.get("checkIn")) : null);
+const [checkOut, setCheckOut] = useState(query.get("checkOut") ? new Date(query.get("checkOut")) : null);
+
+const today = new Date();
   const [guests, setGuests] = useState(Number(query.get("guests")) || 1);
   // const [bookingperson, setBookingperson] = useState([]);
   const [total, setTotal] = useState(0);
@@ -727,67 +733,101 @@ const Row = ({ label, value, bold }) => (
 
       <div className="mt-6 space-y-4">
 {type === "hotel" && (
-  <div>
-        {/* Check-in */}
-        <div>
-          <label className="font-medium">Check-in Date</label>
-          <input
-            type="date"
-            className="w-full mt-1 p-3 border rounded"
-            min={todaydate}
-            value={checkIn}
-            onChange={(e) => setCheckIn(e.target.value)}
-          />
-        </div>
+  <div className="relative">
+    <label className="font-medium text-gray-700">Stay Dates</label>
 
-        {/* Check-out (hotels only) */}
-          <div>
-            <label className="font-medium">Check-out Date</label>
-            <input
-              type="date"
-              className="w-full mt-1 p-3 border rounded"
-              min={checkIn || todaydate}
-              value={checkOut}
-              onChange={(e) => setCheckOut(e.target.value)}
-            />
-          </div>
-          </div>
-        )}
+    {/* Display box */}
+    <div
+      onClick={() => setOpenCalendar(true)}
+      className="w-full mt-2 p-3 border rounded-xl cursor-pointer bg-white shadow-sm hover:border-orange-400 transition"
+    >
+      {checkIn
+        ? `${checkIn.toLocaleDateString()} → ${checkOut ? checkOut.toLocaleDateString() : "Select check-out"}`
+        : "Select stay dates"}
+    </div>
+
+    {/* Calendar popup */}
+    {openCalendar && (
+      <div className="absolute z-50 mt-2 bg-white p-4 rounded-xl shadow-xl">
+        <DayPicker
+          mode="range"
+          selected={{ from: checkIn, to: checkOut }}
+          onSelect={(range) => {
+            setCheckIn(range?.from || null);
+            setCheckOut(range?.to || null);
+          }}
+          disabled={{ before: today }}
+        />
+
+        <button
+          onClick={() => setOpenCalendar(false)}
+          className="mt-3 w-full bg-orange-500 text-white py-2 rounded-lg"
+        >
+          Done
+        </button>
+      </div>
+    )}
+  </div>
+)}
         {type === "villa" && (
-  <>
-    <div>
-      <label className="font-medium">Check-in Date</label>
-      <input
-        type="date"
-        className="w-full p-3 border rounded"
-        min={todaydate}
-        value={checkIn}
-        onChange={(e) => setCheckIn(e.target.value)}
-      />
+  <div className="relative">
+    <label className="font-medium text-gray-700">Stay Dates</label>
+
+    <div
+      onClick={() => setOpenCalendar(true)}
+      className="w-full mt-2 p-3 border rounded-xl cursor-pointer bg-white shadow-sm hover:border-orange-400 transition"
+    >
+      {checkIn
+        ? `${checkIn.toLocaleDateString()} → ${checkOut ? checkOut.toLocaleDateString() : "Select check-out"}`
+        : "Select stay dates"}
     </div>
 
-    <div>
-      <label className="font-medium">Check-out Date</label>
-      <input
-        type="date"
-        className="w-full p-3 border rounded"
-        min={checkIn || todaydate}
-        value={checkOut}
-        onChange={(e) => setCheckOut(e.target.value)}
-      />
-    </div>
-  </>
+    {openCalendar && (
+      <div className="absolute z-50 mt-2 bg-white p-4 rounded-xl shadow-xl">
+        <DayPicker
+          mode="range"
+          selected={{ from: checkIn, to: checkOut }}
+          onSelect={(range) => {
+            setCheckIn(range?.from || null);
+            setCheckOut(range?.to || null);
+          }}
+          disabled={{ before: today }}
+        />
+
+        <button
+          onClick={() => setOpenCalendar(false)}
+          className="mt-3 w-full bg-orange-500 text-white py-2 rounded-lg"
+        >
+          Done
+        </button>
+      </div>
+    )}
+  </div>
 )}
 {type === "camping" && (
-  <div>
-    <label className="font-medium">Select Date</label>
-    <input
-      type="date"
-      className="w-full p-3 border rounded"
-      min={todaydate}
-      value={date}
-      onChange={(e) => setDate(e.target.value)}
-    />
+  <div className="relative">
+    <label className="font-medium text-gray-700">Select Date</label>
+
+    <div
+      onClick={() => setOpenCalendar(true)}
+      className="w-full mt-2 p-3 border rounded-xl cursor-pointer bg-white shadow-sm hover:border-orange-400 transition"
+    >
+      {date ? date.toLocaleDateString() : "Select date"}
+    </div>
+
+    {openCalendar && (
+      <div className="absolute z-50 mt-2 bg-white p-4 rounded-xl shadow-xl">
+        <DayPicker
+          mode="single"
+          selected={date}
+          onSelect={(d) => {
+            setDate(d);
+            setOpenCalendar(false);
+          }}
+          disabled={{ before: today }}
+        />
+      </div>
+    )}
   </div>
 )}
 

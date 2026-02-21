@@ -4,6 +4,8 @@ import api from "../axios";
 import { Link, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 
 import "swiper/css";
@@ -17,7 +19,7 @@ function DesktopHome() {
       const [campings, setCampings] = useState([]);
       const [villas, setVillas] = useState([]);
     
-      const [destination, setDestination] = useState("Alibag");
+      const [destination, setDestination] = useState("Alibaug");
       const [checkIn, setCheckIn] = useState("");
       const [checkOut, setCheckOut] = useState("");
       const [guests, setGuests] = useState(1);
@@ -189,8 +191,7 @@ const handleSearch = () => {
   {/* Overlay */}
   <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
 
-  <div className="relative z-10 h-full flex flex-col justify-center items-center text-white text-center px-6">
-
+<div className="relative h-full flex flex-col justify-center items-center text-white text-center px-6">
     <h1 className="font-heading text-5xl md:text-7xl font-bold leading-tight">
       Discover Luxury Stays
     </h1>
@@ -234,7 +235,7 @@ const handleSearch = () => {
       top-23
       left-0
       w-full
-      mt-[-200px]
+      mt-2
       bg-white
       shadow-2xl
       rounded-xl
@@ -281,23 +282,52 @@ const handleSearch = () => {
   )}
 </div>
 
+        <DatePicker
+              selected={checkIn}
+              onChange={(date) => {
+                setCheckIn(date);
+                if (checkOut && date > checkOut) setCheckOut(null);
+              }}
+              minDate={new Date()}
+              placeholderText="Select check-in date"
+              popperClassName="premium-datepicker"
+              calendarClassName="premium-calendar"
+              className="
+                w-full bg-white border border-gray-200 rounded-xl
+                pl-4 pr-2 py-3 text-sm
+                shadow-sm
+                focus:outline-none
+                focus:ring-2 focus:ring-orange-400
+                focus:border-orange-400
+                transition-all duration-300
+                hover:shadow-md
+              "
+              dateFormat="dd/MM/yyyy"
+              showPopperArrow={false}
+            />
 
-
-        <input
-          type="date"
-          min={today}
-          value={checkIn}
-          onChange={(e) => setCheckIn(e.target.value)}
-          className="p-3 rounded-lg border"
-        />
-
-        <input
-          type="date"
-          min={checkIn || today}
-          value={checkOut}
-          onChange={(e) => setCheckOut(e.target.value)}
-          className="p-3 rounded-lg border"
-        />
+        <DatePicker
+              selected={checkOut}
+              onChange={(date) => setCheckOut(date)}
+              minDate={checkIn || new Date()}
+              placeholderText="Select check-out date"
+              disabled={!checkIn}
+              popperClassName="premium-datepicker"
+              calendarClassName="premium-calendar"
+              className="
+               w-full bg-white border border-gray-200 rounded-xl
+                pl-4 pr-2 py-3 text-sm
+                shadow-sm
+                focus:outline-none
+                focus:ring-2 focus:ring-orange-400
+                focus:border-orange-400
+                transition-all duration-300
+                hover:shadow-md
+                disabled:bg-gray-100 disabled:cursor-not-allowed
+              "
+              dateFormat="dd/MM/yyyy"
+              showPopperArrow={false}
+            />
 
         <select
           value={guests}

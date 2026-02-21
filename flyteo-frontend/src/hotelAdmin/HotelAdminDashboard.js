@@ -49,77 +49,131 @@ export default function HotelAdminDashboard() {
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-           <div className="md:block">
-           <HotelAdminSidebar />
-         </div>
+  <div className="min-h-screen bg-gradient-to-br from-[#f8fafc] to-[#eef2f7] flex">
 
-      <div className="flex-1 md:ml-72 px-4 md:px-8">
-        <h1 className="text-3xl font-heading text-palmGreen">
-          {hotel.name} — Dashboard
-        </h1>
+    {/* SIDEBAR */}
+    <div className="md:block">
+      <HotelAdminSidebar />
+    </div>
 
-        {/* STATS */}
-        <div className="grid grid-cols-3 gap-4 mt-8">
-          <Stat title="Total Rooms" value={totalRooms} />
-          <Stat title="Booked Today" value={bookedRooms} />
-          <Stat title="Blocked Today" value={blockedRooms} />
-          <Stat
-            title="Available Today"
-            value={availableRooms}
-            highlight
-          />
+    {/* MAIN CONTENT */}
+    <div className="flex-1 md:ml-72 px-4 md:px-10 py-6">
+
+      {/* HEADER */}
+      <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-heading text-palmGreen">
+            {hotel.name} Dashboard
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Powered by <span className="font-semibold text-rusticBrown">Flyteo Hotel Panel</span>
+          </p>
         </div>
 
-        {/* RECENT BOOKINGS */}
-        <h2 className="text-2xl font-heading mt-10 mb-3">
-          Active Bookings (Today)
+        <div className="mt-4 md:mt-0 text-sm text-gray-500">
+          Today: {new Date().toLocaleDateString()}
+        </div>
+      </div>
+
+      {/* STATS SECTION */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+
+        <DashboardCard
+          title="Total Rooms"
+          value={totalRooms}
+          color="bg-blue-100 text-blue-700"
+        />
+
+        <DashboardCard
+          title="Booked Today"
+          value={bookedRooms}
+          color="bg-green-100 text-green-700"
+        />
+
+        <DashboardCard
+          title="Blocked Today"
+          value={blockedRooms}
+          color="bg-yellow-100 text-yellow-700"
+        />
+
+        <DashboardCard
+          title="Available"
+          value={availableRooms}
+          color="bg-orange-100 text-orange-600"
+          highlight
+        />
+      </div>
+
+      {/* BOOKINGS SECTION */}
+      <div className="mt-10">
+
+        <h2 className="text-xl md:text-2xl font-heading mb-4">
+          Active Bookings Today
         </h2>
 
-        <div className="bg-white shadow p-4 rounded">
+        <div className="space-y-4">
           {todaysBookings.length === 0 && (
-            <p>No active bookings today.</p>
+            <div className="bg-white rounded-xl shadow p-6 text-center text-gray-500">
+              No active bookings today.
+            </div>
           )}
 
           {todaysBookings.map((b) => (
-            <div key={b.id} className="border-b py-3">
-              <p>
-                <strong>Guest:</strong> {b.user?.name}
-              </p>
-              <p>
-                <strong>Rooms:</strong> {b.roomType} × {b.roomCount}
-              </p>
-              <p>
-                <strong>Stay:</strong>{" "}
-                {new Date(b.checkIn).toLocaleDateString()} →{" "}
-                {new Date(b.checkOut).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>Status:</strong>{" "}
-                <span className="font-semibold">
+            <div
+              key={b.id}
+              className="bg-white rounded-xl shadow-md hover:shadow-xl transition p-5 flex flex-col md:flex-row md:justify-between md:items-center"
+            >
+              <div className="space-y-1">
+                <p className="font-semibold text-gray-800">
+                  {b.user?.name}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {b.roomType} × {b.roomCount}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {new Date(b.checkIn).toLocaleDateString()} →{" "}
+                  {new Date(b.checkOut).toLocaleDateString()}
+                </p>
+              </div>
+
+              <div className="mt-3 md:mt-0">
+                <span className={`
+                  px-4 py-1 rounded-full text-xs font-semibold
+                  ${b.checkInStatus === "Checked In"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-gray-200 text-gray-600"}
+                `}>
                   {b.checkInStatus || "Not Checked In"}
                 </span>
-              </p>
+              </div>
             </div>
           ))}
         </div>
+
       </div>
+
     </div>
-  );
+  </div>
+);
 }
 
 /* Small stat card */
-function Stat({ title, value, highlight }) {
+function DashboardCard({ title, value, color, highlight }) {
   return (
-    <div className="bg-white p-6 shadow rounded">
-      <h2 className="text-xl">{title}</h2>
-      <p
-        className={`text-3xl font-bold ${
-          highlight ? "text-green-600" : ""
-        }`}
-      >
+    <div
+      className={`
+        rounded-2xl p-5 shadow-md hover:shadow-xl transition
+        bg-white border border-gray-100
+        ${highlight ? "ring-2 ring-orange-400" : ""}
+      `}
+    >
+      <p className="text-xs text-gray-500 uppercase tracking-wide">
+        {title}
+      </p>
+      <p className={`text-2xl font-bold mt-2 ${color}`}>
         {value}
       </p>
     </div>
   );
 }
+
