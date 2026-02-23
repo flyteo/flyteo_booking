@@ -5,8 +5,6 @@ import {load} from "@cashfreepayments/cashfree-js";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 
-
-
 export default function Booking() {
   const cashfreeRef = useRef(null);
 
@@ -306,9 +304,14 @@ useEffect(() => {
     totalGuests - item.includedGuests,
     0
   );
-  
+   const pricePerNightVilla = getDayWiseRoomPrice({
+    roomBasePrice: item?.basePrice,
+    checkIn,
+    dayWisePricing: item.day_wise_percentage,
+    hotelDiscount: item.discount
+  });
 
-  const baseVillaPrice = item.basePrice * villaNights;
+  const baseVillaPrice = pricePerNightVilla * villaNights;
   const extraGuestCost =
     extraGuests * item.extraGuestPrice * villaNights;
 
@@ -665,12 +668,12 @@ const Row = ({ label, value, bold }) => (
 
       {/* COVER IMAGE */}
       {type==="hotel" && ( <img
-        src={item.hotelimage?.[0].url || "/placeholder.jpg"}
+        src={item.hotelimage?.[0]?.url || "/placeholder.jpg"}
         className="w-full h-56 md:h-64 object-cover rounded"
         alt=""
       />)}
       {type === 'camping' && (  <img
-        src={item.campingimage?.[0].url || "/placeholder.jpg"}
+        src={item.campingimage?.[0]?.url || "/placeholder.jpg"}
         className="w-full h-56 md:h-64 object-cover rounded"
         alt=""
       />)}

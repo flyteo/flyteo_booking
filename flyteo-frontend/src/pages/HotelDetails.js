@@ -191,7 +191,7 @@ const checkAvailability = async () => {
   setAvailabilityMsg(
     res.data.available
       ? `✅ ${res.data.availableRooms} rooms available`
-      : "❌ Not enough rooms available"
+      : "❌ Sold Out - Try another date"
   );
 };
 const maxGuests =

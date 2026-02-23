@@ -39,9 +39,11 @@ export default function EditVilla() {
           name: v.name || "",
           location: v.location || "",
           address: v.address || "",
+          discount:v.discount || "",
           description: v.description || "",
           mapLocation: v.mapLocation || "",
           email:v.email || "",
+          taxes:v.taxes || "",
 
           maxGuests: v.maxGuests || 1,
           includedGuests: v.includedGuests || 1,
@@ -177,6 +179,11 @@ setDayWisePercentage(dayMap);
           <input type="number" className="w-full p-2 border rounded mb-3" placeholder="Taxes"
             value={villa.taxes}
             onChange={e => setVilla({ ...villa, taxes: e.target.value })}
+          />
+          <label> Discount </label>
+          <input type="number" className="w-full p-2 border rounded mb-3" placeholder="Villa Discount"
+            value={villa.discount}
+            onChange={e => setVilla({ ...villa, discount: e.target.value })}
           />
         </div>
 

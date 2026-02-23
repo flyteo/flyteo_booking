@@ -22,17 +22,15 @@ export default function VillaBookingSidebar({ villa }) {
   let price = villa.basePrice;
 
   // 🔹 Day-wise percentage
-  const dayRule = villa.dayWisePricing?.find(
+  const dayRule = villa.day_wise_percentage?.find(
     d => d.day === dayName
   );
-
+ // 🔹 Villa discount (same as hotel logic)
+  // if (villa.discount > 0) {
+  //   price = price - (price * villa.discount) / 100;
+  // }
   if (dayRule) {
     price = price - (price * dayRule?.percentage) / 100;
-  }
-
-  // 🔹 Villa discount (same as hotel logic)
-  if (villa.discount > 0) {
-    price = price - (price * villa.discount) / 100;
   }
 
   return Math.round(price);
