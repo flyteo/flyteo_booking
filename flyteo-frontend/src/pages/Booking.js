@@ -427,6 +427,10 @@ useEffect(()=>{
     setPaymentChoice("full");
   }
 },[item]);
+
+
+const twoMonthsLater = new Date();
+twoMonthsLater.setMonth(today.getMonth() + 2);
   // Submit booking
 
   // const getSessionId= async()=>{
@@ -759,7 +763,10 @@ const Row = ({ label, value, bold }) => (
             setCheckIn(range?.from || null);
             setCheckOut(range?.to || null);
           }}
-          disabled={{ before: today }}
+          disabled={[
+    { before: today },        // ❌ Disable past dates
+    { after: twoMonthsLater } // ❌ Disable beyond 2 months
+  ]}
         />
 
         <button
@@ -794,7 +801,10 @@ const Row = ({ label, value, bold }) => (
             setCheckIn(range?.from || null);
             setCheckOut(range?.to || null);
           }}
-          disabled={{ before: today }}
+          disabled={[
+    { before: today },        // ❌ Disable past dates
+    { after: twoMonthsLater } // ❌ Disable beyond 2 months
+  ]}
         />
 
         <button
@@ -827,7 +837,10 @@ const Row = ({ label, value, bold }) => (
             setDate(d);
             setOpenCalendar(false);
           }}
-          disabled={{ before: today }}
+          disabled={[
+    { before: today },        // ❌ Disable past dates
+    { after: twoMonthsLater } // ❌ Disable beyond 2 months
+  ]}
         />
       </div>
     )}

@@ -115,6 +115,11 @@ const today = new Date().toISOString().split("T")[0];
                if (checkOut && date > checkOut) setCheckOut(null);
              }}
              minDate={new Date()}
+             maxDate={
+    new Date(
+      new Date().setMonth(new Date().getMonth() + 2)
+    )
+  }  // ✅ next 2 months
              placeholderText="Select check-in date"
              popperClassName="premium-datepicker"
              calendarClassName="premium-calendar"
@@ -148,6 +153,11 @@ const today = new Date().toISOString().split("T")[0];
              selected={checkOut}
              onChange={(date) => setCheckOut(date)}
              minDate={checkIn || new Date()}
+             maxDate={
+    new Date(
+      new Date().setMonth(new Date().getMonth() + 2)
+    )
+  }  // ✅ next 2 months
              placeholderText="Select check-out date"
              disabled={!checkIn}
              popperClassName="premium-datepicker"

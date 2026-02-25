@@ -37,19 +37,22 @@ const [dateError, setDateError] = useState("");
 
   const checkCampingAvailability = async (selectedDate) => {
   if (!selectedDate) return;
-
+     
   try {
     setChecking(true);
     setDateError("");
+// 🔥 Convert JS Date → YYYY-MM-DD
+   const formattedDate = selectedDate
+  .toLocaleDateString("en-CA");
 
     const res = await api.post("/campings/check-availability", {
       campingId: id,
-      date: selectedDate
+      date: formattedDate
     });
 
     if (!res.data.available) {
       setAvailable(false);
-      setDateError("Camping is not available on this date");
+      setDateError("Camping is not available on this date. Please Check another date");
     } else {
       setAvailable(true);
     }
@@ -251,6 +254,11 @@ const [dateError, setDateError] = useState("");
 
              }}
              minDate={new Date()}
+             maxDate={
+    new Date(
+      new Date().setMonth(new Date().getMonth() + 2)
+    )
+  }  // ✅ next 2 months
              placeholderText="Select check-in date"
              popperClassName="premium-datepicker"
              calendarClassName="premium-calendar"

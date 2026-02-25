@@ -4,6 +4,9 @@ import api from "../axios";
 import { Link, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
+import m1 from "../assets/mumbaiback.jpg";
+import l1 from "../assets/lonaval.jpg"
+import a1 from "../assets/alibaug.jpg"
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -15,6 +18,7 @@ import { FaFacebook, FaInstagram, FaWhatsapp } from 'react-icons/fa';
 
 function DesktopHome() {
 
+ 
     const [hotels, setHotels] = useState([]);
       const [campings, setCampings] = useState([]);
       const [villas, setVillas] = useState([]);
@@ -139,14 +143,11 @@ const popularLocations = Array.from(
   return Math.round(price);
 };
     const locationBgMap = {
-  Mumbai:
-    "https://www.oberoihotels.com/-/media/oberoi-hotel/the-oberoi-mumbai/mumbai-1-8-24/overview/banner/desktop1920x980/banner3_.jpg",
+  Mumbai:m1,
 
-  Lonavala:
-    "https://www.trawell.in/blog/wp-content/uploads/2024/07/lonavala-main-730x410.jpg",
+  Lonavala:l1,
 
-  Alibaug:
-    "https://images.unsplash.com/photo-1600696749815-3a5c2c8f1c0e?auto=format&fit=crop&w=1200&q=80",
+  Alibaug:a1,
 };
       // Handle search
       // Handle search (HOME PAGE)
@@ -360,6 +361,64 @@ const handleSearch = () => {
   </div>
 </div>
 
+{/* ================= NEW USER OFFER SECTION ================= */}
+<div className="px-4 md:px-10 mt-10">
+
+  <div className="
+    relative overflow-hidden
+    bg-gradient-to-r from-orange-500 to-amber-500
+    rounded-3xl
+    shadow-2xl
+    p-6 md:p-10
+    text-white
+    flex flex-col md:flex-row
+    items-center
+    justify-between
+    gap-6
+  ">
+
+    {/* Glow Background Effect */}
+    <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/20 rounded-full blur-3xl" />
+    <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/20 rounded-full blur-3xl" />
+
+    {/* LEFT CONTENT */}
+    <div className="relative z-10">
+
+      <div className="inline-block bg-white/20 px-4 py-1 rounded-full text-xs font-semibold mb-3 tracking-wide">
+        🎉 Limited Time Offer
+      </div>
+
+      <h2 className="text-2xl md:text-3xl font-heading font-bold">
+        New User? Get 10% OFF
+      </h2>
+
+      <p className="mt-2 text-sm md:text-base text-white/90">
+        Register today and enjoy exclusive discount on your first booking.
+      </p>
+
+    </div>
+
+    {/* RIGHT CTA */}
+    <div className="relative z-10">
+      <button
+        onClick={() => nav("/register")}
+        className="
+          bg-white text-orange-600
+          font-semibold
+          px-6 py-3
+          rounded-xl
+          shadow-lg
+          hover:scale-105
+          transition
+        "
+      >
+        Sign Up & Save →
+      </button>
+    </div>
+
+  </div>
+
+</div>
 
       {/* ---------------------------------------------------------------- */}
 {/* ---------------------------------------------------------------- */}
@@ -446,8 +505,7 @@ const handleSearch = () => {
   <div className="flex gap-6 overflow-x-auto scrollbar-hide pb-4">
   {popularLocations.map((loc) => {
     const bgImage =
-      locationBgMap[loc] ||
-      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80";
+      locationBgMap[loc] || l1;
 
     return (
       <div

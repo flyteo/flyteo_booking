@@ -71,6 +71,22 @@ const [searchTerm, setSearchTerm] = useState("");
                 setVillas(res.data.slice(0, 6))
               );
   }, []);
+
+  const [offer, setOffer] = useState([]);
+const [coupons, setCoupons] = useState([]);
+useEffect(() => {
+  const loadOffers = async () => {
+    try {
+      const res = await api.get("/offers/home-offers");
+      setOffer(res.data.offers);
+      setCoupons(res.data.coupons);
+    } catch (err) {
+      console.error("Failed to load offers");
+    }
+  };
+
+  loadOffers();
+}, []);
   const getFinalRoomPrice = (roomPrice, taxes, discount, dayWisePricing, date = new Date()) => {
   let price = roomPrice;
 
@@ -175,36 +191,126 @@ useEffect(() => {
     🎉 Special Deals
   </h2>
 
-  <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2"> 
-    {/* OFFER CARD 1 */} 
-    <div onClick={() => nav("/offers")} className="bg-stone-600 min-w-[260px] h-[110px] rounded-2xl overflow-hidden relative shadow-lg cursor-pointer active:scale-95 transition" > 
-      {/* <img src={o1} alt="Offer" className="w-full h-full object-cover" /> */} {/* DARK OVERLAY */} 
-      <div className="absolute inset-0 bg-black/40" /> {/* TEXT */} 
-      <div className="absolute inset-0 p-4 flex flex-col justify-between text-white"> 
-        <div className="text-xs text-rusticBrown font-semibold uppercase tracking-wide"> 
-          Flyteo Special </div> 
-          <div> 
-            <p className="text-3xl text-palmGreen font-bold">Flat 20% OFF</p> 
-            <p className="text-sm mt-1"> Use Code: <span className="text-brandOrange font-bold">FLYTEO20</span> 
-            </p> 
-            </div>
-             </div> 
-             </div> 
-             {/* OFFER CARD 2 */} 
-             <div onClick={() => nav("/offers")} className="bg-stone-600 min-w-[260px] h-[110px] rounded-2xl overflow-hidden relative shadow-lg cursor-pointer active:scale-95 transition" > {/* <img src={o1} alt="Offer" className="w-full h-full object-cover" /> */} 
-              <div className="absolute inset-0 bg-black/40" /> 
-              
-              <div className="absolute inset-0 p-4 flex flex-col justify-between text-white"> 
-                <div className="text-xs text-rusticBrown font-semibold uppercase tracking-wide"> Weekend Deal </div>
-                 <div> <p className="text-3xl text-palmGreen font-bold">Up to 30% OFF</p> 
-                 <p className="text-sm mt-1"> Code: <span className="text-brandOrange font-bold">WEEKEND30</span> </p>
-                  </div> 
-                  </div>
-                   </div>
-                    </div>
+  <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+
+  {/* OFFERS */}
+  {offer.map((o) => (
+    <div
+      key={`offer-${o.id}`}
+      onClick={() => nav("/offers")}
+      className="bg-stone-600 min-w-[260px] h-[110px] rounded-2xl overflow-hidden relative shadow-lg cursor-pointer active:scale-95 transition"
+    >
+      <div className="absolute inset-0 bg-black/40" />
+
+      <div className="absolute inset-0 p-4 flex flex-col justify-between text-white">
+        <div className="text-xs text-rusticBrown font-semibold uppercase tracking-wide">
+          {o.title}
+        </div>
+
+        <div>
+          <p className="text-2xl text-palmGreen font-bold">
+            Flat {o.discountPercent}% OFF
+          </p>
+          
+        </div>
+      </div>
+    </div>
+  ))}
+
+  {/* COUPONS */}
+  {coupons.map((coupon) => (
+    <div
+      key={`coupon-${coupon.id}`}
+      onClick={() => nav("/offers")}
+      className="bg-stone-600 min-w-[260px] h-[110px] rounded-2xl overflow-hidden relative shadow-lg cursor-pointer active:scale-95 transition"
+    >
+      <div className="absolute inset-0 bg-black/40" />
+
+      <div className="absolute inset-0 p-4 flex flex-col justify-between text-white">
+        <div className="text-xs text-rusticBrown font-semibold uppercase tracking-wide">
+          Special Coupon
+        </div>
+
+        <div>
+          <p className="text-2xl text-palmGreen font-bold">
+           Get {coupon.discountType === "percent"
+              ? `${coupon.amount}% OFF`
+              : `₹${coupon.amount} OFF`}
+          </p>
+
+          <p className="text-sm mt-1">
+            Code:{" "}
+            <span className="text-brandOrange font-bold">
+              {coupon.code}
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+  ))}
+
+</div>
 </div>
 
-     
+    {/* ================= NEW USER OFFER (MOBILE) ================= */}
+{/* {!user && ( */}
+  <div className="px-4 mt-6">
+
+    <div className="
+      relative overflow-hidden
+      rounded-3xl
+      p-5
+      bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-500
+      text-white
+      shadow-xl
+      active:scale-95
+      transition
+    ">
+
+      {/* Glow Effects */}
+      <div className="absolute -top-8 -right-8 w-20 h-20 bg-white/20 rounded-full blur-2xl" />
+      <div className="absolute -bottom-8 -left-8 w-20 h-20 bg-white/20 rounded-full blur-2xl" />
+
+      <div className="relative z-10">
+
+        {/* Small Badge */}
+        <div className="inline-block bg-white/20 px-3 py-1 rounded-full text-xs font-semibold mb-3">
+          🎉 Welcome Offer
+        </div>
+
+        {/* Main Text */}
+        <h3 className="text-xl font-heading font-bold leading-tight">
+          Sign up today & unlock exclusive Flyteo discounts.
+        </h3>
+
+
+        {/* Coupon Code */}
+        {/* <div className="mt-3 bg-white/20 backdrop-blur px-4 py-2 rounded-xl text-sm font-semibold inline-block">
+          Use Code: <span className="text-white font-bold">FLYTEO10</span>
+        </div> */}
+
+        {/* CTA Button */}
+        <button
+          onClick={() => nav("/register")}
+          className="
+            mt-4 w-full
+            bg-white text-orange-600
+            py-3 rounded-xl
+            font-semibold
+            shadow-lg
+            hover:scale-105
+            transition
+          "
+        >
+          Sign Up & Save →
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
       {/* ================= HERO + SEARCH ================= */}
    {/* ================= PREMIUM COMPACT HERO ================= */}
 <div className="relative px-4 pt-4 pb-4">
@@ -331,6 +437,11 @@ useEffect(() => {
         selectsRange
         inline
         minDate={new Date()}
+        maxDate={
+    new Date(
+      new Date().setMonth(new Date().getMonth() + 2)
+    )
+  }  // ✅ next 2 months
       />
 
       <button

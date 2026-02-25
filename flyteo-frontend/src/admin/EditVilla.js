@@ -204,6 +204,57 @@ setDayWisePercentage(dayMap);
             onChange={e => setVilla({ ...villa, securityDeposit: e.target.value })}
           />
         </div>
+
+        <div>
+          <label className="font-medium">Villa Images</label>
+        
+          {/* Upload */}
+          <input
+            type="file"
+            accept="image/*"
+            className="w-full mt-1"
+            onChange={async (e) => {
+              const formData = new FormData();
+              formData.append("image", e.target.files[0]);
+        
+              const res = await api.post(
+                "/upload",
+                formData,
+                { headers: { "Content-Type": "multipart/form-data" } }
+              );
+        
+              setVilla(prev => ({
+                ...prev,
+                images: [...prev.images, res.data.url]
+              }));
+            }}
+          />
+        
+          {/* Preview + Delete */}
+          <div className="grid grid-cols-3 gap-4 mt-3">
+            {villa.images.map((url, i) => (
+              <div key={i} className="relative">
+                <img
+                  src={url}
+                  className="h-32 w-full object-cover rounded"
+                />
+                <button
+                  type="button"
+                  className="absolute top-1 right-1 bg-red-600 text-white text-xs px-2 py-1 rounded"
+                  onClick={() =>
+                    setVilla(prev => ({
+                      ...prev,
+                      images: prev.images.filter((_, idx) => idx !== i)
+                    }))
+                  }
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="bg-white shadow rounded-xl p-6 mt-8">
   <h2 className="text-xl font-heading text-palmGreen mb-4">
     Day-wise Pricing Percentage

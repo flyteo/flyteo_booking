@@ -289,7 +289,7 @@ useEffect(() => {
       modules={[Navigation, Thumbs]}
       navigation
       thumbs={{ swiper: thumbsSwiper }}
-      className="rounded-xl overflow-hidden h-[40vh]"
+      className="rounded-xl overflow-hidden h-[50vh]"
     >
       {roomImages.map(img => (
         <SwiperSlide key={img.id}>
@@ -527,6 +527,11 @@ useEffect(() => {
         if (checkOut && date > checkOut) setCheckOut(null);
       }}
       minDate={new Date()}
+      maxDate={
+    new Date(
+      new Date().setMonth(new Date().getMonth() + 2)
+    )
+  }  // ✅ next 2 months
       placeholderText="Select check-in date"
       popperClassName="premium-datepicker"
       calendarClassName="premium-calendar"
@@ -560,6 +565,11 @@ useEffect(() => {
       selected={checkOut}
       onChange={(date) => setCheckOut(date)}
       minDate={checkIn || new Date()}
+      maxDate={
+    new Date(
+      new Date().setMonth(new Date().getMonth() + 2)
+    )
+  }  // ✅ next 2 months
       placeholderText="Select check-out date"
       disabled={!checkIn}
       popperClassName="premium-datepicker"

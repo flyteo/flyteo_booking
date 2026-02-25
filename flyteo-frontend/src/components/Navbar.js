@@ -78,7 +78,7 @@ useEffect(() => {
       </a>
 
       <a
-        href="tel:+918975995125"
+        href="tel:02269621842"
         className="text-blue-600 text-2xl"
         aria-label="Call"
       >

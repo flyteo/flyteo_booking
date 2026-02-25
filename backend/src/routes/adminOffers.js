@@ -77,4 +77,33 @@ router.delete("/:id", auth, adminOnly, async (req, res) => {
   }
 });
 
+// GET /api/home-offers
+router.get("/home-offers", async (req, res) => {
+  try {
+    const today = new Date();
+
+    const offers = await prisma.offer.findMany({
+      where: {
+        isActive: true,
+        validFrom: { lte: today },
+        validTo: { gte: today }
+      },
+      orderBy: { createdAt: "desc" }
+    });
+
+    const coupons = await prisma.coupon.findMany({
+      where: {
+        isActive: true,
+        validFrom: { lte: today },
+        validTo: { gte: today }
+      },
+      orderBy: { createdAt: "desc" }
+    });
+
+    res.json({ offers, coupons });
+  } catch (err) {
+    res.status(500).json({ msg: "Failed to fetch offers" });
+  }
+});
+
 export default router;
