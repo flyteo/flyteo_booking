@@ -28,7 +28,7 @@ export default function AddBlog() {
   return (
     <div className="flex">
       <AdminSidebar />
-      <div className="ml-72 w-full p-8">
+      <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow">
         <h1 className="text-3xl font-heading mb-6">Add Blog</h1>
         <BlogForm
           blog={blog}

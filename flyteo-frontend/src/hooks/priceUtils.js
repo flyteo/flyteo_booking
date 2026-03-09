@@ -46,7 +46,7 @@ export function calculateVillaPrice(basePrice = 0,
   dayWisePricing = [],
   villaDiscount = 0,
   taxes = 0) {
-  let price =basePrice;
+  let price =Number(basePrice);
 
   const date = checkIn ? new Date(checkIn) : new Date();
 
@@ -64,7 +64,7 @@ export function calculateVillaPrice(basePrice = 0,
     price = price - (price * villaDiscount) / 100;
   }
 
-  price += taxes || 0;
+  price += Number(taxes) || 0;
 
   return Math.round(price);
 }
@@ -72,7 +72,7 @@ export function calculateVillaPrice(basePrice = 0,
 export function calculateHotelPrice(hotel, checkIn) {
   const basePrice = hotel.room?.[0]?.price || 0;
 
-  let price = basePrice;
+  let price = Number(basePrice);
 
   const date = checkIn ? new Date(checkIn) : new Date();
 
@@ -97,7 +97,7 @@ export function calculateHotelPrice(hotel, checkIn) {
   return Math.round(price);
 }
 export function calculateVillaPriceInSearch(villa, checkIn) {
-  let price = villa.basePrice || 0;
+  let price = Number(villa.basePrice) || 0;
 
   const date = checkIn ? new Date(checkIn) : new Date();
 
@@ -117,7 +117,7 @@ export function calculateVillaPriceInSearch(villa, checkIn) {
     price = price - (price * villa.discount) / 100;
   }
 
-  price += villa.taxes || 0;
+  price += Number(villa.taxes) || 0;
 
   return Math.round(price);
 }

@@ -2,6 +2,7 @@ import api from "../axios";
 
 export default function BlogForm({ blog, setBlog, onSubmit }) {
   return (
+    <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow">
     <form onSubmit={onSubmit} className="space-y-4">
 
       <input
@@ -150,5 +151,5 @@ export default function BlogForm({ blog, setBlog, onSubmit }) {
         Save Blog
       </button>
     </form>
-  );
+ </div> );
 }

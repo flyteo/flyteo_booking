@@ -482,13 +482,13 @@ const avgRating =
       ).toFixed(1)
     : null;
         return (
-          <div
+         <div
             key={h.id}
-            className="bg-white rounded-2xl shadow-md hover:shadow-xl transition border p-4 flex gap-4"
+            className="bg-white rounded-2xl shadow-md hover:shadow-xl transition border p-4 flex flex-col md:flex-row gap-4"
           >
 
             {/* IMAGE */}
-            <div className="relative min-w-[180px] h-[160px]">
+            <div className="relative md:min-w-[180px] md:w-[180px] h-[200px] md:h-[160px]">
               <img
                 src={h.hotelimage?.[0]?.url || "/hotel.jpg"}
                 className="w-full h-full object-cover rounded-xl"
@@ -504,16 +504,18 @@ const avgRating =
             <div className="flex-1 flex flex-col justify-between relative">
 
               {/* PRICE */}
-              <div className="absolute top-0 right-0 text-right">
+              <div className="flex md:absolute md:top-0 md:right-0 items-center md:block text-right mt-2 md:mt-0">
                 {finalPrice < originalPrice && (
                   <p className="text-gray-400 text-xs line-through">
                     ₹{originalPrice}
                   </p>
                 )}
-                <p className="text-palmGreen font-bold text-lg">
-                  ₹{finalPrice}
-                </p>
-                <p className="text-xs text-gray-500">per night</p>
+                <p className="text-xl font-bold text-palmGreen">
+          ₹{finalPrice}
+          <span className="text-sm text-gray-500 font-normal">
+            {" "} / night
+          </span>
+        </p>
               </div>
 
               {/* INFO */}

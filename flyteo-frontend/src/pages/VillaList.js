@@ -537,13 +537,13 @@ Parking
 
 {filteredVillas.map((villa)=>{
   const finalPrice = calculateVillaPrice(
-    villa.basePrice,
+    Number(villa.basePrice),
     checkIn,
     villa.day_wise_percentage,
     villa.discount,
-    villa.taxes
+    Number(villa.taxes)
   )
-  const originalPrice=Math.round(villa.basePrice + (villa.taxes || 0));
+  const originalPrice=Math.round(Number(villa.basePrice) + Number(villa.taxes || 0));
 return isMobile ? (
 <Link
   key={villa.id}

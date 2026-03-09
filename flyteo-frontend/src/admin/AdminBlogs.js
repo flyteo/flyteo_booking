@@ -26,7 +26,7 @@ export default function AdminBlogs() {
     <div className="flex">
       <AdminSidebar />
 
-      <div className="ml-72 w-full p-8">
+      <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-heading text-palmGreen">
             Blog Management
