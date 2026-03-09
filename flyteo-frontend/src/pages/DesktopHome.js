@@ -9,7 +9,7 @@ import l1 from "../assets/lonaval.jpg"
 import a1 from "../assets/alibaug.jpg"
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
+import h1 from "../assets/backhero.jpg"
 
 import "swiper/css";
 import Contact from './Contact';
@@ -174,195 +174,243 @@ const handleSearch = () => {
 
 
   return (
-    <div className="max-w-7xl mx-auto px-6">
-
-         {/* ---------------------------------------------------------------- */}
-      {/* 1. HERO SECTION */}
-      {/* ---------------------------------------------------------------- */}
-    {/* HERO SECTION */}
-<div
-  className="relative h-[65vh] w-full overflow-hidden"
-  style={{
-    backgroundImage:
-      "url('https://images.unsplash.com/photo-1501117716987-c8e1ecb2105b?auto=format&fit=crop&w=1600&q=80')",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  }}
->
-  {/* Overlay */}
-  <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
-
-<div className="relative h-full flex flex-col justify-center items-center text-white text-center px-6">
-    <h1 className="font-heading text-5xl md:text-7xl font-bold leading-tight">
-      Discover Luxury Stays
-    </h1>
-
-    <p className="mt-4 text-lg md:text-2xl text-gray-200">
-      Hotels • Villas • Camping Experiences
-    </p>
-
-    {/* SEARCH GLASS CARD */}
-    <div className="mt-10 bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-2xl shadow-2xl w-full max-w-5xl">
-
-      <div className="grid md:grid-cols-5 gap-4 text-black">
-
-        {/* <input
-          type="text"
-          placeholder="Where are you going?"
-          className="p-3 rounded-lg border focus:ring-2 focus:ring-orange-400"
-          value={destination}
-          onChange={(e) => setDestination(e.target.value)}
-        /> */}
-         {/* DESTINATION SELECT (DESKTOP) */}
-<div className="relative" ref={dropdownRef}>
-
-  {/* INPUT FIELD (Now Editable) */}
-  <input
-    type="text"
-    placeholder="Where are you going?"
-    value={searchTerm || destination}
-    onChange={(e) => {
-      setSearchTerm(e.target.value);
-      setOpenLocation(true);
-    }}
-    onFocus={() => setOpenLocation(true)}
-    className="p-3 rounded-lg border w-full focus:ring-2 focus:ring-orange-400 outline-none"
-  />
-
-  {/* DROPDOWN */}
-  {openLocation && (
-    <div className="
-      absolute
-      top-23
-      left-0
-      w-full
-      mt-2
-      bg-white
-      shadow-2xl
-      rounded-xl
-      z-50
-      p-3
-      animate-fadeIn
-    ">
-
-      <div className="max-h-60 overflow-y-auto space-y-1">
-
-        {locations
-          .filter(loc =>
-            loc.toLowerCase().includes(
-              (searchTerm || "").toLowerCase()
-            )
-          )
-          .map(loc => (
-            <div
-              key={loc}
-              onClick={() => {
-                setDestination(loc);
-                setSearchTerm("");
-                setOpenLocation(false);
-              }}
-              className="p-2 rounded-lg hover:bg-orange-50 cursor-pointer transition"
-            >
-              📍 {loc}
-            </div>
-          ))}
-
-        {/* If no result */}
-        {locations.filter(loc =>
-          loc.toLowerCase().includes(
-            (searchTerm || "").toLowerCase()
-          )
-        ).length === 0 && (
-          <div className="text-sm text-gray-400 p-2">
-            No locations found
-          </div>
-        )}
-
-      </div>
-    </div>
-  )}
-</div>
-
-        <DatePicker
-              selected={checkIn}
-              onChange={(date) => {
-                setCheckIn(date);
-                if (checkOut && date > checkOut) setCheckOut(null);
-              }}
-              minDate={new Date()}
-              placeholderText="Select check-in date"
-              popperClassName="premium-datepicker"
-              calendarClassName="premium-calendar"
-              className="
-                w-full bg-white border border-gray-200 rounded-xl
-                pl-4 pr-2 py-3 text-sm
-                shadow-sm
-                focus:outline-none
-                focus:ring-2 focus:ring-orange-400
-                focus:border-orange-400
-                transition-all duration-300
-                hover:shadow-md
-              "
-              dateFormat="dd/MM/yyyy"
-              showPopperArrow={false}
-            />
-
-        <DatePicker
-              selected={checkOut}
-              onChange={(date) => setCheckOut(date)}
-              minDate={checkIn || new Date()}
-              placeholderText="Select check-out date"
-              disabled={!checkIn}
-              popperClassName="premium-datepicker"
-              calendarClassName="premium-calendar"
-              className="
-               w-full bg-white border border-gray-200 rounded-xl
-                pl-4 pr-2 py-3 text-sm
-                shadow-sm
-                focus:outline-none
-                focus:ring-2 focus:ring-orange-400
-                focus:border-orange-400
-                transition-all duration-300
-                hover:shadow-md
-                disabled:bg-gray-100 disabled:cursor-not-allowed
-              "
-              dateFormat="dd/MM/yyyy"
-              showPopperArrow={false}
-            />
-
-        <select
-          value={guests}
-          onChange={(e) => setGuests(e.target.value)}
-          className="p-3 rounded-lg border"
-        >
-          {[1,2,3,4,5,6].map(g => (
-            <option key={g}>{g} Guest{g > 1 ? "s" : ""}</option>
-          ))}
-        </select>
-
-        <button
-          onClick={handleSearch}
-          className="bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold"
-        >
-          Search
-        </button>
-
-      </div>
-    </div>
-
-  </div>
-</div>
-<div className="bg-white shadow py-6">
-  <div className="max-w-6xl mx-auto grid grid-cols-4 text-center text-sm text-gray-600">
+    <div className="max-w-7xl mx-auto px-4">
+{/* TRUST BADGES SECTION */}
+<div className="bg-white shadow-md py-4">
+  <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-gray-700 font-medium">
     <div>✔ Verified Properties</div>
     <div>✔ Secure Payments</div>
     <div>✔ 24/7 Support</div>
     <div>✔ Best Price Guarantee</div>
   </div>
 </div>
+         {/* ---------------------------------------------------------------- */}
+      {/* 1. HERO SECTION */}
+      {/* ---------------------------------------------------------------- */}
+<div className="relative h-[40vh] md:h-[60vh] lg:h-[55vh] w-full"
+>
+
+  {/* Background Image */}
+  <div
+    className="absolute inset-0 bg-cover bg-center scale-105"
+  />
+
+  {/* Dark Overlay */}
+  <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/60 to-black/40" 
+  />
+
+  {/* Content */}
+  <div className="relative z-10 flex flex-col justify-center items-center text-center text-white px-6 py-8">
+
+   <h1 className="
+  font-heading
+  text-4xl md:text-6xl xl:text-7xl
+  font-bold
+  leading-tight
+  tracking-wide
+  drop-shadow-2xl
+">
+  Discover <span className="text-orange-500">Luxury</span> Escapes
+</h1>
+
+    <p className="mt-6 text-lg md:text-xl text-gray-200 max-w-2xl">
+      Premium Hotels • Private Villas • Luxury Camping
+    </p>
+{/* ===== OFFER BADGE ===== */}
+<div className="mb-6 flex justify-center">
+
+  <div className="
+    relative
+    bg-gradient-to-r from-orange-500 to-amber-500
+    text-white
+    px-6 py-3
+    rounded-full
+    shadow-xl
+    flex items-center gap-3
+    text-sm md:text-base
+    font-medium
+    animate-pulse
+  ">
+
+    <span className="text-lg">🎉</span>
+
+    <span>
+      New User? Get <strong>5% OFF</strong> on Registration
+    </span>
+
+    {/* <span className="hidden md:inline">
+      | Apply Coupon & Save More
+    </span> */}
+
+  </div>
+
+</div>
+    {/* PREMIUM SEARCH CARD */}
+    <div className="w-full max-w-6xl">
+
+      <div className="
+        backdrop-blur-2xl bg-white/10
+        border border-white/20
+        shadow-[0_20px_60px_rgba(0,0,0,0.6)]
+        rounded-3xl p-6 md:p-8
+      ">
+
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-5 items-end">
+
+          {/* DESTINATION */}
+          <div className="relative" ref={dropdownRef}>
+            <label className="text-xs text-gray-200 mb-1 block">
+              Destination
+            </label>
+
+            <input
+              type="text"
+              placeholder="Where are you going?"
+              value={searchTerm || destination}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setOpenLocation(true);
+              }}
+              onFocus={() => setOpenLocation(true)}
+              className="
+                w-full bg-white rounded-xl px-4 py-3
+                text-gray-600
+                focus:ring-2 focus:ring-orange-500
+                outline-none transition-all
+                shadow-md hover:shadow-lg
+              "
+            />
+
+            {/* Dropdown */}
+            {openLocation && (
+              <div className="absolute bottom-[120px] mt-2 w-full bg-white rounded-xl shadow-2xl z-40 p-3 max-h-60 overflow-y-auto">
+                {locations
+                  .filter(loc =>
+                    loc.toLowerCase().includes(
+                      (searchTerm || "").toLowerCase()
+                    )
+                  )
+                  .map(loc => (
+                    <div
+                      key={loc}
+                      onClick={() => {
+                        setDestination(loc);
+                        setSearchTerm("");
+                        setOpenLocation(false);
+                      }}
+                      className="p-2 text-gray-700 rounded-lg hover:bg-orange-50 cursor-pointer transition"
+                    >
+                      📍 {loc}
+                    </div>
+                  ))}
+
+                {locations.filter(loc =>
+                  loc.toLowerCase().includes(
+                    (searchTerm || "").toLowerCase()
+                  )
+                ).length === 0 && (
+                  <div className="text-sm text-gray-700 p-2">
+                    No locations found
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* CHECK-IN */}
+          <div>
+            <label className="text-xs text-gray-200 mb-1 block">
+              Check In
+            </label>
+
+            <DatePicker
+              selected={checkIn}
+              onChange={(date) => {
+                setCheckIn(date);
+                if (checkOut && date > checkOut) setCheckOut(null);
+              }}
+              minDate={new Date()}
+              placeholderText="Select date"
+              className="
+                w-full bg-white text-gray-700 rounded-xl px-4 py-3
+                focus:ring-2 focus:ring-orange-500
+                shadow-md hover:shadow-lg transition-all
+              "
+              dateFormat="dd/MM/yyyy"
+            />
+          </div>
+
+          {/* CHECK-OUT */}
+          <div>
+            <label className="text-xs text-gray-200 mb-1 block">
+              Check Out
+            </label>
+
+            <DatePicker
+              selected={checkOut}
+              onChange={(date) => setCheckOut(date)}
+              minDate={checkIn || new Date()}
+              placeholderText="Select date"
+              disabled={!checkIn}
+              className="
+                w-full bg-white text-gray-700 rounded-xl px-4 py-3
+                focus:ring-2 focus:ring-orange-500
+                shadow-md hover:shadow-lg transition-all
+                disabled:bg-gray-200
+              "
+              dateFormat="dd/MM/yyyy"
+            />
+          </div>
+
+          {/* GUESTS */}
+          <div>
+            <label className="text-xs text-gray-200 mb-1 block">
+              Guests
+            </label>
+
+            <select
+              value={guests}
+              onChange={(e) => setGuests(e.target.value)}
+              className="
+                w-full bg-white rounded-xl px-4 py-3 text-gray-700
+                focus:ring-2 focus:ring-orange-500
+                shadow-md hover:shadow-lg transition-all
+              "
+            >
+              {[1,2,3,4,5,6].map(g => (
+                <option key={g}>{g} Guest{g > 1 ? "s" : ""}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* SEARCH BUTTON */}
+          <div>
+            <button
+              onClick={handleSearch}
+              className="
+                w-full py-3 rounded-xl font-semibold text-white
+                bg-gradient-to-r from-orange-500 to-orange-600
+                hover:from-orange-600 hover:to-orange-700
+                shadow-lg hover:shadow-xl
+                transition-all duration-300
+                active:scale-95
+              "
+            >
+              Search
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
 
 {/* ================= NEW USER OFFER SECTION ================= */}
-<div className="px-4 md:px-10 mt-10">
+<div className="px-4 z-10 md:px-10 mt-10">
 
   <div className="
     relative overflow-hidden
@@ -424,71 +472,103 @@ const handleSearch = () => {
 {/* ---------------------------------------------------------------- */}
 {/* SPECIAL OFFERS & DEALS (Dynamic from Backend) */}
 {/* ---------------------------------------------------------------- */}
-<div className="mt-20">
-  <h2 className="text-4xl font-heading font-bold text-center mb-12">
-  <span className="text-orange-500">Special</span> Offers & Deals
-</h2>
+{/* ================= OFFERS ZONE ================= */}
+<div className="mt-10 bg-palmGreen py-4 px-2 md:px-6 rounded-3xl">
 
+  {/* HEADER */}
+  <div className="text-center text-white mb-12">
+    <h2 className="text-4xl font-heading font-bold">
+      Offers Zone
+    </h2>
+    <p className="mt-2 text-lg text-white/80">
+      Discover the best of best deals right here!
+    </p>
+  </div>
 
   {offers.length === 0 ? (
-    <p className="text-center text-gray-600">No active offers right now.</p>
+    <p className="text-center text-white/70">
+      No active offers right now.
+    </p>
   ) : (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
-      {offers.map((offer) => (
-        <div
-          key={offer.id}
-          className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 group cursor-pointer"
-        >
-          {/* IMAGE */}
-          {/* <img
-            src={offer.image || "https://via.placeholder.com/600x400"}
-            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-          /> */}
+    <div className="relative">
 
-          {/* DISCOUNT BADGE */}
-          {offer.discount && (
-            <div className="absolute top-3 left-3 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow">
-              {offer.discount}% OFF
-            </div>
-          )}
+      {/* HORIZONTAL SCROLL */}
+      <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
 
-          {/* CONTENT */}
-          <div className="p-5">
+        {offers.map((offer) => (
+          <div
+            key={offer.id}
+            className="
+              min-w-[260px] md:min-w-[420px]
+              bg-white
+              rounded-3xl
+              shadow-xl
+              overflow-hidden
+              hover:scale-105
+              transition
+              duration-300
+              cursor-pointer
+            "
+          >
+
+            {/* IMAGE */}
             <img
-  src={offer.image || "/offer-default.jpg"}
-  className="w-full h-40 object-cover rounded"
-/>
+              src={offer.image || "/offer-default.jpg"}
+              alt={offer.title}
+              className="w-full h-32 object-cover"
+            />
 
-            <h3 className="font-heading text-xl text-gray-800">
-              {offer.title}
-            </h3>
+            {/* CONTENT */}
+            <div className="p-5">
 
-            <p className="text-gray-600 mt-2">{offer.description}</p>
+              <h3 className="text-xl font-bold text-gray-800">
+                {offer.title}
+              </h3>
 
-            {/* VALIDITY */}
-            {offer.validTill && (
-              <p className="text-sm text-gray-500 mt-2">
-                Valid till:{" "}
-                {new Date(offer.validTill).toLocaleDateString("en-IN")}
+              <p className="text-gray-600 mt-2 text-sm">
+                {offer.description}
               </p>
-            )}
 
-            {/* OFFER TYPE */}
-            <span className="inline-block mt-3 px-3 py-1 bg-sand rounded-full text-xs text-gray-600">
-              {offer.offerType?.toUpperCase() || "ALL"}
-            </span>
+              {offer.discount && (
+                <div className="mt-2 text-2xl font-bold text-orange-500">
+                  {offer.discount}% OFF
+                </div>
+              )}
 
-            {/* BUTTON */}
-            <button className="mt-4 w-full bg-palmGreen text-white py-2 rounded-lg font-medium hover:bg-green-700 transition">
-             <Link to="/hotels"> Explore Offer</Link>
-            </button>
+              {offer.validTill && (
+                <p className="text-xs text-gray-500 mt-2">
+                  Valid till{" "}
+                  {new Date(offer.validTill).toLocaleDateString("en-IN")}
+                </p>
+              )}
+
+              <Link
+                to="/offers"
+                className="
+                  mt-4 inline-block
+                  bg-palmGreen
+                  text-white
+                  px-5 py-2
+                  rounded-lg
+                  text-sm
+                  font-semibold
+                  hover:bg-green-700
+                  transition
+                "
+              >
+                Explore →
+              </Link>
+
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+
+      </div>
 
     </div>
   )}
+
 </div>
 
 
@@ -496,7 +576,7 @@ const handleSearch = () => {
       {/* ---------------------------------------------------------------- */}
       {/* 2. FEATURED DESTINATIONS SECTION */}
       {/* ---------------------------------------------------------------- */}
-     <div className="mt-16">
+     <div className="mt-10">
  <h2 className="text-4xl font-heading font-bold text-center mb-12">
   <span className="text-orange-500">Explore</span> Popular Destinations
 </h2>
@@ -550,7 +630,7 @@ const handleSearch = () => {
       {/* ---------------------------------------------------------------- */}
       {/* 3. FEATURED HOTELS & CAMPSITES */}
       {/* ---------------------------------------------------------------- */}
-     <div className="mt-16">
+     <div className="mt-10">
   <h2 className="text-4xl font-heading font-bold text-center mb-12">
   <span className="text-orange-500">Best</span> Stays in Mumbai
 </h2>
@@ -606,7 +686,7 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
 
               {/* PRICE */}
               {finalPrice < originalPrice && (
-                <p className="text-2xl font-bold text-orange-500">
+                <p className="text-xl font-bold text-orange-500">
   ₹{finalPrice}
   <span className="text-sm text-gray-500 font-normal"> / night</span>
 </p>
@@ -615,7 +695,7 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
             </div>
 
             {/* BODY */}
-            <div className="p-5">
+            <div className="p-2">
               <h3 className="font-heading text-lg text-gray-800">
                 {h.name}
               </h3>
@@ -660,7 +740,7 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
 </div>
 
        {/* Camping SPots */}
-<div className="mt-12">
+<div className="mt-10">
   <h2 className="text-4xl font-heading font-bold text-center mb-12">
   <span className="text-orange-500">Adventure</span> Activities,Camping & Events
 </h2>
@@ -745,7 +825,7 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
   </Swiper>
 </div>
    { /*  Villas Spots */}
-   <div className="mt-12">
+   <div className="mt-10">
     <h2 className="text-4xl font-heading font-bold text-center mb-12">
   <span className="text-orange-500">Luxury</span> Villas for Private Stay
 </h2>
@@ -860,7 +940,7 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
       {/* ---------------------------------------------------------------- */}
 {/* CUSTOMER REVIEWS */}
 {/* ---------------------------------------------------------------- */}
-<div className="mt-20 py-16 bg-white shadow-inner rounded-xl">
+{/* <div className="mt-10 py-16 bg-white shadow-inner rounded-xl">
   <h2 className="text-4xl font-heading font-bold text-center mb-12">
   What our<span className="text-orange-500"> Customer</span> Says
 </h2>
@@ -890,13 +970,13 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
     </div>
 
   </div>
-</div>
+</div> */}
 
 
       {/* ---------------------------------------------------------------- */}
       {/* 4. WHY CHOOSE US (TRUST SECTION) */}
       {/* ---------------------------------------------------------------- */}
-      <div className="mt-20 py-16 bg-white rounded-xl shadow-inner shadow-lg">
+      <div className="mt-10 py-16 bg-white rounded-xl shadow-inner shadow-lg">
        <h2 className="text-4xl font-heading font-bold text-center mb-12">
   Why Choose<span className="text-orange-500"> Flyteo?</span> 
 </h2>
@@ -944,7 +1024,7 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
       {/* ---------------------------------------------------------------- */}
 {/* BLOG / TRAVEL INSPIRATION */}
 {/* ---------------------------------------------------------------- */}
-<div className="mt-20">
+<div className="mt-10">
  <h2 className="text-4xl font-heading font-bold text-center mb-12">
   <span className="text-orange-500">Travel</span> Inspiration & Guides
 </h2>

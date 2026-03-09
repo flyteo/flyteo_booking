@@ -13,6 +13,7 @@ router.get("/", async (req, res) => {
       include: {
         villaimage: true,
         villalayout: true,
+        day_wise_percentage:true,
 
         // ✅ AMENITIES
         villaamenity: {

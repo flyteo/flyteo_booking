@@ -41,8 +41,8 @@ export default function AboutUs() {
           </p>
 
           <p className="mb-4">
-            Founded by <strong>Shivam Jadhav</strong> and{" "}
-            <strong>Shubham Tivalekar</strong>, Flyteo was created with a strong
+            Founded by <strong>Shivam Jadhav(FOUNDER)</strong> and{" "}
+            <strong>Shubham Tivalekar(CO-FOUNDER)</strong>, Flyteo was created with a strong
             focus on promoting local hospitality businesses in Alibag and nearby
             coastal destinations. Our aim is to help travelers discover
             comfortable stays while supporting hotels with better visibility and

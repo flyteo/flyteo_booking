@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import api from "../axios";
 import { Link } from "react-router-dom";
+import { calculateHotelPrice, calculateVillaPriceInSearch } from "../hooks/priceUtils";
 
 export default function SearchedHotels() {
   const [params] = useSearchParams();
   const location = params.get("location");
+  const checkIn = params.get("checkIn");
   const guests = params.get("guests") || 1;
 
   const [data, setData] = useState({ hotels: [], villas: [] });
@@ -13,37 +15,25 @@ export default function SearchedHotels() {
   useEffect(() => {
     api
       .get("/search", {
-        params: { location, guests }
+        params: { location,checkIn, guests }
       })
       .then(res => setData(res.data));
-  }, [location, guests]);
+  }, [location, checkIn, guests]);
 
-  
+const sortedHotels = [...data.hotels].sort((a, b) => {
+  const priceA = calculateHotelPrice(a, checkIn);
+  const priceB = calculateHotelPrice(b, checkIn);
+
+  return priceA - priceB;
+});
+  const sortedVillas = [...data.villas].sort((a, b) => {
+  const priceA = calculateVillaPriceInSearch(a, checkIn);
+  const priceB = calculateVillaPriceInSearch(b, checkIn);
+
+  return priceA - priceB;
+});
 const isMobile = window.innerWidth <= 768;
-const getFinalRoomPrice = (roomPrice, taxes, discount, dayWisePricing, date = new Date()) => {
-  let price = roomPrice;
 
-  // 🟢 Day-wise percentage
-  const dayName = date
-    .toLocaleDateString("en-US", { weekday: "long" })
-    .toUpperCase();
-
-  const dayRule = dayWisePricing?.find(d => d.day === dayName);
-
-  if (dayRule) {
-    price = price - (price * dayRule.percentage) / 100;
-  }
-
-  // 🟢 Hotel discount
-  if (discount > 0) {
-    price = price - (price * discount) / 100;
-  }
-
-  // 🟢 Add taxes at the end
-  price = price + (taxes || 0);
-
-  return Math.round(price);
-};
   return (
     <div className="py-4">
       <h1 className="text-2xl font-bold mb-6">
@@ -55,18 +45,12 @@ const getFinalRoomPrice = (roomPrice, taxes, discount, dayWisePricing, date = ne
         <>
           <h2 className="text-xl font-semibold mb-3">Hotels</h2>
           <div className="">
-            {data.hotels.map((h) => {
-              const basePrice = h.room?.[0]?.price || 0;
-              
-              const finalPrice = getFinalRoomPrice(
-                basePrice,
-                h.taxes,
-                h.discount,
-                h.dayWisePricing
-              );
-              
-              // ❌ original price before any discount (for strike-through)
-              const originalPrice = Math.round(basePrice + (h.taxes || 0));
+            {sortedHotels.map((h) => {
+                const basePrice = h.room?.[0]?.price || 0;
+
+                const finalPrice = calculateHotelPrice(h, checkIn);
+
+                const originalPrice = Math.round(basePrice + (h.taxes || 0));
               
               
                         return isMobile ? (
@@ -241,9 +225,9 @@ const getFinalRoomPrice = (roomPrice, taxes, discount, dayWisePricing, date = ne
 
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-      {data.villas.map((v) => {
+      {sortedVillas.map((v) => {
         const layout = v.villalayout;
-
+const finalPrice = calculateVillaPriceInSearch(v, checkIn);
         return (
           <Link
             key={v.id}

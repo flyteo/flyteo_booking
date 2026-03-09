@@ -54,6 +54,9 @@ import AdminCampingAvailability from "./admin/AdminCampingAvailability";
 import ProtectedRoute from "./context/ProtectedRoute";
 import RoleRedirect from "./RoleRedirect";
 import Profile from "./pages/Profile";
+import AdminBlogs from "./admin/AdminBlogs";
+import AddBlog from "./admin/AddBlog";
+import EditBlog from "./admin/EditBlog";
 
 function App() {
   return (
@@ -164,6 +167,21 @@ function App() {
   <Route path="/admin/bookings" element={
   <ProtectedRoute role="admin">
   <AdminBookings />
+  </ProtectedRoute>
+  } />
+  <Route path="/admin/blogs" element={
+  <ProtectedRoute role="admin">
+  <AdminBlogs />
+  </ProtectedRoute>
+  } />
+   <Route path="/admin/blogs/add" element={
+  <ProtectedRoute role="admin">
+  <AddBlog />
+  </ProtectedRoute>
+  } />
+   <Route path="/admin/blogs/edit/:id" element={
+  <ProtectedRoute role="admin">
+  <EditBlog />
   </ProtectedRoute>
   } />
 <Route path="/admin/hotels/add" element={

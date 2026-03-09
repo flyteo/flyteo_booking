@@ -10,7 +10,7 @@ export default function DeskTopLayout() {
   return (
     <div className="bg-sand min-h-screen">
       <Navbar />
-      <div className="container mx-auto px-6 py-8">
+      <div className="pt-24">
         <Outlet />
       </div>
     </div>

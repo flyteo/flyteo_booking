@@ -210,6 +210,10 @@ useEffect(() => {
 
 
 const applyCoupon = () => {
+  if(appliedCoupon){
+    setCouponMessage("Coupon already applied");
+    return;
+  }
   if (!couponCode) return;
 
  const couponList =
@@ -951,7 +955,7 @@ const Row = ({ label, value, bold }) => (
 )}
 
         {/* Coupon Code */}
-{type === "hotel" && (
+{(type === "hotel" || type === "villa") && (
   <div>
   <label className="font-medium">Apply Coupon</label>
 
@@ -964,18 +968,42 @@ const Row = ({ label, value, bold }) => (
       onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
     />
 
-    <button
-      type="button"
-      onClick={applyCoupon}
-      className="px-4 bg-palmGreen text-white rounded"
-    >
-      Apply
-    </button>
+     <button
+  type="button"
+  onClick={applyCoupon}
+  disabled={!!appliedCoupon}
+  className={`px-4 rounded text-white ${
+    appliedCoupon
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-palmGreen"
+  }`}
+>
+  Apply
+</button>
   </div>
 
   {couponMessage && (
     <p className="text-sm mt-1 text-blue-700">{couponMessage}</p>
   )}
+  {appliedCoupon && (
+  <button
+    type="button"
+    onClick={() => {
+      setAppliedCoupon(null);
+      setCouponCode("");
+      setCouponMessage("");
+
+      setPrice(prev => ({
+        ...prev,
+        final: prev.base,
+        couponDiscount: 0
+      }));
+    }}
+    className="text-sm text-red-600 mt-1"
+  >
+    Remove coupon
+  </button>
+)}
 </div>
 )}
 {/* CONTACT DETAILS */}

@@ -88,11 +88,18 @@ useEffect(() => {
   </div>
 
   {/* ================= DESKTOP NAVBAR (UNCHANGED) ================= */}
-  <div className="hidden md:flex container mx-auto px-6 py-4 items-center justify-between">
-
+<div className="
+  hidden md:flex
+  fixed top-0 left-0 w-full
+  backdrop-blur-xl bg-white/70
+  border-b border-white/30
+  shadow-lg
+  z-50
+">
+<div className="container mx-auto px-8 py-4 flex items-center justify-between">
     {/* LEFT: LOGO */}
     <Link to="/home" className="flex items-center gap-3">
-      <img src={logo} alt="Flyteo" className="w-12 h-12" />
+      <img src={logo} alt="Flyteo" className="w-12 h-12 transition group-hover:scale-105" />
       <div>
         <h1 className="font-heading text-xl text-palmGreen">
           FLYTEO.IN
@@ -104,9 +111,10 @@ useEffect(() => {
     </Link>
 
     {/* RIGHT: DESKTOP LINKS */}
-    <nav className="flex items-center gap-6 font-body">
-      <NavLinks user={user} logout={logout} />
+     <nav className="flex items-center gap-8 text-[15px] font-medium text-gray-700">
+      <DesktopNavLinks user={user} logout={logout} />
     </nav>
+    </div>
   </div>
 
   {/* ================= MOBILE DRAWER ================= */}
@@ -205,6 +213,44 @@ function NavLinks({ user, logout, mobile }) {
           className={`mt-4 md:mt-0 ${
             mobile ? "w-full text-center" : ""
           } bg-rusticBrown px-4 py-2 text-white rounded`}
+        >
+          Login
+        </Link>
+      )}
+    </>
+  );
+}
+function DesktopNavLinks({ user, logout }) {
+
+  const linkStyle =
+    "relative hover:text-orange-600 transition duration-300 after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-orange-500 hover:after:w-full after:transition-all after:duration-300";
+
+  return (
+    <>
+      <Link className={linkStyle} to="/home">Home</Link>
+      <Link className={linkStyle} to="/hotels">Hotels</Link>
+      <Link className={linkStyle} to="/campings">Camping</Link>
+      <Link className={linkStyle} to="/villas">Villas</Link>
+
+      {user ? (
+        <>
+          {user.role === "user" && (
+            <Link className={linkStyle} to="/my-bookings">
+              My Bookings
+            </Link>
+          )}
+
+          <button
+            onClick={logout}
+            className="bg-red-600 text-white px-5 py-2 rounded-xl shadow hover:shadow-lg transition"
+          >
+            Logout
+          </button>
+        </>
+      ) : (
+        <Link
+          to="/login"
+          className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-2 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition duration-300"
         >
           Login
         </Link>

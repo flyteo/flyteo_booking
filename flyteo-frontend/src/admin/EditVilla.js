@@ -7,6 +7,7 @@ export default function EditVilla() {
   const { id } = useParams();
   const nav = useNavigate();
   const [villa, setVilla] = useState(null);
+  const [amenityList, setAmenityList] = useState([]);
    const DAYS = [
     "SUNDAY",
     "MONDAY",
@@ -26,7 +27,18 @@ export default function EditVilla() {
     FRIDAY: "",
     SATURDAY: ""
   });
-
+useEffect(() => {
+  api.get("/hotels/amenities")
+    .then(res => setAmenityList(res.data));
+}, []);
+const [offerList, setOfferList] = useState([]);
+useEffect(() => {
+  api.get("/search/activeoffers").then((res) => setOfferList(res.data));
+}, []);
+const [couponList, setCouponList] = useState([]);
+useEffect(() => {
+  api.get("/search/activecoupons").then((res) => setCouponList(res.data));
+}, []);
   useEffect(() => {
 
     api
@@ -57,6 +69,9 @@ export default function EditVilla() {
 
           advancePaymentAllowed: v.advancePaymentAllowed ?? false,
           advancePercent: v.advancePercent ?? "",
+          villaamenity: v.villaamenity?.map(a => a.amenityId) || [],
+  villaoffer: v.villaoffer?.map(o => o.offerId) || [],
+  villacoupon: v.villacoupon?.map(c => c.couponId) || [],
 
           images: v.villaimage?.map(i => i.url) || [],
 
@@ -105,6 +120,9 @@ setDayWisePercentage(dayMap);
       `/villas/${id}`,
       {
         ...villa,
+         villaamenity: villa.villaamenity, // [Int]
+    villaoffer: villa.villaoffer,       // [Int]
+    villacoupon: villa.villacoupon,     // [Int]
         taxes: Number(villa.taxes),
         basePrice: Number(villa.basePrice),
         extraGuestPrice: Number(villa.extraGuestPrice),
@@ -203,9 +221,92 @@ setDayWisePercentage(dayMap);
             value={villa.securityDeposit}
             onChange={e => setVilla({ ...villa, securityDeposit: e.target.value })}
           />
+          
         </div>
+ <div>
+          <h2>Policies</h2>
+          <label>Check-in Time</label>
+          <input className="w-full p-2 border rounded mb-3" placeholder="Check-in Time"
+            value={villa.checkInTime}
+            onChange={e => setVilla({ ...villa, checkInTime: e.target.value })}
+          />
+          <label>Check-out Time</label>
+          <input className="w-full p-2 border rounded mb-3" placeholder="Check-out Time"
+            value={villa.checkOutTime}
+            onChange={e => setVilla({ ...villa, checkOutTime: e.target.value })}
+          />
+          <label>Cancellation Policy</label>
+          <textarea className="w-full p-2 border rounded mb-3" placeholder="Cancellation Policy"
+            value={villa.cancellationPolicy}
+            onChange={e => setVilla({ ...villa, cancellationPolicy: e.target.value })}
+          />
+        </div>
+        <label>Map URL</label>
+        <input className="w-full p-2 border rounded mb-3" placeholder="Enter Map URL"
+        value={villa.mapLocation}
+        onChange={e => setVilla({ ...villa, mapLocation: e.target.value })}
+        />
+        <div className="border p-4 rounded">
+  <h2 className="font-heading text-xl mb-3">Select Offers</h2>
 
+  {offerList.map((o) => (
+    <label key={o.id} className="flex gap-2">
+      <input
+        type="checkbox"
+        checked={villa.villaoffer?.includes(o.id)}
+        onChange={(e) => {
+          if (e.target.checked) {
+            setVilla({ ...villa, villaoffer: [...villa.villaoffer, o.id] });
+          } else {
+            setVilla({ ...villa, villaoffer: villa.villaoffer.filter((id) => id !== o.id) });
+          }
+        }}
+      />
+      {o.title} ({o.discountPercent}%)
+    </label>
+  ))}
+</div>
+<div className="border p-4 rounded">
+  <h2 className="font-heading text-xl mb-3">Select Coupons</h2>
+
+  {couponList.map((c) => (
+    <label key={c.id} className="flex gap-2">
+      <input
+        type="checkbox"
+        checked={villa.villacoupon?.includes(c.id)}
+        onChange={(e) => {
+          if (e.target.checked) {
+            setVilla({ ...villa, villacoupon: [...villa.villacoupon, c.id] });
+          } else {
+            setVilla({ ...villa, villacoupon: villa.villacoupon.filter((id) => id !== c.id) });
+          }
+        }}
+      />
+      {c.code} — {c.discountType === "percent" ? `${c.amount}%` : `₹${c.amount}`}
+    </label>
+  ))}
+</div>
         <div>
+          <label>Villa Amenities</label>
+           <div className="grid grid-cols-2 gap-2 border p-3 rounded">
+              {amenityList.map((a) => (
+      <label key={a.id} className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={villa.villaamenity.includes(a.id)}
+          onChange={(e) => {
+            setVilla({
+              ...villa,
+              villaamenity: e.target.checked
+                ? [...villa.villaamenity, a.id]
+                : villa.villaamenity.filter(id => id !== a.id)
+            });
+          }}
+        />
+        {a.name}
+      </label>
+    ))}
+            </div>
           <label className="font-medium">Villa Images</label>
         
           {/* Upload */}

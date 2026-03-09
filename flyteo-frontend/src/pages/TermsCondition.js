@@ -188,7 +188,7 @@ export default function TermsConditions() {
       </h2>
       <p>
         Flyteo.in may update these Terms & Conditions at any time. The latest
-        version will always be posted here with a new “Last Updated” date.
+        version will always be posted here with a new “28 dec 2025” date.
       </p>
 
       {/* 13 */}

@@ -25,7 +25,8 @@ router.get("/", async (req, res) => {
         hotelamenity: { include: { amenity: true } },
         hoteloffer: { include: { offer: true } },
         hotelcoupon: { include: { coupon: true } },
-        // rating: true
+        reviews:true,
+        day_wise_percentage: true
       }
     });
 

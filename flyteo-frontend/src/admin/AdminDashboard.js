@@ -67,6 +67,9 @@ if (!user || user.role !== "admin") {
         <Link className="bg-rusticBrown text-white px-6 py-3 rounded-lg text-center" to="/admin/camping">
           Manage Camping
         </Link>
+         <Link className="bg-palmGreen text-white px-6 py-3 rounded-lg text-center" to="/admin/blogs">
+          Manage Blogs
+        </Link>
         <Link
   className="bg-blue-600 text-white px-6 py-3 rounded-lg text-center"
   to="/admin/bookings"
