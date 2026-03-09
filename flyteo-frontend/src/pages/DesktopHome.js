@@ -9,7 +9,7 @@ import l1 from "../assets/lonaval.jpg"
 import a1 from "../assets/alibaug.jpg"
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import h1 from "../assets/backhero.jpg"
+// import h1 from "../assets/backhero.jpg"
 
 import "swiper/css";
 import Contact from './Contact';
