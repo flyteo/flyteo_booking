@@ -13,6 +13,7 @@ import { MdEmail } from "react-icons/md";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "swiper/css";
+import MobileHomeBlogs from "./MobileHomeBlogs";
 
 export default function MobileHome() {
   const nav = useNavigate();
@@ -663,7 +664,15 @@ const finalPrice = getFinalRoomPrice(
 
 // ❌ original price before any discount (for strike-through)
 const originalPrice = Math.round(basePrice + (h.taxes || 0));
-       
+       const reviewCount = h.reviews?.length || 0;
+
+const avgRating =
+  reviewCount > 0
+    ? (
+        h.reviews.reduce((sum, r) => sum + r.rating, 0) /
+        reviewCount
+      ).toFixed(1)
+    : null;
              return (
                <SwiperSlide key={h.id}>
                  <div className="bg-white rounded-3xl shadow-lg overflow-hidden active:scale-95 transition duration-300">
@@ -706,7 +715,7 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
        
                      {/* Rating */}
                      <div className="mt-2 flex items-center text-yellow-500 text-sm">
-                       ⭐⭐⭐⭐⭐ <span className="text-gray-500 ml-2">(4.8)</span>
+                       ⭐ <span className="text-gray-500 ml-2">({avgRating})</span>
                      </div>
        
                      {/* Amenities */}
@@ -769,7 +778,15 @@ const finalPrice = getFinalRoomPrice(
 
 // ❌ original price before any discount (for strike-through)
 const originalPrice = Math.round(basePrice + (v.taxes || 0));
-       
+       const reviewCount = v.reviews?.length || 0;
+
+const avgRating =
+  reviewCount > 0
+    ? (
+        v.reviews.reduce((sum, r) => sum + r.rating, 0) /
+        reviewCount
+      ).toFixed(1)
+    : null;
              return (
     <SwiperSlide key={v.id}>
       <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 border border-gray-100">
@@ -833,7 +850,7 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
 
           {/* RATING (OPTIONAL STATIC) */}
           <div className="mt-3 flex items-center text-yellow-500 text-sm">
-            ⭐⭐⭐⭐⭐ <span className="text-gray-500 ml-2">(4.9)</span>
+            ⭐ <span className="text-gray-500 ml-2">({avgRating})</span>
           </div>
 
           {/* BUTTON */}
@@ -894,6 +911,15 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
           maxPrice > todayPrice
             ? Math.round(((maxPrice - todayPrice) / maxPrice) * 100)
             : 0;
+            const reviewCount = c.reviews?.length || 0;
+
+const avgRating =
+  reviewCount > 0
+    ? (
+        c.reviews.reduce((sum, r) => sum + r.rating, 0) /
+        reviewCount
+      ).toFixed(1)
+    : null;
       return (
       <SwiperSlide key={c.id}>
         <div className="bg-white p-4 rounded-xl shadow hover:shadow-xl transition">
@@ -911,7 +937,14 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
           <h3 className="font-heading text-xl mt-3">
             {c.name}
           </h3>
-
+ {avgRating ? (<>
+        <span className="bg-green-600 text-white text-xs px-2 py-1 rounded">
+          ⭐ {avgRating}
+        </span>
+        <span className="text-gray-400 text-xs">({reviewCount} reviews)</span>
+      </>):(<span className="text-gray-400 text-xs">
+      No reviews yet
+    </span>)}
           <p className="font-bold text-palmGreen mt-1">
             ₹{
                   todayPriceObj.adultPrice || "999"
@@ -929,6 +962,7 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
 )})}
   </Swiper>
 </div>
+<MobileHomeBlogs/>
    {/* ================= MOBILE FOOTER ================= */}
 <div className="mt-4 bg-gradient-to-b from-[#f8f8f8] to-[#ffffff] px-6 py-8 rounded-t-3xl shadow-inner">
  {/* SOCIAL ICONS */}

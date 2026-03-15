@@ -26,7 +26,8 @@ import invoiceRoutes from "./src/routes/invoice.js";
 import contactRoutes from "./src/routes/contact.js";
 import calenderRoutes from "./src/controller/calender.js";
 import villaAdminRoutes from "./src/routes/villaAdmin.js";
-import paymentRoutes from "./src/payment/gateway_order.js"
+import paymentRoutes from "./src/payment/gateway_order.js";
+import blogRoutes from "./src/routes/blogs.js"
 
 const app = express();
 app.use(express.json());
@@ -54,6 +55,7 @@ app.use("/api/contact", contactRoutes);
 app.use("/api/occupancy", calenderRoutes);
 app.use("/api/villa-admin", villaAdminRoutes);
 app.use("/api/payment",paymentRoutes);
+app.use("/api/blogs",blogRoutes);
 
 app.listen(process.env.PORT, () =>
       console.log(`Backend running on port ${process.env.PORT}`)

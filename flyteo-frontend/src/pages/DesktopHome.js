@@ -15,6 +15,7 @@ import "swiper/css";
 import Contact from './Contact';
 import AboutUs from './AboutUs';
 import { FaFacebook, FaInstagram, FaWhatsapp } from 'react-icons/fa';
+import HomeBlogs from './HomeBlogs';
 
 function DesktopHome() {
 
@@ -473,7 +474,7 @@ const handleSearch = () => {
 {/* SPECIAL OFFERS & DEALS (Dynamic from Backend) */}
 {/* ---------------------------------------------------------------- */}
 {/* ================= OFFERS ZONE ================= */}
-<div className="mt-10 bg-palmGreen py-4 px-2 md:px-6 rounded-3xl">
+<div className="mt-10 bg-stone-700 py-4 px-2 md:px-6 rounded-3xl">
 
   {/* HEADER */}
   <div className="text-center text-white mb-12">
@@ -664,7 +665,15 @@ const finalPrice = getFinalRoomPrice(
 
 // ❌ original price before any discount (for strike-through)
 const originalPrice = Math.round(basePrice + (h.taxes || 0));
+const reviewCount = h.reviews?.length || 0;
 
+const avgRating =
+  reviewCount > 0
+    ? (
+        h.reviews.reduce((sum, r) => sum + r.rating, 0) /
+        reviewCount
+      ).toFixed(1)
+    : null;
       return (
         <SwiperSlide key={h.id}>
 <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-2 transition duration-500">
@@ -706,7 +715,7 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
 
               {/* Rating */}
               <div className="mt-2 flex items-center text-yellow-500 text-sm">
-                ⭐⭐⭐⭐⭐ <span className="text-gray-500 ml-2">(4.8)</span>
+                ⭐ <span className="text-gray-500 ml-2">({avgRating})</span>
               </div>
 
               {/* Amenities */}
@@ -785,6 +794,15 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
     maxPrice > todayPrice
       ? Math.round(((maxPrice - todayPrice) / maxPrice) * 100)
       : 0;
+       const reviewCount = c.reviews?.length || 0;
+
+const avgRating =
+  reviewCount > 0
+    ? (
+        c.reviews.reduce((sum, r) => sum + r.rating, 0) /
+        reviewCount
+      ).toFixed(1)
+    : null;
       return(
       <SwiperSlide key={c.id}>
         <div className="bg-white p-4 rounded-xl shadow hover:shadow-xl transition">
@@ -802,7 +820,9 @@ const originalPrice = Math.round(basePrice + (h.taxes || 0));
           <h3 className="font-heading text-xl mt-3">
             {c.name}
           </h3>
-
+<div className="mt-3 flex items-center text-yellow-500 text-sm">
+            ⭐ <span className="text-gray-500 ml-2">({avgRating})</span>
+          </div>
           <p className="font-bold text-palmGreen mt-1">
             ₹{
                   todayPriceObj.adultPrice || "999"
@@ -855,7 +875,15 @@ const finalPrice = getFinalRoomPrice(
 
 // ❌ original price before any discount (for strike-through)
 const originalPrice = Math.round(basePrice + (v.taxes || 0));
+const reviewCount = v.reviews?.length || 0;
 
+const avgRating =
+  reviewCount > 0
+    ? (
+        v.reviews.reduce((sum, r) => sum + r.rating, 0) /
+        reviewCount
+      ).toFixed(1)
+    : null;
       return (
     <SwiperSlide key={v.id}>
       <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 border border-gray-100">
@@ -919,7 +947,7 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
 
           {/* RATING (OPTIONAL STATIC) */}
           <div className="mt-3 flex items-center text-yellow-500 text-sm">
-            ⭐⭐⭐⭐⭐ <span className="text-gray-500 ml-2">(4.9)</span>
+            ⭐ <span className="text-gray-500 ml-2">({avgRating})</span>
           </div>
 
           {/* BUTTON */}
@@ -972,9 +1000,14 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
   </div>
 </div> */}
 
-
       {/* ---------------------------------------------------------------- */}
-      {/* 4. WHY CHOOSE US (TRUST SECTION) */}
+{/* BLOG / TRAVEL INSPIRATION */}
+{/* ---------------------------------------------------------------- */}
+
+<div className="mt-10">
+ <HomeBlogs/>
+</div>
+{/* 4. WHY CHOOSE US (TRUST SECTION) */}
       {/* ---------------------------------------------------------------- */}
       <div className="mt-10 py-16 bg-white rounded-xl shadow-inner shadow-lg">
        <h2 className="text-4xl font-heading font-bold text-center mb-12">
@@ -1021,109 +1054,105 @@ const originalPrice = Math.round(basePrice + (v.taxes || 0));
 
         </div>
       </div>
-      {/* ---------------------------------------------------------------- */}
-{/* BLOG / TRAVEL INSPIRATION */}
-{/* ---------------------------------------------------------------- */}
-<div className="mt-10">
- <h2 className="text-4xl font-heading font-bold text-center mb-12">
-  <span className="text-orange-500">Travel</span> Inspiration & Guides
-</h2>
-
-
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-    <div className="bg-white rounded-xl shadow overflow-hidden">
-      <img
-        src="https://t4.ftcdn.net/jpg/02/99/03/35/360_F_299033508_CMsvdMpHqsmvpFw2dpfN9MkMqiivAa1D.jpg"
-        className="w-full h-48 object-cover"
-      />
-      <div className="p-4">
-        <h3 className="font-heading text-xl">Top 5 Camping Tips for Beginners</h3>
-        <p className="text-gray-600 mt-2">Make your first camping trip safe & fun.</p>
-        <button className="mt-3 text-palmGreen font-semibold">Read More →</button>
-      </div>
-    </div>
-
-    <div className="bg-white rounded-xl shadow overflow-hidden">
-      <img
-        src="https://media.cnn.com/api/v1/images/stellar/prod/170421155806-mumbai.jpg?q=w_2832,h_2052,x_0,y_0,c_fill"
-        className="w-full h-48 object-cover"
-      />
-      <div className="p-4">
-        <h3 className="font-heading text-xl">Best Hotels in Mumbai (2024)</h3>
-        <p className="text-gray-600 mt-2">Our expert picks for comfort & value.</p>
-        <button className="mt-3 text-palmGreen font-semibold">Read More →</button>
-      </div>
-    </div>
-
-    <div className="bg-white rounded-xl shadow overflow-hidden">
-      <img
-        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIVy1EBaM8UAzqyfiy5t-K3BvH7DvxSbJEqQ&s"
-        className="w-full h-48 object-cover"
-      />
-      <div className="p-4">
-        <h3 className="font-heading text-xl">Weekend Getaways Near Mumbai</h3>
-        <p className="text-gray-600 mt-2">Top places for quick refreshing trips.</p>
-        <button className="mt-3 text-palmGreen font-semibold">Read More →</button>
-      </div>
-    </div>
-
-  </div>
-</div>
 <AboutUs/>
 <Contact/>
 {/* ---------------------------------------------------------------- */}
 {/* FOOTER */}
 {/* ---------------------------------------------------------------- */}
-<footer className="bg-gradient-to-r from-orange-500 to-yellow-400 text-gray-300 py-14">
-{/* <div className="h-1 bg-gradient-to-r from-orange-500 to-yellow-400 mb-10" /> */}
+<footer className="bg-gray-50 border-t border-gray-200 text-gray-700">
 
-  <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-6">
+  <div className="max-w-7xl mx-auto px-6 py-10">
 
-    {/* ABOUT */}
-    <div>
-      <h3 className="text-xl font-heading mb-3 text-palmGreen">Flyteo.in</h3>
-      <p className="text-stone-800">
-        Your trusted partner for Hotels & Camping bookings in Mumbai and beyond.
-      </p>
-    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
 
-    {/* QUICK LINKS */}
-    <div>
-      <h4 className="font-heading  text-lg text-palmGreen mb-3">Quick Links</h4>
-      <ul className="space-y-2 underline decoration-solid text-stone-800">
-        <li><Link to="/hotels">Hotels</Link></li>
-        <li><Link to="/campings">Camping</Link></li>
-        <li><Link to="/about">About Us</Link></li>
-        <li><Link to="/contact">Contact</Link></li>
-      </ul>
-    </div>
+      {/* BRAND */}
+      <div>
+        <h3 className="text-xl font-heading text-palmGreen mb-2">
+          Flyteo.in
+        </h3>
 
-    {/* SUPPORT */}
-    <div>
-      <h4 className="font-heading text-lg text-palmGreen mb-3">Support</h4>
-      <ul className="space-y-2 underline decoration-solid text-stone-800">
-        <li>FAQ</li>
-        <li><Link to="/cancellation-policy">Cancellation Policy</Link></li>
-        <li><Link to="/terms-condition">Terms & Conditions</Link></li>
-        <li><Link to="/privacy-policy">Privacy Policy</Link></li>
-      </ul>
-    </div>
+        <p className="text-sm leading-relaxed">
+          Discover Hotels, Villas & Camping destinations across India.
+          Your trusted partner for memorable travel stays.
+        </p>
 
-    {/* SOCIAL */}
-    <div>
-      <h4 className="font-heading text-lg mb-3 text-palmGreen">Follow Us</h4>
-      <div className="flex gap-4 text-xl">
-        <a href="https://wa.me/918975995125" className="hover:text-palmGreen"><FaWhatsapp/></a>
-        <a href="https://www.facebook.com/flyteo.in" className="hover:text-palmGreen"><FaFacebook/></a>
-        <a href="https://www.instagram.com/flyteo.in?igsh=OGd6OWV5ZWVndTZv" className="hover:text-palmGreen"><FaInstagram/></a>
-        {/* <a href="#" className="hover:text-palmGreen">🐦</a> */}
+        <div className="mt-3 text-sm space-y-1">
+          <p>📍 Mumbai, India</p>
+          <p>📞 +91 8975995125</p>
+        </div>
       </div>
 
-      <p className="text-stone-700 mt-4 text-sm">© 2025 Flyteo.in — All Rights Reserved</p>
+
+      {/* EXPLORE */}
+      <div>
+        <h4 className="font-semibold mb-3 text-gray-900">
+          Explore
+        </h4>
+
+        <ul className="space-y-2 text-sm">
+          <li><Link to="/hotels" className="hover:text-palmGreen">Hotels</Link></li>
+          <li><Link to="/villas" className="hover:text-palmGreen">Villas</Link></li>
+          <li><Link to="/campings" className="hover:text-palmGreen">Camping</Link></li>
+          <li><Link to="/blogs" className="hover:text-palmGreen">Travel Blogs</Link></li>
+        </ul>
+      </div>
+
+
+      {/* COMPANY */}
+      <div>
+        <h4 className="font-semibold mb-3 text-gray-900">
+          Company
+        </h4>
+
+        <ul className="space-y-2 text-sm">
+          <li><Link to="/about" className="hover:text-palmGreen">About Us</Link></li>
+          <li><Link to="/contact" className="hover:text-palmGreen">Contact</Link></li>
+          <li><Link to="/terms-condition" className="hover:text-palmGreen">Terms & Conditions</Link></li>
+          <li><Link to="/privacy-policy" className="hover:text-palmGreen">Privacy Policy</Link></li>
+        </ul>
+      </div>
+
+
+      {/* SOCIAL */}
+      <div>
+        <h4 className="font-semibold mb-3 text-gray-900">
+          Follow Us
+        </h4>
+
+        <div className="flex gap-4 text-xl text-gray-600">
+          <a href="https://wa.me/918975995125" className="hover:text-green-600">
+            <FaWhatsapp/>
+          </a>
+
+          <a href="https://www.facebook.com/flyteo.in" className="hover:text-blue-600">
+            <FaFacebook/>
+          </a>
+
+          <a href="https://www.instagram.com/flyteo.in" className="hover:text-pink-500">
+            <FaInstagram/>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+
+    {/* BOTTOM COPYRIGHT */}
+
+    <div className="border-t border-gray-200 mt-8 pt-4 text-sm flex flex-col md:flex-row justify-between items-center">
+
+      <p>
+        © 2025 Flyteo.in — All Rights Reserved
+      </p>
+
+      <p className="mt-2 md:mt-0 text-gray-500">
+        Made with ❤️ for travelers
+      </p>
+
     </div>
 
   </div>
+
 </footer>
     </div>
   )

@@ -3,6 +3,7 @@ import api from "../axios";
 import { Link, useNavigate ,useSearchParams} from "react-router-dom";
 import {filterAndSortStays} from "../hooks/filterStays";
 import {calculateRoomPrice} from "../hooks/priceUtils";
+import DestinationSearch from "../layouts/DestinationSearch";
 
 export default function HotelsList() {
   const nav = useNavigate();
@@ -152,19 +153,16 @@ const filteredHotels = filterAndSortStays({
 
   <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
 
-  {/* DESTINATION */}
-  <input
-    type="text"
-    placeholder="Destination"
-    value={destination}
-    onChange={(e) => {
-      setSearchParams({
-        ...Object.fromEntries(searchParams),
-        location: e.target.value
-      });
-    }}
-    className="border rounded-xl px-4 py-2 focus:ring-2 focus:ring-palmGreen outline-none"
-  />
+   {/* DESTINATION */}
+ <DestinationSearch
+ type="hotel"
+  destination={destination}
+  setDestination={(value) =>
+    setSearchParams({
+      ...Object.fromEntries(searchParams),
+      location: value
+    })
+  }/>
 
   {/* CHECK-IN */}
   <input
@@ -231,20 +229,17 @@ const filteredHotels = filterAndSortStays({
   
   <div className="bg-white w-[90%] max-w-md rounded-2xl shadow-2xl p-6">
 <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-<button className="bg-red-400" onClick={()=>setOpenSearch(false)}>Close</button>
-  {/* DESTINATION */}
-  <input
-    type="text"
-    placeholder="Destination"
-    value={destination}
-    onChange={(e) => {
-      setSearchParams({
-        ...Object.fromEntries(searchParams),
-        location: e.target.value
-      });
-    }}
-    className="border rounded-xl px-4 py-2 focus:ring-2 focus:ring-palmGreen outline-none"
-  />
+    {/* DESTINATION */}
+ <DestinationSearch
+ type="hotel"
+  destination={destination}
+  setDestination={(value) =>
+    setSearchParams({
+      ...Object.fromEntries(searchParams),
+      location: value
+    })
+  }
+/>
 
   {/* CHECK-IN */}
   <input
@@ -291,7 +286,12 @@ const filteredHotels = filterAndSortStays({
       </option>
     ))}
   </select>
-
+<button
+      onClick={() => setOpenSearch(false)}
+      className="w-full bg-palmGreen text-white py-2 rounded-lg"
+    >
+      Search
+    </button>
 </div>
     </div>
   </div>
@@ -311,7 +311,7 @@ const filteredHotels = filterAndSortStays({
 
 <div className="fixed inset-0 flex items-center justify-center z-50">
 
-  <div className="bg-white w-[90%] max-w-md rounded-2xl shadow-2xl p-6">
+  <div className="bg-white w-[90%] max-w-md rounded-2xl shadow-2xl p-6 max-h-[85vh] overflow-y-auto">
 
     <h3 className="text-lg font-semibold mb-4">
       Filters
@@ -352,7 +352,20 @@ const filteredHotels = filterAndSortStays({
       ))}
 
     </div>
-
+<div>
+      <p className="font-medium mb-2">Amenities</p>
+      {allAmenities.map((a) => (
+        <label key={a.id} className="block text-sm mb-1">
+          <input
+            type="checkbox"
+            value={a.id}
+            onChange={handleAmenityFilter}
+            className="mr-2"
+          />
+          {a.name}
+        </label>
+      ))}
+    </div>
     <button
       onClick={() => setOpenFilter(false)}
       className="w-full bg-palmGreen text-white py-2 rounded-lg"

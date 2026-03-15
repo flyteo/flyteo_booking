@@ -17,10 +17,47 @@ router.post("/", auth, async (req, res) => {
       return res.status(400).json({ msg: "Missing fields" });
     }
 
+    const userId = req.user.id;
+
+    let existingReview = null;
+
+    if (type === "hotel") {
+      existingReview = await prisma.reviews.findFirst({
+        where: {
+          userId,
+          hotelId: Number(targetId)
+        }
+      });
+    }
+
+    if (type === "camping") {
+      existingReview = await prisma.reviews.findFirst({
+        where: {
+          userId,
+          campingId: Number(targetId)
+        }
+      });
+    }
+
+    if (type === "villa") {
+      existingReview = await prisma.reviews.findFirst({
+        where: {
+          userId,
+          villaId: Number(targetId)
+        }
+      });
+    }
+
+    if (existingReview) {
+      return res.status(400).json({
+        msg: "You have already reviewed this property"
+      });
+    }
+
     const data = {
       rating,
       comment,
-      userId: req.user.id
+      userId
     };
 
     if (type === "hotel") data.hotelId = Number(targetId);
@@ -28,11 +65,40 @@ router.post("/", auth, async (req, res) => {
     if (type === "villa") data.villaId = Number(targetId);
 
     const review = await prisma.reviews.create({ data });
+
     res.json(review);
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: "Review failed" });
   }
+});
+
+router.get("/check", auth, async (req, res) => {
+  const { type, targetId } = req.query;
+  const userId = req.user.id;
+
+  let review = null;
+
+  if (type === "hotel") {
+    review = await prisma.reviews.findFirst({
+      where: { userId, hotelId: Number(targetId) }
+    });
+  }
+
+  if (type === "camping") {
+    review = await prisma.reviews.findFirst({
+      where: { userId, campingId: Number(targetId) }
+    });
+  }
+
+  if (type === "villa") {
+    review = await prisma.reviews.findFirst({
+      where: { userId, villaId: Number(targetId) }
+    });
+  }
+
+  res.json({ reviewed: !!review });
 });
 
 

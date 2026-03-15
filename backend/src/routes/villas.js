@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
         villaimage: true,
         villalayout: true,
         day_wise_percentage:true,
-
+        reviews:true,
         // ✅ AMENITIES
         villaamenity: {
           include: {
@@ -45,6 +45,28 @@ router.get("/", async (req, res) => {
     res.status(500).json({ msg: "Failed to fetch villas" });
   }
 });
+router.get("/locations", async (req, res) => {
+  try {
+
+    const locations = await prisma.villa.groupBy({
+      by: ["location"],
+      _count: {
+        location: true
+      }
+    });
+
+    const data = locations.map(l => ({
+      city: l.location,
+      count: l._count.location
+    }));
+
+    res.json(data);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Failed to load villa locations" });
+  }
+});
 
 router.get("/:id", async (req, res) => {
   try {
@@ -54,7 +76,7 @@ router.get("/:id", async (req, res) => {
         villaimage: true,
         villalayout: true,
         day_wise_percentage:true,
-
+        reviews:true,
         // ✅ AMENITIES
         villaamenity: {
           include: {

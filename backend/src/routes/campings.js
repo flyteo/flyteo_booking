@@ -16,7 +16,8 @@ router.get("/", async (req, res) => {
         campingexclusion: true,
         campingactivity: true,
         campingitinerary: { include: { campingitinerarypoint: true } },
-        campingpricing: true
+        campingpricing: true,
+        reviews:true
       }
     });
 
@@ -41,7 +42,8 @@ router.get("/:id", async (req, res) => {
         campingexclusion: true,
         campingactivity: true,
         campingitinerary: { include: { campingitinerarypoint: true } },
-        campingpricing: true
+        campingpricing: true,
+        reviews:true
       }
     });
 

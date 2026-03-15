@@ -57,6 +57,8 @@ import Profile from "./pages/Profile";
 import AdminBlogs from "./admin/AdminBlogs";
 import AddBlog from "./admin/AddBlog";
 import EditBlog from "./admin/EditBlog";
+import BlogDetails from "./pages/BlogDetails";
+import Blogs from "./pages/Blogs";
 
 function App() {
   return (
@@ -86,6 +88,8 @@ function App() {
           <Route path="/contact" element={<Contact/>}/>
           <Route path="/aboutus" element={<AboutUs/>}/>
           <Route path="/search" element={<SearchedHotels/>}/>
+           <Route path="/blog/:slug" element={<BlogDetails />} />
+          <Route path="/blogs" element={<Blogs />} />
           <Route path="/terms-condition" element={<TermsConditions />} />
  <Route path="/cancellation-policy" element={<CancellationPolicy />} />
  <Route path="/privacy-policy" element={<PrivacyPolicy />} />

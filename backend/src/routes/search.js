@@ -19,6 +19,8 @@ router.get("/", async (req, res) => {
       },
       include: {
          hotelamenity: { include: { amenity: true } },
+         reviews:true,
+         day_wise_percentage:true,
         hotelimage: true,
         room: {
           take: 1,
@@ -36,7 +38,9 @@ router.get("/", async (req, res) => {
       },
       include: {
         villaimage: true,
-        villalayout: true
+        villalayout: true,
+        reviews:true,
+         day_wise_percentage:true
       }
     });
 

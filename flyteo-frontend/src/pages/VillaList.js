@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../axios";
 import { Link ,useSearchParams} from "react-router-dom";
 import { calculateVillaPrice } from "../hooks/priceUtils";
+import DestinationSearch from "../layouts/DestinationSearch";
 
 function VillaCard({ villa }) {
   
@@ -299,18 +300,16 @@ Apply Filters
 <div className="bg-white w-[90%] rounded-2xl p-6">
   
 <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-<input
-    type="text"
-    placeholder="Destination"
-    value={destination}
-    onChange={(e) => {
-      setSearchParams({
-        ...Object.fromEntries(searchParams),
-        location: e.target.value
-      });
-    }}
-    className="border rounded-xl px-4 py-2 focus:ring-2 focus:ring-palmGreen outline-none"
-  />
+<DestinationSearch
+ type="villa"
+  destination={destination}
+  setDestination={(value) =>
+    setSearchParams({
+      ...Object.fromEntries(searchParams),
+      location: value
+    })
+  }
+/>
 
   {/* CHECK-IN */}
   <input
@@ -393,18 +392,16 @@ Handpicked private villas for premium stays
 <div className="bg-white shadow-md rounded-2xl p-4 mx-4 mb-2">
 
 <div className="grid grid-cols-5 gap-4">
-<input
-    type="text"
-    placeholder="Destination"
-    value={destination}
-    onChange={(e) => {
-      setSearchParams({
-        ...Object.fromEntries(searchParams),
-        location: e.target.value
-      });
-    }}
-    className="border rounded-xl px-4 py-2 focus:ring-2 focus:ring-palmGreen outline-none"
-  />
+<DestinationSearch
+ type="villa"
+  destination={destination}
+  setDestination={(value) =>
+    setSearchParams({
+      ...Object.fromEntries(searchParams),
+      location: value
+    })
+  }
+/>
 
   {/* CHECK-IN */}
   <input
@@ -544,6 +541,15 @@ Parking
     Number(villa.taxes)
   )
   const originalPrice=Math.round(Number(villa.basePrice) + Number(villa.taxes || 0));
+  const reviewCount = villa.reviews?.length || 0;
+
+const avgRating =
+  reviewCount > 0
+    ? (
+        villa.reviews.reduce((sum, r) => sum + r.rating, 0) /
+        reviewCount
+      ).toFixed(1)
+    : null;
 return isMobile ? (
 <Link
   key={villa.id}
@@ -597,11 +603,16 @@ return isMobile ? (
     </p>
 
     {/* RATING */}
-    <div className="flex items-center gap-2 mt-2">
-      <span className="bg-green-600 text-white text-xs px-2 py-0.5 rounded">
-        ⭐ 4.6
+     <div className="flex items-center gap-2 mt-2">
+      {
+        avgRating ? ( <><span className="bg-green-600 text-white text-xs px-2 py-0.5 rounded">
+        ⭐ {avgRating}
       </span>
-      <span className="text-gray-400 text-xs">(120 reviews)</span>
+      <span className="text-gray-400 text-xs">({reviewCount} reviews)</span></>):(<span className="text-gray-400 text-xs">
+      No reviews yet
+    </span>)
+      }
+     
     </div>
 
     {/* FEATURES */}

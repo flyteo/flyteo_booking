@@ -74,6 +74,15 @@ export default function CampingList() {
     maxPrice > todayPrice
       ? Math.round(((maxPrice - todayPrice) / maxPrice) * 100)
       : 0;
+const reviewCount = camp.reviews?.length || 0;
+
+const avgRating =
+  reviewCount > 0
+    ? (
+        camp.reviews.reduce((sum, r) => sum + r.rating, 0) /
+        reviewCount
+      ).toFixed(1)
+    : null;
 
   return isMobile ? (
       <Link
@@ -109,7 +118,18 @@ export default function CampingList() {
           <p className="text-xs text-gray-500 mt-1">
             📍 {camp.location}
           </p>
-
+<div className="flex items-center gap-2 mt-2">
+      {/* RATING */}
+      {avgRating ? (<>
+        <span className="bg-green-600 text-white text-xs px-2 py-1 rounded">
+          ⭐ {avgRating}
+        </span>
+        <span className="text-gray-400 text-xs">({reviewCount} reviews)</span>
+      </>):(<span className="text-gray-400 text-xs">
+      No reviews yet
+    </span>)}
+        
+      </div>
           {/* ACTIVITIES */}
           <div className="flex gap-2 mt-2 text-xs flex-wrap">
             {camp.campingactivity?.slice(0, 2).map((a) => (

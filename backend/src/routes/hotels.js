@@ -36,7 +36,28 @@ router.get("/", async (req, res) => {
     res.status(500).json({ msg: "Failed to fetch hotels" });
   }
 });
+router.get("/locations", async (req, res) => {
+  try {
 
+    const locations = await prisma.hotel.groupBy({
+      by: ["location"],
+      _count: {
+        location: true
+      }
+    });
+
+    const data = locations.map(l => ({
+      city: l.location,
+      hotels: l._count.location
+    }));
+
+    res.json(data);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Failed to load locations" });
+  }
+});
 
 router.get("/:id", async (req, res) => {
   try {

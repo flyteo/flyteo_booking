@@ -51,7 +51,15 @@ const isMobile = window.innerWidth <= 768;
                 const finalPrice = calculateHotelPrice(h, checkIn);
 
                 const originalPrice = Math.round(basePrice + (h.taxes || 0));
-              
+                  const reviewCount = h.reviews?.length || 0;
+
+const avgRating =
+  reviewCount > 0
+    ? (
+        h.reviews.reduce((sum, r) => sum + r.rating, 0) /
+        reviewCount
+      ).toFixed(1)
+    : null;
               
                         return isMobile ? (
                   /* ================= MOBILE CARD ================= */
@@ -85,11 +93,17 @@ const isMobile = window.innerWidth <= 768;
                       </p>
               
                       {/* RATING */}
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="bg-green-600 text-white px-2 py-0.5 rounded text-xs">
-                          ⭐ 4.3
-                        </span>
-                        <span className="text-gray-400 text-xs">(2300)</span>
+                      <div className="mt-2 flex items-center gap-2">
+                        {avgRating ? (<>
+                          <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">
+                            ⭐ {avgRating}
+                          </span>
+                          <span className="text-gray-500 text-xs">({reviewCount} Reviews)</span>
+                        </>):(
+                          <span className="text-gray-400 text-xs">
+                            No reviews yet
+                          </span>
+                        )}
                       </div>
               {/* PRICE */}
                       <div className="flex justify-between items-end mt-3">
@@ -228,6 +242,15 @@ const isMobile = window.innerWidth <= 768;
       {sortedVillas.map((v) => {
         const layout = v.villalayout;
 const finalPrice = calculateVillaPriceInSearch(v, checkIn);
+const reviewCount = v.reviews?.length || 0;
+
+const avgRating =
+  reviewCount > 0
+    ? (
+        v.reviews.reduce((sum, r) => sum + r.rating, 0) /
+        reviewCount
+      ).toFixed(1)
+    : null;
         return (
           <Link
             key={v.id}
@@ -250,7 +273,7 @@ const finalPrice = calculateVillaPriceInSearch(v, checkIn);
 
               {/* PRICE FLOAT */}
               <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-4 py-1 rounded-full text-sm font-semibold text-palmGreen shadow">
-                ₹{v.basePrice} / night
+                ₹{finalPrice} / night
               </div>
             </div>
 
@@ -302,8 +325,10 @@ const finalPrice = calculateVillaPriceInSearch(v, checkIn);
 
               {/* RATING (Static for now) */}
               <div className="mt-4 flex items-center text-yellow-500 text-sm">
-                ⭐⭐⭐⭐⭐
-                <span className="text-gray-500 ml-2">(4.8)</span>
+               {avgRating ? (<><span className="text-gray-500 ml-2"> ⭐({avgRating})</span></>):(
+                <span className="text-gray-400 text-xs">No Reviews Yet</span>
+               )}
+                
               </div>
 
               {/* BUTTON */}

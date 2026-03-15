@@ -15,6 +15,14 @@ export default function BlogForm({ blog, setBlog, onSubmit }) {
       />
       <input
         className="w-full p-3 border rounded"
+        placeholder="Author Name"
+        value={blog.authorName}
+        onChange={(e) =>
+          setBlog({ ...blog, authorName: e.target.value })
+        }
+      />
+      <input
+        className="w-full p-3 border rounded"
         placeholder="Location"
         value={blog.location}
         onChange={(e) =>

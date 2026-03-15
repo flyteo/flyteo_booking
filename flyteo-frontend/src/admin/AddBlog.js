@@ -13,6 +13,7 @@ export default function AddBlog() {
     excerpt: "",
     content: "",
     coverImage: "",
+    authorName:"",
     metaTitle: "",
     metaDescription: "",
     isFeatured: false,

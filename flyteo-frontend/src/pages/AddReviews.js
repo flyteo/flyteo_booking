@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import api from "../axios";
 
 export default function AddReviews({
@@ -10,6 +10,31 @@ export default function AddReviews({
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
+  const [alreadyReviewed, setAlreadyReviewed] = useState(false);
+
+  useEffect(() => {
+  checkReview();
+}, []);
+
+const checkReview = async () => {
+  let type = null;
+  let targetId = null;
+
+  if (hotelId) {
+    type = "hotel";
+    targetId = hotelId;
+  } else if (campingId) {
+    type = "camping";
+    targetId = campingId;
+  } else if (villaId) {
+    type = "villa";
+    targetId = villaId;
+  }
+
+  const res = await api.get(`/reviews/check?type=${type}&targetId=${targetId}`);
+
+  setAlreadyReviewed(res.data.reviewed);
+};
 
   const submitReview = async () => {
 
@@ -58,7 +83,10 @@ export default function AddReviews({
 
   return (
     <div className="bg-white p-5 rounded-xl shadow border">
-      <h3 className="font-heading text-lg mb-3">Write a Review</h3>
+      {
+        alreadyReviewed ? (<><div className="bg-green-50 border border-green-200 p-4 rounded">
+          You Already Submitted a Review for this property.
+        </div> </>):(<><h3 className="font-heading text-lg mb-3">Write a Review</h3>
 
       {/* STAR RATING */}
       <select
@@ -88,7 +116,9 @@ export default function AddReviews({
         className="mt-4 bg-palmGreen text-white px-5 py-2 rounded w-full hover:opacity-90 disabled:opacity-50"
       >
         {loading ? "Submitting..." : "Submit Review"}
-      </button>
+      </button></>)
+      }
+      
     </div>
   );
 }

@@ -1,116 +1,162 @@
+import t1 from "../assets/t1.jpg";
+
 export default function AboutUs() {
   return (
-    <div className="bg-white min-h-screen mt-16">
+    <div className="bg-white mt-10">
 
       {/* ================= HERO SECTION ================= */}
-      <div className="relative h-[45vh] md:h-[60vh]">
-        {/* <img
-          src="https://www.cnn.com/travel/article/us-beautiful-hotels"
-          alt="Flyteo Travel"
-          className="w-full h-full object-cover"
-        /> */}
-        <div className="absolute inset-0 bg-brandOrange" />
+      <div className="relative h-[35vh] md:h-[45vh] lg:h-[50vh] flex items-center justify-center">
 
-        <div className="absolute inset-0 flex items-center justify-center text-center px-4">
-          <div className="text-white max-w-3xl">
-            <h1 className="font-heading text-3xl md:text-5xl mb-4">
-              About Flyteo
-            </h1>
-            <p className="text-base md:text-lg opacity-90">
-              Making travel accommodation simple, affordable & reliable
-            </p>
-          </div>
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-amber-500" />
+
+        {/* Content */}
+        <div className="relative text-center text-white px-6 max-w-4xl">
+          <h1 className="font-heading text-4xl md:text-6xl font-bold mb-4">
+            About Flyteo
+          </h1>
+
+          <p className="text-sm md:text-lg opacity-90">
+            Making travel accommodation simple, affordable & reliable
+          </p>
         </div>
       </div>
 
-      {/* ================= CONTENT ================= */}
-      <div className="container mx-auto px-4 md:px-8 py-12">
 
-        {/* INTRO */}
-        <div className="max-w-4xl mx-auto text-gray-700 leading-relaxed">
-          <h2 className="font-heading text-2xl md:text-3xl text-palmGreen mb-4">
-            Who We Are
-          </h2>
+      {/* ================= INTRO SECTION ================= */}
+      <section className="max-w-6xl mx-auto px-5 md:px-10 py-14">
 
-          <p className="mb-4">
-            <strong>Flyteo.in</strong> is a digital hotel and room booking platform
-            proudly starting from <strong>Alibag</strong>, designed to make travel
-            accommodation simple, affordable, and reliable. We connect travelers
-            with verified hotels, resorts, homestays, and lodging partners,
-            ensuring a smooth and transparent booking experience.
-          </p>
+        <div className="grid md:grid-cols-2 gap-10 items-center">
 
-          <p className="mb-4">
-            Founded by <strong>Shivam Jadhav(FOUNDER)</strong> and{" "}
-            <strong>Shubham Tivalekar(CO-FOUNDER)</strong>, Flyteo was created with a strong
-            focus on promoting local hospitality businesses in Alibag and nearby
-            coastal destinations. Our aim is to help travelers discover
-            comfortable stays while supporting hotels with better visibility and
-            digital growth.
-          </p>
+          {/* TEXT */}
+          <div className="text-gray-700 leading-relaxed">
+            <h2 className="font-heading text-3xl md:text-4xl text-palmGreen mb-5">
+              Who We Are
+            </h2>
 
-          <p>
-            At Flyteo, we believe that quality stays and honest pricing build
-            long-term trust. Our platform emphasizes ease of use, secure
-            payments, and clear communication between guests and hotel partners.
-            Whether it’s a weekend getaway or a longer stay, Flyteo is committed
-            to making your booking experience stress-free.
-          </p>
+            <p className="mb-4">
+              <strong>Flyteo.in</strong> is a digital hotel and room booking platform
+              proudly starting from <strong>Alibaug</strong>. Our goal is to make
+              accommodation booking simple, transparent, and accessible for travelers.
+            </p>
+
+            <p className="mb-4">
+              We connect guests with verified hotels, villas, and camping
+              experiences while helping local hospitality partners grow digitally.
+            </p>
+
+            <p>
+              Founded by <strong>Shivam Jadhav(FOUNDER)</strong> and{" "}
+              <strong>Shubham Tivalekar(CO-FOUNDER)</strong>, Flyteo focuses on promoting
+              local tourism while delivering a reliable booking experience.
+            </p>
+          </div>
+
+          {/* IMAGE */}
+          <div>
+            <img
+              src={t1}
+              className="rounded-2xl shadow-xl w-full object-cover"
+              alt="Travel Experience"
+            />
+          </div>
+
         </div>
+      </section>
 
-        {/* ================= MISSION & VISION ================= */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-14 max-w-5xl mx-auto">
+
+      {/* ================= MISSION & VISION ================= */}
+      <section className="bg-gray-50 py-16 px-5">
+
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
 
           {/* MISSION */}
-          <div className="bg-palmGreen rounded-2xl p-6 shadow">
-            <h3 className="font-heading text-xl text-brandOrange mb-3">
+          <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition">
+
+            <h3 className="font-heading text-xl text-orange-500 mb-3">
               🎯 Our Mission
             </h3>
-            <p className="text-black-400">
-              To simplify hotel bookings while empowering local hotels through
-              digital solutions.
+
+            <p className="text-gray-600">
+              To simplify hotel bookings while empowering local hospitality
+              businesses through digital platforms and transparent pricing.
             </p>
+
           </div>
 
           {/* VISION */}
-          <div className="bg-palmGreen rounded-2xl p-6 shadow">
-            <h3 className="font-heading text-xl text-brandOrange mb-3">
+          <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition">
+
+            <h3 className="font-heading text-xl text-orange-500 mb-3">
               🌍 Our Vision
             </h3>
-            <p className="text-black-400">
-              To grow from Alibag to destinations across India, becoming a
-              trusted name in travel and accommodation services.
+
+            <p className="text-gray-600">
+              To expand from Alibag to travel destinations across India and
+              become a trusted travel accommodation platform.
             </p>
+
           </div>
+
         </div>
 
-        {/* ================= TRUST STRIP ================= */}
-        <div className="mt-16 bg-gray-50 rounded-2xl p-8 text-center max-w-5xl mx-auto">
-          <h3 className="font-heading text-2xl text-palmGreen mb-6">
-            Why Travelers Trust Flyteo
-          </h3>
+      </section>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 text-gray-700">
-            <div>
-              <div className="text-3xl mb-2">🏨</div>
-              Verified Properties
-            </div>
-            <div>
-              <div className="text-3xl mb-2">💰</div>
-              Honest Pricing
-            </div>
-            <div>
-              <div className="text-3xl mb-2">🔐</div>
-              Secure Payments
-            </div>
-            <div>
-              <div className="text-3xl mb-2">📞</div>
-              Dedicated Support
-            </div>
+
+      {/* ================= TRUST SECTION ================= */}
+      <section className="max-w-6xl mx-auto px-5 py-16">
+
+        <h3 className="font-heading text-3xl text-center text-palmGreen mb-10">
+          Why Travelers Trust Flyteo
+        </h3>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+
+          <div className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
+            <div className="text-3xl mb-2">🏨</div>
+            <p className="font-medium">Verified Properties</p>
           </div>
+
+          <div className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
+            <div className="text-3xl mb-2">💰</div>
+            <p className="font-medium">Honest Pricing</p>
+          </div>
+
+          <div className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
+            <div className="text-3xl mb-2">🔐</div>
+            <p className="font-medium">Secure Payments</p>
+          </div>
+
+          <div className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
+            <div className="text-3xl mb-2">📞</div>
+            <p className="font-medium">Dedicated Support</p>
+          </div>
+
         </div>
 
-      </div>
+      </section>
+
+
+      {/* ================= CTA SECTION ================= */}
+      <section className="bg-gradient-to-r from-orange-500 to-amber-500 py-8 text-center text-white px-6">
+
+        <h3 className="text-3xl font-heading mb-4">
+          Start Your Next Journey With Flyteo
+        </h3>
+
+        <p className="mb-6 opacity-90">
+          Discover hotels, villas, and camping experiences across amazing destinations.
+        </p>
+
+        <a
+          href="/hotels"
+          className="bg-white text-orange-600 px-6 py-3 rounded-xl font-semibold shadow hover:scale-105 transition"
+        >
+          Explore Stays →
+        </a>
+
+      </section>
+
     </div>
   );
 }

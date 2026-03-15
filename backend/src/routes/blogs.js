@@ -125,10 +125,10 @@ router.get("/", async (req, res) => {
     res.status(500).json({ msg: "Failed to fetch blogs" });
   }
 });
-
-router.get("/featured", async (req, res) => {
+// GET /api/blogs/bloglist
+router.get("/bloglist", async (req, res) => {
   try {
-    const blogs = await prisma.blog.findMany({
+    const featured = await prisma.blog.findFirst({
       where: {
         isFeatured: true,
         isPublished: true
@@ -136,11 +136,34 @@ router.get("/featured", async (req, res) => {
       orderBy: { createdAt: "desc" }
     });
 
-    res.json(blogs);
+    const blogs = await prisma.blog.findMany({
+      where: {
+        isPublished: true
+      },
+      orderBy: { createdAt: "desc" }
+    });
+
+    res.json({ featured, blogs });
+
   } catch (err) {
-    res.status(500).json({ msg: "Failed to fetch featured blogs" });
+    res.status(500).json({ msg: "Failed to fetch blogs" });
   }
 });
+// router.get("/featured", async (req, res) => {
+//   try {
+//     const blogs = await prisma.blog.findMany({
+//       where: {
+//         isFeatured: true,
+//         isPublished: true
+//       },
+//       orderBy: { createdAt: "desc" }
+//     });
+
+//     res.json(blogs);
+//   } catch (err) {
+//     res.status(500).json({ msg: "Failed to fetch featured blogs" });
+//   }
+// });
 
 router.get("/:slug", async (req, res) => {
   try {
@@ -155,6 +178,68 @@ router.get("/:slug", async (req, res) => {
     res.json(blog);
   } catch (err) {
     res.status(500).json({ msg: "Failed to fetch blog" });
+  }
+});
+router.get("/:slug/details", async (req, res) => {
+  try {
+    const blog = await prisma.blog.findUnique({
+      where: { slug: req.params.slug }
+    });
+
+    if (!blog) {
+      return res.status(404).json({ msg: "Blog not found" });
+    }
+
+    let hotels = [];
+    let villas = [];
+    let campings = [];
+
+    if (blog.location) {
+
+      hotels = await prisma.hotel.findMany({
+        where: {
+          location: { contains: blog.location }
+        },
+        include:{
+          hotelimage:true,
+          room:true
+        },
+        take: 4
+      });
+
+      villas = await prisma.villa.findMany({
+        where: {
+          location: {contains: blog.location}
+        },
+        include:{
+          villaimage:true,
+        },
+        take: 4
+      });
+
+      campings = await prisma.camping.findMany({
+        where: {
+          location: {contains: blog.location}
+        },
+        include:{
+          campingimage:true,
+          campingpricing:true
+        },
+        take: 4
+      });
+
+    }
+
+    res.json({
+      blog,
+      hotels,
+      villas,
+      campings
+    });
+
+  } catch (err) {
+    console.error("BLOG DETAILS ERROR:", err);
+    res.status(500).json({ msg: "Failed to fetch blog details" });
   }
 });
 
