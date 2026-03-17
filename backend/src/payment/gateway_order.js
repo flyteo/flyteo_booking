@@ -7,270 +7,270 @@ import { type } from "os";
 import { sendBookingConfirmationEmail,sendCompanyEmail,sendHotelAdminBookingEmail,sendVillaAdminBookingEmail } from "../utils/mailer.js";
 const router = express.Router();
 
-const cashfree = new Cashfree(
-  CFEnvironment.PRODUCTION,
-  process.env.CASHFREE_APP_ID,
-  process.env.CASHFREE_SECRET_KEY
-);
+// const cashfree = new Cashfree(
+//   CFEnvironment.PRODUCTION,
+//   process.env.CASHFREE_APP_ID,
+//   process.env.CASHFREE_SECRET_KEY
+// );
 
 
-function genrateOrderId(){
-  const uniqueId=crypto.randomBytes(16).toString('hex');
+// function genrateOrderId(){
+//   const uniqueId=crypto.randomBytes(16).toString('hex');
 
-  const hash = crypto.createHash('sha256');
+//   const hash = crypto.createHash('sha256');
 
-  hash.update(uniqueId);
+//   hash.update(uniqueId);
 
-  const orderId = hash.digest('hex');
-  return orderId.substr(0,12);
-}
+//   const orderId = hash.digest('hex');
+//   return orderId.substr(0,12);
+// }
 
-router.post("/create-order", auth, async (req, res) => {
-  try {
-     const {
-    type,
-    hotel,
-    villa,
-    camping,
-    meals,
-    roomType,
-    acType,
-    checkIn,
-    checkOut,
-    guests,
-    roomCount,
-    fullname,
-    mobileno,
-    totalAmount,
-    paymentChoice
-  } = req.body;
+// router.post("/create-order", auth, async (req, res) => {
+//   try {
+//      const {
+//     type,
+//     hotel,
+//     villa,
+//     camping,
+//     meals,
+//     roomType,
+//     acType,
+//     checkIn,
+//     checkOut,
+//     guests,
+//     roomCount,
+//     fullname,
+//     mobileno,
+//     totalAmount,
+//     paymentChoice
+//   } = req.body;
 
-   const checkInDate = new Date(checkIn);
-  const checkOutDate = checkOut ? new Date(checkOut) : null;
-  const booking = await prisma.$transaction(async (tx) => {
+//    const checkInDate = new Date(checkIn);
+//   const checkOutDate = checkOut ? new Date(checkOut) : null;
+//   const booking = await prisma.$transaction(async (tx) => {
 
-      /* ==========================
-         HOTEL AVAILABILITY CHECK
-      ========================== */
-      if (type === "hotel") {
-        if (!roomCount || roomCount < 1) {
-          throw new Error("Invalid room count");
-        }
+//       /* ==========================
+//          HOTEL AVAILABILITY CHECK
+//       ========================== */
+//       if (type === "hotel") {
+//         if (!roomCount || roomCount < 1) {
+//           throw new Error("Invalid room count");
+//         }
 
-        const room = await tx.room.findFirst({
-          where: {
-            hotelId: Number(hotel),
-            type: roomType,
-            acType
-          }
-        });
+//         const room = await tx.room.findFirst({
+//           where: {
+//             hotelId: Number(hotel),
+//             type: roomType,
+//             acType
+//           }
+//         });
 
-        if (!room) throw new Error("Invalid room selected");
+//         if (!room) throw new Error("Invalid room selected");
 
-        // 🔹 Booked rooms
-        const booked = await tx.booking.aggregate({
-          _sum: { roomCount: true },
-          where: {
-            hotelId: Number(hotel),
-            roomType,
-            acType,
-            paymentStatus: { not: "cancelled" },
-            AND: [
-              { checkIn: { lt: checkOutDate } },
-              { checkOut: { gt: checkInDate } }
-            ]
-          }
-        });
+//         // 🔹 Booked rooms
+//         const booked = await tx.booking.aggregate({
+//           _sum: { roomCount: true },
+//           where: {
+//             hotelId: Number(hotel),
+//             roomType,
+//             acType,
+//             paymentStatus: { not: "cancelled" },
+//             AND: [
+//               { checkIn: { lt: checkOutDate } },
+//               { checkOut: { gt: checkInDate } }
+//             ]
+//           }
+//         });
 
-        const bookedRooms = booked._sum.roomCount || 0;
+//         const bookedRooms = booked._sum.roomCount || 0;
 
-        // 🔹 Blocked rooms (admin / hotel-admin)
-        const blocked = await tx.room_availability.findMany({
-          where: {
-            roomId: room.id,
-            date: {
-              gte: checkInDate,
-              lt: checkOutDate
-            }
-          },
-          select: { blocked_rooms: true }
-        });
+//         // 🔹 Blocked rooms (admin / hotel-admin)
+//         const blocked = await tx.room_availability.findMany({
+//           where: {
+//             roomId: room.id,
+//             date: {
+//               gte: checkInDate,
+//               lt: checkOutDate
+//             }
+//           },
+//           select: { blocked_rooms: true }
+//         });
 
-        // 🔹 Find max blocked on any day (safe rule)
-const blockedRooms = blocked.reduce(
-  (max, b) => Math.max(max, b.blocked_rooms),
-  0
-);
+//         // 🔹 Find max blocked on any day (safe rule)
+// const blockedRooms = blocked.reduce(
+//   (max, b) => Math.max(max, b.blocked_rooms),
+//   0
+// );
 
-        const availableRooms =
-          room.totalRooms - bookedRooms - blockedRooms;
+//         const availableRooms =
+//           room.totalRooms - bookedRooms - blockedRooms;
 
-        if (roomCount > availableRooms) {
-          throw new Error(
-            `Only ${availableRooms} room(s) available`
-          );
-        }
+//         if (roomCount > availableRooms) {
+//           throw new Error(
+//             `Only ${availableRooms} room(s) available`
+//           );
+//         }
 
-        const maxGuests = room.maxPersons * roomCount;
-        if (guests > maxGuests) {
-          throw new Error(
-            `Maximum ${maxGuests} guests allowed`
-          );
-        }
-      }
+//         const maxGuests = room.maxPersons * roomCount;
+//         if (guests > maxGuests) {
+//           throw new Error(
+//             `Maximum ${maxGuests} guests allowed`
+//           );
+//         }
+//       }
 
-      /* ==========================
-         VILLA AVAILABILITY CHECK
-      ========================== */
-      if (type === "villa") {
-        const overlappingBooking = await tx.booking.findFirst({
-          where: {
-            villaId: Number(villa),
-            paymentStatus: { not: "cancelled" },
-            AND: [
-              { checkIn: { lt: checkOutDate } },
-              { checkOut: { gt: checkInDate } }
-            ]
-          }
-        });
+//       /* ==========================
+//          VILLA AVAILABILITY CHECK
+//       ========================== */
+//       if (type === "villa") {
+//         const overlappingBooking = await tx.booking.findFirst({
+//           where: {
+//             villaId: Number(villa),
+//             paymentStatus: { not: "cancelled" },
+//             AND: [
+//               { checkIn: { lt: checkOutDate } },
+//               { checkOut: { gt: checkInDate } }
+//             ]
+//           }
+//         });
 
-        if (overlappingBooking) {
-          throw new Error("Villa not available for selected dates");
-        }
+//         if (overlappingBooking) {
+//           throw new Error("Villa not available for selected dates");
+//         }
 
-        const blocked = await tx.villa_availability.findFirst({
-          where: {
-            villaId: Number(villa),
-            date: {
-              gte: checkInDate,
-              lt: checkOutDate
-            },
-            status:"blocked"
-          }
-        });
+//         const blocked = await tx.villa_availability.findFirst({
+//           where: {
+//             villaId: Number(villa),
+//             date: {
+//               gte: checkInDate,
+//               lt: checkOutDate
+//             },
+//             status:"blocked"
+//           }
+//         });
 
-        if (blocked) {
-          throw new Error("Villa Sold Out / Blocked for selected date");
-        }
-      }
+//         if (blocked) {
+//           throw new Error("Villa Sold Out / Blocked for selected date");
+//         }
+//       }
 
-      if (type === "camping") {
-  const blocked = await prisma.camping_availability.findFirst({
-    where: {
-      campingId: Number(camping),
-      date: checkInDate,
-      status: "blocked"
-    }
-  });
+//       if (type === "camping") {
+//   const blocked = await prisma.camping_availability.findFirst({
+//     where: {
+//       campingId: Number(camping),
+//       date: checkInDate,
+//       status: "blocked"
+//     }
+//   });
 
-  if (blocked) {
-    throw new Error("Camping not available on selected date");
-  }
-}
+//   if (blocked) {
+//     throw new Error("Camping not available on selected date");
+//   }
+// }
 
-      /* ==========================
-         ADVANCE PAYMENT
-      ========================== */
+//       /* ==========================
+//          ADVANCE PAYMENT
+//       ========================== */
      
 
-      /* ==========================
-         CREATE BOOKING
-      ========================== */
+//       /* ==========================
+//          CREATE BOOKING
+//       ========================== */
       
-    });
-      let advanceAllowed = false;
-      let advancePercent = null;
+//     });
+//       let advanceAllowed = false;
+//       let advancePercent = null;
 
-      if (type === "hotel") {
-        const h = await prisma.hotel.findUnique({
-          where: { id: Number(hotel) },
-          select: {
-            advancePaymentAllowed: true,
-            advancePercent: true
-          }
-        });
-        advanceAllowed = h?.advancePaymentAllowed;
-        advancePercent = h?.advancePercent;
-      }
+//       if (type === "hotel") {
+//         const h = await prisma.hotel.findUnique({
+//           where: { id: Number(hotel) },
+//           select: {
+//             advancePaymentAllowed: true,
+//             advancePercent: true
+//           }
+//         });
+//         advanceAllowed = h?.advancePaymentAllowed;
+//         advancePercent = h?.advancePercent;
+//       }
       
-       if (type === "camping" && camping) {
-      const c = await prisma.camping.findUnique({
-        where: { id: Number(camping) },
-        select: { advancePaymentAllowed: true, advancePercent: true }
-      });
-      advanceAllowed = c?.advancePaymentAllowed || false;
-      advancePercent = c?.advancePercent ?? null;
-    }
+//        if (type === "camping" && camping) {
+//       const c = await prisma.camping.findUnique({
+//         where: { id: Number(camping) },
+//         select: { advancePaymentAllowed: true, advancePercent: true }
+//       });
+//       advanceAllowed = c?.advancePaymentAllowed || false;
+//       advancePercent = c?.advancePercent ?? null;
+//     }
 
-      if (type === "villa") {
-        const v = await prisma.villa.findUnique({
-          where: { id: Number(villa) },
-          select: {
-            advancePaymentAllowed: true,
-            advancePercent: true
-          }
-        });
-        advanceAllowed = v?.advancePaymentAllowed;
-        advancePercent = v?.advancePercent;
-      }
+//       if (type === "villa") {
+//         const v = await prisma.villa.findUnique({
+//           where: { id: Number(villa) },
+//           select: {
+//             advancePaymentAllowed: true,
+//             advancePercent: true
+//           }
+//         });
+//         advanceAllowed = v?.advancePaymentAllowed;
+//         advancePercent = v?.advancePercent;
+//       }
 
-      let paidAmount = totalAmount;
-      let paymentType = "full";
-      let remainingAmount = 0;
-      let paymentStatus = "paid";
+//       let paidAmount = totalAmount;
+//       let paymentType = "full";
+//       let remainingAmount = 0;
+//       let paymentStatus = "paid";
 
-      if (advanceAllowed && paymentChoice === "advance") {
-        const percent =Number(advancePercent || 0)
-        paidAmount = Math.round((totalAmount * percent) / 100);
-        remainingAmount = totalAmount - paidAmount;
-        paymentType = "partial";
-        paymentStatus = "partial";
-      }
-     let payNowAmount = totalAmount;
-    // let remainingAmount = 0;
-    // let paymentType = "full";
+//       if (advanceAllowed && paymentChoice === "advance") {
+//         const percent =Number(advancePercent || 0)
+//         paidAmount = Math.round((totalAmount * percent) / 100);
+//         remainingAmount = totalAmount - paidAmount;
+//         paymentType = "partial";
+//         paymentStatus = "partial";
+//       }
+//      let payNowAmount = totalAmount;
+//     // let remainingAmount = 0;
+//     // let paymentType = "full";
 
-    if (advanceAllowed && paymentChoice === "advance") {
-      payNowAmount = Math.round((totalAmount * advancePercent) / 100);
-      remainingAmount = totalAmount - payNowAmount;
-      paymentType = "partial";
-    }
+//     if (advanceAllowed && paymentChoice === "advance") {
+//       payNowAmount = Math.round((totalAmount * advancePercent) / 100);
+//       remainingAmount = totalAmount - payNowAmount;
+//       paymentType = "partial";
+//     }
 
-    const orderID = await genrateOrderId();
-// Save temp order (IMPORTANT)
-  await prisma.payment_order.create({
-    data: {
-      orderId: orderID,
-      userId: req.user.id,
-      payload: req.body, // store full booking payload
-      amount: totalAmount,
-      status: "PENDING"
-    }
-  });
-  const orderCashfree={
-      order_id: orderID,
-      order_amount: payNowAmount,
-      order_currency: "INR",
-      customer_details: {
-        customer_id: String(req.user.id),
-        customer_name: fullname,
-        customer_phone: `+91${mobileno}`,
-      order_meta:{
-        return_url:`${process.env.FRONTEND_URL_FLYTEO}/payment-success?order_id=${orderID}`
-      }
-  }
-}
-    const response = await cashfree.PGCreateOrder(orderCashfree);
+//     const orderID = await genrateOrderId();
+// // Save temp order (IMPORTANT)
+//   await prisma.payment_order.create({
+//     data: {
+//       orderId: orderID,
+//       userId: req.user.id,
+//       payload: req.body, // store full booking payload
+//       amount: totalAmount,
+//       status: "PENDING"
+//     }
+//   });
+//   const orderCashfree={
+//       order_id: orderID,
+//       order_amount: payNowAmount,
+//       order_currency: "INR",
+//       customer_details: {
+//         customer_id: String(req.user.id),
+//         customer_name: fullname,
+//         customer_phone: `+91${mobileno}`,
+//       order_meta:{
+//         return_url:`${process.env.FRONTEND_URL_FLYTEO}/payment-success?order_id=${orderID}`
+//       }
+//   }
+// }
+//     const response = await cashfree.PGCreateOrder(orderCashfree);
 
-    res.json({
-      payment_session_id: response.data.payment_session_id,
-      orderID
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ msg: "Failed to create payment order" });
-  }
-});
+//     res.json({
+//       payment_session_id: response.data.payment_session_id,
+//       orderID
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ msg: "Failed to create payment order" });
+//   }
+// });
 // router.post("/create-order", auth, async (req, res) => {
 //   try {
 //     const { totalAmount, payload } = req.body;
@@ -356,173 +356,176 @@ const blockedRooms = blocked.reduce(
 //   }
 // });
 
-router.post("/webhook", async (req, res) => {
-  try {
 
-    const event = req.body;
+// Webhook to handle payment success and create actual booking
 
-    if (event.type !== "PAYMENT_SUCCESS_WEBHOOK") {
-      return res.sendStatus(200);
-    }
+// router.post("/webhook", async (req, res) => {
+//   try {
 
-    const orderId = event.data.order.order_id;
+//     const event = req.body;
 
-    const paymentOrder = await prisma.payment_order.findUnique({
-      where: { orderId }
-    });
+//     if (event.type !== "PAYMENT_SUCCESS_WEBHOOK") {
+//       return res.sendStatus(200);
+//     }
 
-    if (!paymentOrder || paymentOrder.status === "PAID") {
-      return res.sendStatus(200);
-    }
+//     const orderId = event.data.order.order_id;
 
-    const payload = paymentOrder.payload;
+//     const paymentOrder = await prisma.payment_order.findUnique({
+//       where: { orderId }
+//     });
 
-    const totalAmount = payload.totalAmount;
-    const paidAmount = event.data.payment.payment_amount;
+//     if (!paymentOrder || paymentOrder.status === "PAID") {
+//       return res.sendStatus(200);
+//     }
 
-    let remainingAmount = totalAmount - paidAmount;
-    let paymentType = remainingAmount > 0 ? "partial" : "full";
-    let paymentStatus = remainingAmount > 0 ? "partial" : "paid";
+//     const payload = paymentOrder.payload;
 
-    /* ==========================
-       CREATE REAL BOOKING
-    ========================== */
+//     const totalAmount = payload.totalAmount;
+//     const paidAmount = event.data.payment.payment_amount;
 
-   const booking = await prisma.booking.create({
-  data: {
-    type: payload.type,
-    roomType: payload.roomType,
-    acType: payload.acType,
-    checkIn: new Date(payload.checkIn),
-    checkOut: payload.checkOut ? new Date(payload.checkOut) : null,
-    guests: payload.guests,
-    meals:payload.meals,
-    fullname: payload.fullname,
-    mobileno: payload.mobileno,
-    roomCount: payload.roomCount,
+//     let remainingAmount = totalAmount - paidAmount;
+//     let paymentType = remainingAmount > 0 ? "partial" : "full";
+//     let paymentStatus = remainingAmount > 0 ? "partial" : "paid";
 
-    totalAmount: payload.totalAmount,
-    paidAmount,
-    remainingAmount,
-    paymentType,
-    paymentStatus,
-    paymentChoice: payload.paymentChoice,
+//     /* ==========================
+//        CREATE REAL BOOKING
+//     ========================== */
 
-    user: { connect: { id: paymentOrder.userId } },
+//    const booking = await prisma.booking.create({
+//   data: {
+//     type: payload.type,
+//     roomType: payload.roomType,
+//     acType: payload.acType,
+//     checkIn: new Date(payload.checkIn),
+//     checkOut: payload.checkOut ? new Date(payload.checkOut) : null,
+//     guests: payload.guests,
+//     meals:payload.meals,
+//     fullname: payload.fullname,
+//     mobileno: payload.mobileno,
+//     roomCount: payload.roomCount,
 
-    ...(payload.type === "hotel"
-      ? { hotel: { connect: { id: Number(payload.hotel) } } }
-      : {}),
-    ...(payload.type === "villa"
-      ? { villa: { connect: { id: Number(payload.villa) } } }
-      : {}),
-    ...(payload.type === "camping"
-      ? { camping: { connect: { id: Number(payload.camping) } } }
-      : {}),
-  },
-  include: {
-    hotel: { select: { name: true } },
-    villa: { select: { name: true } },
-    camping: { select: { name: true } },
-    user: { select: { email: true } }
-  }
-});
+//     totalAmount: payload.totalAmount,
+//     paidAmount,
+//     remainingAmount,
+//     paymentType,
+//     paymentStatus,
+//     paymentChoice: payload.paymentChoice,
 
+//     user: { connect: { id: paymentOrder.userId } },
 
-    await prisma.payment_order.update({
-      where: { orderId },
-      data: {
-        status: "PAID",
-        bookingId: booking.id
-      }
-    });
-   const propertyName =
-  booking.hotel?.name ||
-  booking.villa?.name ||
-  booking.camping?.name ||
-  "Flyteo Property";
+//     ...(payload.type === "hotel"
+//       ? { hotel: { connect: { id: Number(payload.hotel) } } }
+//       : {}),
+//     ...(payload.type === "villa"
+//       ? { villa: { connect: { id: Number(payload.villa) } } }
+//       : {}),
+//     ...(payload.type === "camping"
+//       ? { camping: { connect: { id: Number(payload.camping) } } }
+//       : {}),
+//   },
+//   include: {
+//     hotel: { select: { name: true } },
+//     villa: { select: { name: true } },
+//     camping: { select: { name: true } },
+//     user: { select: { email: true } }
+//   }
+// });
 
 
-    await sendBookingConfirmationEmail({
-  name: booking.fullname,
-  email: booking.user.email,
-  bookingId: booking.id,
-  type: booking.type,
-  propertyName,
-  checkIn: booking.checkIn,
-  checkOut: booking.checkOut,
-  guests: booking.guests,
-  totalAmount: booking.totalAmount,
-  paidAmount: booking.paidAmount,
-  remainingAmount: booking.remainingAmount,
-  paymentType: booking.paymentType
-});
-
-await sendHotelAdminBookingEmail({
-  hotelAdminEmail: hotel.email,
-  bookingId: booking.id,
-  propertyName,
-  type: booking.type,
-  checkIn: booking.checkIn,
-  checkOut: booking.checkOut,
-  roomType: booking.roomType,
-  roomCount: booking.roomCount,
-  guests: booking.guests,
-  guestName: booking.fullname,
-  guestMobile: booking.mobileno,
-  totalAmount: booking.totalAmount,
-  paidAmount: booking.paidAmount,
-  remainingAmount: booking.remainingAmount,
-  paymentStatus: booking.paymentStatus,
-  paymentType: booking.paymentType
-});
-
-await sendVillaAdminBookingEmail({
-  villaAdminEmail: villa.email,
-  bookingId: booking.id,
-  propertyName,
-  type: booking.type,
-  checkIn: booking.checkIn,
-  checkOut: booking.checkOut,
-  roomType: booking.roomType,
-  roomCount: booking.roomCount,
-  guests: booking.guests,
-  guestName: booking.fullname,
-  guestMobile: booking.mobileno,
-  totalAmount: booking.totalAmount,
-  paidAmount: booking.paidAmount,
-  remainingAmount: booking.remainingAmount,
-  paymentStatus: booking.paymentStatus,
-  paymentType: booking.paymentType
-});
+//     await prisma.payment_order.update({
+//       where: { orderId },
+//       data: {
+//         status: "PAID",
+//         bookingId: booking.id
+//       }
+//     });
+//    const propertyName =
+//   booking.hotel?.name ||
+//   booking.villa?.name ||
+//   booking.camping?.name ||
+//   "Flyteo Property";
 
 
-await sendCompanyEmail({
-  bookingId: booking.id,
-  propertyName,
-  type: booking.type,
-  checkIn: booking.checkIn,
-  checkOut: booking.checkOut,
-  roomType: booking.roomType,
-  roomCount: booking.roomCount,
-  guests: booking.guests,
-  guestName: booking.fullname,
-  guestMobile: booking.mobileno,
-  totalAmount: booking.totalAmount,
-  paidAmount: booking.paidAmount,
-  remainingAmount: booking.remainingAmount,
-  paymentStatus: booking.paymentStatus,
-  paymentType: booking.paymentType
-});
+//     await sendBookingConfirmationEmail({
+//   name: booking.fullname,
+//   email: booking.user.email,
+//   bookingId: booking.id,
+//   type: booking.type,
+//   propertyName,
+//   checkIn: booking.checkIn,
+//   checkOut: booking.checkOut,
+//   guests: booking.guests,
+//   totalAmount: booking.totalAmount,
+//   paidAmount: booking.paidAmount,
+//   remainingAmount: booking.remainingAmount,
+//   paymentType: booking.paymentType
+// });
+
+// await sendHotelAdminBookingEmail({
+//   hotelAdminEmail: hotel.email,
+//   bookingId: booking.id,
+//   propertyName,
+//   type: booking.type,
+//   checkIn: booking.checkIn,
+//   checkOut: booking.checkOut,
+//   roomType: booking.roomType,
+//   roomCount: booking.roomCount,
+//   guests: booking.guests,
+//   guestName: booking.fullname,
+//   guestMobile: booking.mobileno,
+//   totalAmount: booking.totalAmount,
+//   paidAmount: booking.paidAmount,
+//   remainingAmount: booking.remainingAmount,
+//   paymentStatus: booking.paymentStatus,
+//   paymentType: booking.paymentType
+// });
+
+// await sendVillaAdminBookingEmail({
+//   villaAdminEmail: villa.email,
+//   bookingId: booking.id,
+//   propertyName,
+//   type: booking.type,
+//   checkIn: booking.checkIn,
+//   checkOut: booking.checkOut,
+//   roomType: booking.roomType,
+//   roomCount: booking.roomCount,
+//   guests: booking.guests,
+//   guestName: booking.fullname,
+//   guestMobile: booking.mobileno,
+//   totalAmount: booking.totalAmount,
+//   paidAmount: booking.paidAmount,
+//   remainingAmount: booking.remainingAmount,
+//   paymentStatus: booking.paymentStatus,
+//   paymentType: booking.paymentType
+// });
 
 
-    res.sendStatus(200);
+// await sendCompanyEmail({
+//   bookingId: booking.id,
+//   propertyName,
+//   type: booking.type,
+//   checkIn: booking.checkIn,
+//   checkOut: booking.checkOut,
+//   roomType: booking.roomType,
+//   roomCount: booking.roomCount,
+//   guests: booking.guests,
+//   guestName: booking.fullname,
+//   guestMobile: booking.mobileno,
+//   totalAmount: booking.totalAmount,
+//   paidAmount: booking.paidAmount,
+//   remainingAmount: booking.remainingAmount,
+//   paymentStatus: booking.paymentStatus,
+//   paymentType: booking.paymentType
+// });
 
-  } catch (err) {
-    console.error("Webhook error:", err);
-    res.sendStatus(500);
-  }
-});
+
+//     res.sendStatus(200);
+
+//   } catch (err) {
+//     console.error("Webhook error:", err);
+//     res.sendStatus(500);
+//   }
+// });
 
 router.get("/payment/status/:orderId", async (req, res) => {
 

@@ -452,21 +452,12 @@ twoMonthsLater.setMonth(today.getMonth() + 2);
   // }
 
 
-//   const handleBooking = async () => {
+
+// const handleBooking = async () => {
 //   try {
-//     const token = localStorage.getItem("token");
-
-//      let payload = {};
-//     //  let sessionId = await getSessionId();
-//     //  let checkoutOptions = {
-//     //   paymentSessionId:sessionId,
-//     //   redirectTarget:"_modal"
-//     //  }
-
-//     //  cashfree.checkout(checkoutOptions).then((res)=>{
-//     //   console.log("payment Initiated");
-//     //  })
-
+//      let payload;
+  
+   
 //     if (type === "hotel") {
 //       payload = {
 //         type: "hotel",
@@ -493,6 +484,7 @@ twoMonthsLater.setMonth(today.getMonth() + 2);
 //         camping: campingId,
 //         roomType: null,
 //         acType: null,
+//         meals,
 //         checkIn:date,
 //         checkOut: null,
 //         guests: adults + children,
@@ -522,140 +514,42 @@ twoMonthsLater.setMonth(today.getMonth() + 2);
 //        paymentChoice
 //       };
 //     }
+//     if (!fullname || !mobileno) {
+//       alert("Enter name & mobile");
+//       return;
+//     }
 
-// if (!fullname || !mobileno) {
-//   alert("Please enter full name and mobile number");
-//   return;
-// }
-// const res1 = await api.post(
+
+//     const res = await api.post(
 //       "/payment/create-order",
-//       payload,
-//       { headers: { Authorization: `Bearer ${token}` } }
+//         payload
 //     );
 
-//     const cashfree = new window.Cashfree();
-//     cashfree.checkout({
-//       paymentSessionId: res1.data.payment_session_id,
+//     if (!res.data.payment_session_id) {
+//       alert("Failed to initialize payment");
+//       return;
+//     }
+//     cashfreeRef.current.checkout({
+//       paymentSessionId: res.data.payment_session_id,
 //       redirectTarget: "_self"
 //     });
-//     const res = await api.post(
-//       "/bookings",
-//       payload,
-//       {
-//         headers: { Authorization: `Bearer ${token}` }
-//       }
-//     );
-
-//     const bookingId = res.data.id;
-    
-
-// //     nav(
-// //   `/payment?bookingId=${bookingId}` +
-// //   `&total=${price.final}` +
-// //   `&payNow=${payNowAmount}` +
-// //   `&remaining=${remainingAmount}`
-// // );
 
 //   } catch (err) {
-//     alert(err.response?.data?.msg || "Error creating booking");
-//     // nav("/login");
-//   }
+//   console.error("FULL ERROR:", err);
+//   if (err.response?.status === 401) {
+//   nav("/login");
+//   return;
+// }
+
+//   alert(err.response?.data?.msg || err.message || "Payment failed");
+
+// }
+
 // };
-
+const [showPopup,setShowPopup]=useState(false);
 const handleBooking = async () => {
-  try {
-     let payload;
-  
-   
-    if (type === "hotel") {
-      payload = {
-        type: "hotel",
-        hotel: hotelId,
-        camping: null,
-        roomType: selectedRoom?.type,
-        acType: selectedRoom?.acType,
-        checkIn,
-        checkOut,
-        guests,
-        fullname,
-        mobileno,
-        remainingAmount,
-        roomCount:roomCount,
-        totalAmount: price.final,
-        paymentChoice
-      };
-    }
-
-    if (type === "camping") {
-      payload = {
-        type: "camping",
-        hotel: null,
-        camping: campingId,
-        roomType: null,
-        acType: null,
-        meals,
-        checkIn:date,
-        checkOut: null,
-        guests: adults + children,
-        fullname,
-        mobileno,
-        remainingAmount,
-      totalAmount: price.final,
-      paymentChoice
-      };
-    }
-
-    if (type === "villa") {
-      payload = {
-        type: "villa",
-        hotel: null,
-        camping: null,
-        villa: villaId,
-        roomType: null,
-        acType: null,
-        checkIn,
-        checkOut,
-        guests: totalGuestsVilla,
-        fullname,
-        mobileno,
-        remainingAmount,
-       totalAmount: price.final,
-       paymentChoice
-      };
-    }
-    if (!fullname || !mobileno) {
-      alert("Enter name & mobile");
-      return;
-    }
-
-
-    const res = await api.post(
-      "/payment/create-order",
-        payload
-    );
-
-    if (!res.data.payment_session_id) {
-      alert("Failed to initialize payment");
-      return;
-    }
-    cashfreeRef.current.checkout({
-      paymentSessionId: res.data.payment_session_id,
-      redirectTarget: "_self"
-    });
-
-  } catch (err) {
-  console.error("FULL ERROR:", err);
-  if (err.response?.status === 401) {
-  nav("/login");
-  return;
+    setShowPopup(true);
 }
-
-  alert(err.response?.data?.msg || err.message || "Payment failed");
-
-}
-
-};
-
 const todaydate = new Date().toISOString().split("T")[0];
 
 const Row = ({ label, value, bold }) => (
@@ -1244,8 +1138,8 @@ const Row = ({ label, value, bold }) => (
 <button
   onClick={handleBooking}
   className="w-full bg-rusticBrown text-white py-3 rounded text-lg"
->
- {advancePercent ? (
+> Book Now </button>
+ {/* {advancePercent ? (
     paymentChoice === "advance" ? (
       `Pay ₹${payNowAmount} (Advance)`
     ) : (
@@ -1254,8 +1148,53 @@ const Row = ({ label, value, bold }) => (
   ) : (
     `Pay ₹${price.final}`
   )}
-</button>
+</button> */}
+{showPopup && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+    <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 relative">
 
+      {/* CLOSE BUTTON */}
+      <button
+        onClick={() => setShowPopup(false)}
+        className="absolute top-3 right-3 text-gray-500 text-xl"
+      >
+        ✕
+      </button>
+
+      {/* ICON */}
+      <div className="text-center">
+        <div className="text-4xl mb-3">📞</div>
+
+        <h2 className="font-heading text-xl text-gray-800">
+          Booking Unavailable
+        </h2>
+
+        <p className="text-gray-600 mt-3">
+          Currently online booking is not available.
+        </p>
+
+        <p className="text-gray-800 font-semibold mt-2">
+          Contact for booking:
+        </p>
+
+        <a
+          href="tel:8975995125"
+          className="text-palmGreen font-bold text-lg mt-1 block"
+        >
+          📱 8975995125
+        </a>
+
+        {/* ACTION BUTTON */}
+        <button
+          onClick={() => setShowPopup(false)}
+          className="mt-6 w-full bg-palmGreen text-white py-3 rounded-lg font-medium"
+        >
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+)}
       </div>
     </div>
   );

@@ -60,6 +60,7 @@ import EditBlog from "./admin/EditBlog";
 import BlogDetails from "./pages/BlogDetails";
 import Blogs from "./pages/Blogs";
 
+
 function App() {
   return (
     <div className="bg-sand min-h-screen">
