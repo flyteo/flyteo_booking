@@ -46,8 +46,8 @@ export default function AboutUs() {
             </p>
 
             <p>
-              Founded by <strong>Shivam Jadhav(FOUNDER)</strong> and{" "}
-              <strong>Shubham Tivalekar(CO-FOUNDER)</strong>, Flyteo focuses on promoting
+              Founded by <strong>Mr Shivam Nivrutti Jadhav(FOUNDER & CEO)</strong> and{" "}
+              <strong>Miss Madhu Jha(CO-FOUNDER)</strong>, Flyteo focuses on promoting
               local tourism while delivering a reliable booking experience.
             </p>
           </div>
